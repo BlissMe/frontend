@@ -12,22 +12,31 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="w-1/2 hidden md:block h-full">
-        <img src={signup} alt="Signup" className="w-full h-full object-cover" />
+    <div className="flex h-screen flex-col md:flex-row">
+      <div className="block md:block w-full md:w-1/2 h-72 md:h-full">
+        <img
+          src={signup}
+          alt="Signup"
+          className="w-full h-full object-cover md:object-cover object-center"
+        />
       </div>
-      <div className="flex flex-col gap-2 items-center justify-center w-full md:w-1/2 h-full bg-gradient-to-b from-[#FFFFFF] to-[#5FB57F]">
-        <div className="flex flex-col items-center w-full gap-2 mt-20">
-          <Text className="text-black text-3xl font-semibold font-Roboto">Register</Text>
-          <Text className="text-textColorOne text-base font-normal block text-center">
+
+      <div className="flex flex-col gap-4 items-center justify-center w-full md:w-1/2 h-full px-4 md:py-8 bg-gradient-to-b from-[#FFFFFF] to-[#5FB57F]">
+        <div className="flex flex-col items-center w-full gap-2 md:mt-6">
+          <Text className="text-black text-2xl md:text-3xl font-semibold">
+            Register
+          </Text>
+          <Text className="text-textColorOne text-sm md:text-base font-normal block text-center">
             Let’s get you started with your friendly AI buddy!
           </Text>
         </div>
-        <div className="flex flex-col items-center w-full">
-          <Form layout="vertical" className="w-full max-w-md" onFinish={onFinish}>
+        <div className="flex flex-col items-center w-full max-w-[400px]">
+          <Form layout="vertical" className="w-full" onFinish={onFinish}>
             <Form.Item
               name="email"
-              label="Email"
+              label="Email *"
+              className="custom-label"
+              required={false}
               rules={[
                 {
                   required: true,
@@ -56,7 +65,9 @@ const SignUp: React.FC = () => {
             </Form.Item>
             <Form.Item
               name="password"
-              label="Password"
+              label="Password *"
+              className="custom-label"
+              required={false}
               rules={[
                 {
                   required: true,
@@ -74,7 +85,8 @@ const SignUp: React.FC = () => {
             </Form.Item>
             <Form.Item
               name="contact"
-              label="Emergency Conatct Number"
+              label="Emergency Contact Number *"
+              required={false}
               rules={[
                 {
                   required: true,
@@ -82,11 +94,13 @@ const SignUp: React.FC = () => {
                 },
                 { min: 10, message: "Invalid phone number!" },
               ]}
+              className="custom-label"
             >
               <Input
                 prefix={<PhoneIcon />}
                 placeholder="Contact Number"
                 size="large"
+                required={false}
                 className="custom-input"
               />
             </Form.Item>
@@ -113,14 +127,14 @@ const SignUp: React.FC = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="!bg-buttonColor hover:!bg-buttonColor w-[300px] h-[45px] text-lg rounded-full text-white font-bold"
+                  className="!bg-buttonColor hover:!bg-buttonColor w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold"
                 >
                   Sign Up
                 </Button>
               </div>
             </Form.Item>
 
-            <Text className="block text-center">
+            <Text className="block text-center text-sm md:text-base text-textColorOne">
               Already have an account?{" "}
               <span className="text-textColorTwo">Sign In</span>
             </Text>

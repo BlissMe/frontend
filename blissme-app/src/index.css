@@ -21,3 +21,11 @@
 .custom-password-input .ant-input {
   border-radius: 30px;
 }
+
+.custom-label .ant-form-item-label > label {
+  @apply text-base font-normal text-black px-2;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}

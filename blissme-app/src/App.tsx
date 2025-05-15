@@ -1,8 +1,11 @@
-import SignUp from "./app/signUp/SignUp";
+import { BrowserRouter } from "react-router-dom";
+import Routerset from "./routes/Routerset";
 
 function App() {
   return (
-    <SignUp/>
+    <BrowserRouter>
+          <Routerset />
+        </BrowserRouter>
   );
 }
 

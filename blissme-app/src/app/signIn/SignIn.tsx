@@ -1,22 +1,23 @@
 import React from "react";
-import signup from "../../assets/images/signup.jpg";
+import signin from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography } from "antd";
-import { MailOutlined, LockOutlined, PhoneOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 
-const SignUp: React.FC = () => {
+const SignIn: React.FC = () => {
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
   };
+
   const navigateTo = useNavigate();
+
   return (
     <div className="flex h-screen flex-col md:flex-row">
       <div className="block md:block w-full md:w-1/2 h-72 md:h-full">
         <img
-          src={signup}
-          alt="Signup"
+          src={signin}
+          alt="Signin"
           className="w-full h-full object-cover md:object-cover object-center"
         />
       </div>
@@ -24,10 +25,10 @@ const SignUp: React.FC = () => {
       <div className="flex flex-col gap-4 items-center justify-center w-full md:w-1/2 h-full px-4 md:py-8 bg-gradient-to-b from-[#FFFFFF] to-[#5FB57F]">
         <div className="flex flex-col items-center w-full gap-2 md:mt-6">
           <Text className="text-black text-2xl md:text-3xl font-semibold">
-            Register
+            Welcome Again{" "}
           </Text>
           <Text className="text-textColorOne text-sm md:text-base font-normal block text-center">
-            Let’s get you started with your friendly AI buddy!
+            Welcome back! Your AI buddy is ready to chat!{" "}
           </Text>
         </div>
         <div className="flex flex-col items-center w-full max-w-[400px]">
@@ -83,45 +84,18 @@ const SignUp: React.FC = () => {
                 className="custom-input"
               />
             </Form.Item>
-            <Form.Item
-              name="contact"
-              label="Emergency Contact Number *"
-              required={false}
-              rules={[
-                {
-                  required: true,
-                  message: "Emergency contact number is required!",
-                },
-                { min: 10, message: "Invalid phone number!" },
-              ]}
-              className="custom-label"
-            >
-              <Input
-                prefix={<PhoneOutlined />}
-                placeholder="Contact Number"
-                size="large"
-                required={false}
-                className="custom-input"
-              />
-            </Form.Item>
-            <Form.Item
-              name="agree"
-              valuePropName="checked"
-              rules={[
-                {
-                  validator: (_, value) =>
-                    value
-                      ? Promise.resolve()
-                      : Promise.reject("You must agree to terms"),
-                },
-              ]}
-            >
-              <Checkbox>
-                I agree to{" "}
-                <span className="text-textColorTwo">Terms & Conditions</span>{" "}
-                and <span className="text-textColorTwo">Privacy</span>
-              </Checkbox>
-            </Form.Item>
+            <div className="flex justify-between items-center mb-8">
+              <Form.Item name="rememberme" valuePropName="checked" noStyle>
+                <Checkbox>Remember me</Checkbox>
+              </Form.Item>
+              <Text
+                className="text-textColorTwo cursor-pointer text-sm hover:underline"
+                onClick={() => navigateTo("/forgot-password")}
+              >
+                Forgot Password?
+              </Text>
+            </div>
+
             <Form.Item>
               <div className="flex justify-center">
                 <Button
@@ -129,14 +103,19 @@ const SignUp: React.FC = () => {
                   htmlType="submit"
                   className="!bg-buttonColor hover:!bg-buttonColor w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold"
                 >
-                  Sign Up
+                  Log in
                 </Button>
               </div>
             </Form.Item>
 
             <Text className="block text-center text-sm md:text-base text-textColorOne">
-              Already have an account?{" "}
-              <span className="text-textColorTwo cursor-pointer"  onClick={() => navigateTo("/login")}>Sign In</span>
+              Don’t have an account?{" "}
+              <span
+                className="text-textColorTwo cursor-pointer"
+                onClick={() => navigateTo("/")}
+              >
+                Sign up
+              </span>
             </Text>
           </Form>
         </div>
@@ -145,4 +124,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

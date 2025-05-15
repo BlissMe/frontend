@@ -1,5 +1,5 @@
 import React from "react";
-import signin from "../../assets/images/signup.jpg";
+import signin from "../../assets/images/signin.png";
 import { Form, Input, Button, Checkbox, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";

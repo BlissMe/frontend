@@ -1,0 +1,8 @@
+.sidebar {
+  min-height: 100vh;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px 15px;
+}
+

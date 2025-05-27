@@ -10,6 +10,11 @@ export default {
         textColorOne: "#5F5757",
         textColorTwo: "#1713FF",
         buttonColor : "#1B5E3B",
+        bgColorOne : "#A8D5BABD",
+        inputColorOne :"#F2C1B6",
+        inputColorTwo :"#47A37E",
+        inputColorThree :"#DCF2DE",
+        iconColor : "#1B5E3A"
       },
       screens: {
         xsm: "360px",

@@ -1,32 +1,38 @@
 import { Button, Divider, Input, Typography } from "antd";
 import { assets } from "../../assets/assets";
-
+import { useState } from "react";
+import { getCurrentTime } from "../../helpers/Time";
+import {chatBotService} from "../../services/ChatBotService"
 const { Text } = Typography;
 
 const ChatBox = () => {
-  const messages = [
-    { sender: "popo", text: "Hi Popo! How are you?", time: "10:20 a.m." },
-    {
+  
+  const [messages, setMessages] = useState([
+    { sender: "popo", text: "Hi Popo! How are you?", time: getCurrentTime() },
+  ]);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleSend = async () => {
+    if (!inputValue.trim()) return;
+
+    const userMessage = {
       sender: "you",
-      text: "Hi Popo! How are you? hjhs gjhdf ggdghgc gdhcx bhdcghs dvc gsjdgs gdg",
-      time: "10:21 a.m.",
-    },
-    {
+      text: inputValue,
+      time: getCurrentTime(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    const botReply = await chatBotService(inputValue);
+
+    const botMessage = {
       sender: "popo",
-      text: "Hi Popo! How are you? uhiudu njhjds hdfj gd gdshc uygd cgdghv g vhhvghdc ghvccvgc xghc ghvhc g.",
-      time: "10:20 a.m.",
-    },
-    {
-      sender: "you",
-      text: "gfgvdg ffdgvg gchx gsvdhhs gshgdhsaa hsgh hhasa geg jsdsj sgsdghcgs ghvhcvh",
-      time: "10:21 a.m.",
-    },
-    {
-      sender: "popo",
-      text: "Hi Popo! How are you? uhiudu njhjds",
-      time: "10:20 a.m.",
-    },
-  ];
+      text: botReply,
+      time: getCurrentTime(),
+    };
+
+    setMessages((prev) => [...prev, botMessage]);
+  };
 
   return (
     <>
@@ -81,6 +87,9 @@ const ChatBox = () => {
               className="w-5 h-5 object-contain"
             />
           }
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onPressEnter={handleSend}
           className="flex items-center bg-inputColorThree rounded-full px-4 py-2 w-full max-w-5xl placeholder-gray-500 border-none shadow-none focus:ring-0 focus:border-none hover:bg-inputColorThree"
         />
         <Button
@@ -93,6 +102,7 @@ const ChatBox = () => {
             />
           }
           className="ml-2"
+          onClick={handleSend}
         />
       </div>
     </>

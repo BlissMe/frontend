@@ -3,6 +3,7 @@ import signup from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography } from "antd";
 import { MailOutlined, LockOutlined, PhoneOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { assets } from "../../assets/assets";
 
 const { Text } = Typography;
 
@@ -10,6 +11,11 @@ const SignUp: React.FC = () => {
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
   };
+
+  const googleAuth = () => {
+    window.open(`http://localhost:8000/auth/google/callback`, "_self");
+  };
+
   const navigateTo = useNavigate();
   return (
     <div className="flex h-screen flex-col md:flex-row">
@@ -83,7 +89,7 @@ const SignUp: React.FC = () => {
                 className="custom-input"
               />
             </Form.Item>
-            <Form.Item
+            {/*     <Form.Item
               name="contact"
               label="Emergency Contact Number *"
               required={false}
@@ -103,7 +109,7 @@ const SignUp: React.FC = () => {
                 required={false}
                 className="custom-input"
               />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               name="agree"
               valuePropName="checked"
@@ -133,10 +139,38 @@ const SignUp: React.FC = () => {
                 </Button>
               </div>
             </Form.Item>
+          </Form>
+          <Form>
+            <div className="flex justify-center my-4">
+              <Text className="text-center text-black text-sm">or</Text>
+            </div>
+
+            <Form.Item>
+              <div className="flex justify-center">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="google_btn flex items-center gap-2"
+                  onClick={googleAuth}
+                >
+                  <img
+                    src={assets.google}
+                    alt="google icon"
+                    className="w-5 h-5"
+                  />
+                  Sign up with Google
+                </Button>
+              </div>
+            </Form.Item>
 
             <Text className="block text-center text-sm md:text-base text-textColorOne">
               Already have an account?{" "}
-              <span className="text-textColorTwo cursor-pointer"  onClick={() => navigateTo("/login")}>Sign In</span>
+              <span
+                className="text-textColorTwo cursor-pointer"
+                onClick={() => navigateTo("/login")}
+              >
+                Sign In
+              </span>
             </Text>
           </Form>
         </div>

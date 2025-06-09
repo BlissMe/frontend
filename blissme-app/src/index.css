@@ -2,16 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/*Custom Input */
+.custom-input {
+  border-radius: 30px;
+  border: 2px solid #d9d9d9;
+  height: 45px;
+  padding: 0 16px;
+  background-color: #fffcfc;
+  transition: border-color 0.3s;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.custom-input:focus,
+.custom-input-focused {
+  border-color: #5fb57f !important;
+  box-shadow: 0 0 0 2px rgba(95, 181, 127, 0.2);
+}
+
+.custom-password-input .ant-input {
+  border-radius: 30px;
+}
+
+.custom-label .ant-form-item-label > label {
+  @apply text-base font-normal text-black px-2;
+}
+
+.google_btn {
+    width: 230px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background-color: white;
+    box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 20px 0;
+    color: #2c444e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.text {
+    font-size: 14px;
+    color: #2c444e;
+    margin: 5px 0;
+    padding: 0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}
+
+@keyframes waveBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-waves {
+  background-size: 200% 200%;
+  animation: waveBackground 12s ease-in-out infinite;
 }

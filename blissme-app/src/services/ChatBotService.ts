@@ -18,3 +18,24 @@ export async function chatBotService(userQuery: string): Promise<string> {
     return "Sorry, something went wrong.";
   }
 }
+
+export async function profileDetailsService(
+  virtualName: string,
+  character: string,
+  inputMethod: string
+): Promise<void> {
+  try {
+    const res = await fetch(`${metadataServiceURL}user/details`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ virtualName, character, inputMethod }),
+    });
+
+    const data = await res.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error submitting virtual login:", error);
+  }
+}
+
+

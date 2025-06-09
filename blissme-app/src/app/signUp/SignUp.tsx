@@ -1,22 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import signup from "../../assets/images/signup.jpg";
-import { Form, Input, Button, Checkbox, Typography } from "antd";
-import { MailOutlined, LockOutlined, PhoneOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Checkbox, Typography, message } from "antd";
+import { MailOutlined, LockOutlined} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
+import { userSignUpService } from "../../services/UserService";
 
 const { Text } = Typography;
 
 const SignUp: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = async (values: any) => {
+    try {
+      setLoading(true);
+      const userData = {
+        email: values.email,
+        password: values.password,
+      };
+
+      const response = await userSignUpService(userData);
+
+      if (response.message) {
+        message.success("Login successful!");
+        navigate("/onbording/profile", { replace: true });
+      } else {
+        message.error(response.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      message.error("Something went wrong. Please try again later.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const googleAuth = () => {
-    window.open(`http://localhost:8000/auth/google/callback`, "_self");
+    window.open(`http://localhost:8080/auth/google/callback`, "_self");
   };
 
-  const navigateTo = useNavigate();
   return (
     <div className="flex h-screen flex-col md:flex-row">
       <div className="block md:block w-full md:w-1/2 h-72 md:h-full">
@@ -134,6 +157,7 @@ const SignUp: React.FC = () => {
                   type="primary"
                   htmlType="submit"
                   className="!bg-buttonColor hover:!bg-buttonColor w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold"
+                  loading={loading}
                 >
                   Sign Up
                 </Button>
@@ -167,7 +191,7 @@ const SignUp: React.FC = () => {
               Already have an account?{" "}
               <span
                 className="text-textColorTwo cursor-pointer"
-                onClick={() => navigateTo("/login")}
+                onClick={() => navigate("/login")}
               >
                 Sign In
               </span>

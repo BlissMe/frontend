@@ -2,11 +2,10 @@ import { Button, Divider, Input, Typography } from "antd";
 import { assets } from "../../assets/assets";
 import { useState } from "react";
 import { getCurrentTime } from "../../helpers/Time";
-import {chatBotService} from "../../services/ChatBotService"
+import { chatBotService } from "../../services/ChatBotService";
 const { Text } = Typography;
 
 const ChatBox = () => {
-  
   const [messages, setMessages] = useState([
     { sender: "popo", text: "Hi Popo! How are you?", time: getCurrentTime() },
   ]);
@@ -35,48 +34,49 @@ const ChatBox = () => {
   };
 
   return (
-    <>
-      <div className="flex items-center justify-center">
+    <div className="flex flex-col h-screen">
+      <div className="flex items-center justify-center py-4">
         <img src={assets.profile} width={120} height={120} />
       </div>
-      <div className="p-4">
-        <div className="space-y-6">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex flex-col ${
-                msg.sender === "you" ? "items-end" : "items-start"
-              }`}
-            >
-              <div className="flex">
-                {msg.sender === "you" ? (
-                  <img src={assets.icon1} alt="" width={40} height={80} />
-                ) : (
-                  <img src={assets.icon2} alt="" width={40} height={80} />
-                )}
-                <div
-                  className={`p-3 rounded-lg ${
-                    msg.sender === "you"
-                      ? "bg-inputColorTwo text-right"
-                      : "bg-inputColorOne text-left"
-                  }`}
-                >
-                  <Text className="text-sm">{msg.text}</Text>
-                </div>
-              </div>
-              <Text
-                className={`text-xs text-gray-500 mt-1 ${
-                  msg.sender === "you" ? "" : "mx-10"
+
+      <div className="flex-1 overflow-y-auto px-4 space-y-6">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`flex flex-col ${
+              msg.sender === "you" ? "items-end" : "items-start"
+            }`}
+          >
+            <div className="flex gap-2">
+              {msg.sender === "you" ? (
+                <img src={assets.icon1} alt="" width={40} height={40} />
+              ) : (
+                <img src={assets.icon2} alt="" width={40} height={40} />
+              )}
+              <div
+                className={`p-3 rounded-lg max-w-xs ${
+                  msg.sender === "you"
+                    ? "bg-inputColorTwo text-right"
+                    : "bg-inputColorOne text-left"
                 }`}
               >
-                {msg.time}
-              </Text>
+                <Text className="text-sm">{msg.text}</Text>
+              </div>
             </div>
-          ))}
-        </div>
+            <Text
+              className={`text-xs text-gray-500 mt-1 ${
+                msg.sender === "you" ? "" : "ml-10"
+              }`}
+            >
+              {msg.time}
+            </Text>
+          </div>
+        ))}
       </div>
-      <Divider />
-      <div className="flex justify-center items-center">
+
+      <Divider className="m-0" />
+
+      <div className="flex items-center gap-2 p-4 bg-white">
         <Input
           placeholder="Type your message here..."
           size="large"
@@ -90,7 +90,7 @@ const ChatBox = () => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onPressEnter={handleSend}
-          className="flex items-center bg-inputColorThree rounded-full px-4 py-2 w-full max-w-5xl placeholder-gray-500 border-none shadow-none focus:ring-0 focus:border-none hover:bg-inputColorThree"
+          className="flex-1 bg-inputColorThree rounded-full px-4 py-2 border-none shadow-none focus:ring-0 focus:border-none hover:bg-inputColorThree"
         />
         <Button
           type="text"
@@ -101,11 +101,10 @@ const ChatBox = () => {
               className="w-8 h-8 object-contain"
             />
           }
-          className="ml-2"
           onClick={handleSend}
         />
       </div>
-    </>
+    </div>
   );
 };
 

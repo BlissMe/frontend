@@ -4,8 +4,8 @@ import Routerset from "./routes/Routerset";
 function App() {
   return (
     <BrowserRouter>
-          <Routerset />
-        </BrowserRouter>
+      <Routerset />
+    </BrowserRouter>
   );
 }
 

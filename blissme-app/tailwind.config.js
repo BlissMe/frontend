@@ -16,6 +16,9 @@ export default {
         inputColorThree :"#DCF2DE",
         iconColor : "#1B5E3A"
       },
+        animation: {
+        ping_slow: 'ping 4s cubic-bezier(0, 0, 0.2, 1) infinite',
+      },
       screens: {
         xsm: "360px",
         sm: "540px",

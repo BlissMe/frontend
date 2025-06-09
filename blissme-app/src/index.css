@@ -55,3 +55,20 @@
 body {
   font-family: "Roboto", sans-serif;
 }
+
+@keyframes waveBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-waves {
+  background-size: 200% 200%;
+  animation: waveBackground 12s ease-in-out infinite;
+}

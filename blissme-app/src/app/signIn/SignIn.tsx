@@ -1,16 +1,35 @@
 import React from "react";
 import signin from "../../assets/images/signin.png";
-import { Form, Input, Button, Checkbox, Typography } from "antd";
+import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { userSignUpService } from "../../services/UserService";
+
 const { Text } = Typography;
 
 const SignIn: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
-  };
+  const navigate = useNavigate();
 
-  const navigateTo = useNavigate();
+  const onFinish = async (values: any) => {
+    try {
+      const userData = {
+        email: values.email,
+        password: values.password,
+      };
+
+      const response = await userSignUpService(userData);
+
+      if (response.success) {
+        message.success("Login successful!");
+        navigate("/onbording/profile", { replace: true });
+      } else {
+        message.error(response.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      message.error("Something went wrong. Please try again later.");
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex h-screen flex-col md:flex-row">
@@ -28,16 +47,15 @@ const SignIn: React.FC = () => {
             Welcome Again{" "}
           </Text>
           <Text className="text-textColorOne text-sm md:text-base font-normal block text-center">
-            Welcome back! Your AI buddy is ready to chat!{" "}
+            Welcome back! Your AI buddy is ready to chat!
           </Text>
         </div>
+
         <div className="flex flex-col items-center w-full max-w-[400px]">
           <Form layout="vertical" className="w-full" onFinish={onFinish}>
             <Form.Item
               name="email"
               label="Email *"
-              className="custom-label"
-              required={false}
               rules={[
                 {
                   required: true,
@@ -61,14 +79,12 @@ const SignIn: React.FC = () => {
                 size="large"
                 maxLength={100}
                 autoComplete="off"
-                className="custom-input"
               />
             </Form.Item>
+
             <Form.Item
               name="password"
               label="Password *"
-              className="custom-label"
-              required={false}
               rules={[
                 {
                   required: true,
@@ -81,16 +97,16 @@ const SignIn: React.FC = () => {
                 size="large"
                 placeholder="Password"
                 maxLength={60}
-                className="custom-input"
               />
             </Form.Item>
+
             <div className="flex justify-between items-center mb-8">
               <Form.Item name="rememberme" valuePropName="checked" noStyle>
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
               <Text
                 className="text-textColorTwo cursor-pointer text-sm hover:underline"
-                onClick={() => navigateTo("/forgot-password")}
+                onClick={() => navigate("/forgot-password")}
               >
                 Forgot Password?
               </Text>
@@ -112,7 +128,7 @@ const SignIn: React.FC = () => {
               Don’t have an account?{" "}
               <span
                 className="text-textColorTwo cursor-pointer"
-                onClick={() => navigateTo("/")}
+                 onClick={() => navigate("/signup")}
               >
                 Sign up
               </span>

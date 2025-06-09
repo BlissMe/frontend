@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import signup from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
-import { MailOutlined, LockOutlined} from "@ant-design/icons";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
+import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 
 const { Text } = Typography;
 
@@ -97,12 +98,7 @@ const SignUp: React.FC = () => {
               label="Password *"
               className="custom-label"
               required={false}
-              rules={[
-                {
-                  required: true,
-                  message: "Password is required!",
-                },
-              ]}
+              rules={[{ validator: passwordFieldValidation}]}
             >
               <Input.Password
                 prefix={<LockOutlined />}

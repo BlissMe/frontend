@@ -24,7 +24,7 @@ const SignUp: React.FC = () => {
       const response = await userSignUpService(userData);
 
       if (response.message) {
-        message.success("Login successful!");
+        message.success("Successfully Registered!");
         navigate("/onbording/profile", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");

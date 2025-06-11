@@ -26,3 +26,30 @@ export async function userSignUpService(userData : SignUpPayload): Promise<any> 
     return "Sorry, something went wrong.";
   }
 }
+
+interface SignInPayload {
+  email: string;
+  password: string;
+  
+}
+export async function userSignInService(userData : SignInPayload): Promise<any> {
+  try {
+    const response = await fetch(`${metadataServiceURL}authUser/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    return "Sorry, something went wrong.";
+  }
+}

@@ -1,25 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import signin from "../../assets/images/signin.png";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { userSignUpService } from "../../services/UserService";
+import {
+  userSignInService,
+} from "../../services/UserService";
 
 const { Text } = Typography;
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: any) => {
     try {
+      setLoading(true);
+
       const userData = {
         email: values.email,
         password: values.password,
       };
 
-      const response = await userSignUpService(userData);
+      const response = await userSignInService(userData);
 
-      if (response.success) {
+      if (response.message) {
         message.success("Login successful!");
         navigate("/onbording/profile", { replace: true });
       } else {
@@ -28,6 +33,8 @@ const SignIn: React.FC = () => {
     } catch (error) {
       message.error("Something went wrong. Please try again later.");
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,6 +125,7 @@ const SignIn: React.FC = () => {
                   type="primary"
                   htmlType="submit"
                   className="!bg-buttonColor hover:!bg-buttonColor w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold"
+                  loading={loading}
                 >
                   Log in
                 </Button>
@@ -128,7 +136,7 @@ const SignIn: React.FC = () => {
               Don’t have an account?{" "}
               <span
                 className="text-textColorTwo cursor-pointer"
-                 onClick={() => navigate("/signup")}
+                onClick={() => navigate("/signup")}
               >
                 Sign up
               </span>

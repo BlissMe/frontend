@@ -14,7 +14,6 @@ export async function chatBotService(userQuery: string): Promise<string> {
     console.log(data);
     return data.response;
   } catch (error) {
-    console.error("Error talking to bot:", error);
     return "Sorry, something went wrong.";
   }
 }
@@ -23,7 +22,7 @@ export async function profileDetailsService(
   virtualName: string,
   character: string,
   inputMethod: string
-): Promise<void> {
+): Promise<any> {
   try {
     const res = await fetch(`${metadataServiceURL}user/details`, {
       method: "POST",
@@ -33,6 +32,7 @@ export async function profileDetailsService(
 
     const data = await res.json();
     console.log(data);
+    return data;
   } catch (error) {
     console.error("Error submitting virtual login:", error);
   }

@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
-import { Input, Select, Button, Card, Avatar, Form } from "antd";
+import { Input, Select, Button, Card, Avatar, Form, message } from "antd";
 import { profileDetailsService } from "../../services/ChatBotService";
 import { useNavigate } from "react-router-dom";
+import { assets } from "../../assets/assets";
 
 const { Option } = Select;
 
 const characters = [
-  { name: "SkyFox", image: "/avatars/fox.png" },
-  { name: "BlueBear", image: "/avatars/bear.png" },
-  { name: "WiseOwl", image: "/avatars/owl.png" },
+  { name: "SkyFox", imgage : assets.avatar1},
+  { name: "BlueBear", image: assets.avatar2 },
+  { name: "WiseOwl", image:  assets.avatar3},
 ];
 
-export default function VirtualLogin() {
+const VirtualLogin: React.FC = () => {
   const [virtualName, setVirtualName] = useState<string>("");
   const [character, setCharacter] = useState<string>(characters[0].name);
   const [inputMethod, setInputMethod] = useState<string>("");
@@ -31,11 +32,19 @@ export default function VirtualLogin() {
     }
     setLoading(true);
     try {
-      await profileDetailsService(virtualName, character, inputMethod);
-      if (inputMethod === "text") {
-        navigate("/chat/text");
+      const response = await profileDetailsService(
+        virtualName,
+        character,
+        inputMethod
+      );
+      if (response.message) {
+        if (inputMethod === "text") {
+          navigate("/chat/text");
+        } else {
+          navigate("/chat/voice");
+        }
       } else {
-        navigate("/chat/voice");
+        message.error(response.message || "Please try again.");
       }
     } catch (error) {
       console.error("Error submitting virtual login:", error);
@@ -94,7 +103,11 @@ export default function VirtualLogin() {
               onChange={(value) => setInputMethod(value)}
               className="w-full"
               disabled={loading}
+              placeholder="Select a method" 
             >
+              <Option value="" disabled>
+                Select a method
+              </Option>
               <Option value="text">Text</Option>
               <Option value="voice">Voice</Option>
             </Select>
@@ -113,4 +126,5 @@ export default function VirtualLogin() {
       </Card>
     </div>
   );
-}
+};
+export default VirtualLogin;

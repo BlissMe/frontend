@@ -72,3 +72,19 @@ body {
   background-size: 200% 200%;
   animation: waveBackground 12s ease-in-out infinite;
 }
+/* Custom spinner style */
+.custom-spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #1890ff; /* Ant Design blue */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: auto; /* center horizontally */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

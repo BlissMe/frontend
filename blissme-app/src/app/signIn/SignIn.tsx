@@ -26,6 +26,7 @@ const SignIn: React.FC = () => {
       if (response.message) {
         message.success("Login successful!");
         setLocalStorageData("token", response.token); 
+        console.log("Token:", response.token);
         navigate("/chat/text", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");

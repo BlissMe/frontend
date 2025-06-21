@@ -1,9 +1,10 @@
 import { Button, Divider, Input, Typography, Spin } from "antd";
 import { assets } from "../../assets/assets";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
-import { createNewSession, fetchChatHistory, saveMessage } from "../../services/ChatMessageService";
+import { createNewSession, fetchChatHistory, saveMessage ,endCurrentSession} from "../../services/ChatMessageService";
 const { Text } = Typography;
 
 const ChatBox = () => {
@@ -16,24 +17,15 @@ const [chatHistory, setChatHistory] = useState<
 >([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [isSessionEnded, setIsSessionEnded] = useState(false);
+
 console.log("chatHistory", chatHistory);
 console.log("messages", messages);
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
       setSessionID(session);
-
-    //   const history = await fetchChatHistory(session);
-    //   console.log("Chat History:", history);
-    //  const formattedHistory = Array.isArray(history)
-    //     ? history.map((msg: any) => ({
-    //         sender: msg.sender,
-    //         text: msg.message,
-    //         time: getCurrentTime(),
-    //       }))
-    //     : [];
-    //   console.log("Formatted History:", formattedHistory);
-    //   setMessages((prev) => [...prev, ...formattedHistory]);
     })();
   }, []);
 
@@ -92,6 +84,27 @@ console.log("messages", messages);
     <div className="flex flex-col h-screen">
       <div className="flex items-center justify-center py-4">
         <img src={assets.profile} width={120} height={120} />
+        <Button
+    type="primary"
+    danger
+    size="small"
+    onClick={async () => {
+      const res = await endCurrentSession(sessionID); 
+      if (res.success) {
+        alert("Session ended and summary saved.");
+        setIsSessionEnded(true);
+         setMessages([]);
+        setChatHistory([]);
+        setSessionID("");
+        navigate("/login");
+
+      } else {
+        alert("Failed to end session.");
+      }
+    }}
+  >
+    End Session
+  </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 space-y-6">

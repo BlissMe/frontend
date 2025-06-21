@@ -56,3 +56,22 @@ export async function createNewSession() {
         console.error("Error creating session:", err);
     }
 }
+
+export async function endCurrentSession(sessionID: string) {
+    const token = getLocalStoragedata("token");
+
+    try {
+        const response = await fetch(`${API_BASE}/session/end`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ sessionID })
+        });
+
+        return await response.json();
+    } catch (err) {
+        console.error("Error ending session:", err);
+    }
+}

@@ -7,6 +7,7 @@ import FrontPage from "../app/chatBox/FrontPage";
 import VoiceChatBox from "../app/chatBox/VoiceChatBox";
 import OnBordingLayout from "../app/layouts/OnBordingLayout";
 import Nickname from "../app/start/Nickname";
+import VirtualCharacter from "../app/start/VirtualCharacter";
 
 const Routerset = () => {
   return (
@@ -14,7 +15,7 @@ const Routerset = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
       <Route path="/nick-name" element={<Nickname />} />
-
+      <Route path="/virtual-character" element={<VirtualCharacter />} />
 
       <Route path="/onbording" element={<OnBordingLayout />}>
         <Route path="profile" element={<FrontPage />} />

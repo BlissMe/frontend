@@ -1,16 +1,35 @@
 import { Button, Divider, Input, Typography, Spin } from "antd";
 import { assets } from "../../assets/assets";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
+import { createNewSession, fetchChatHistory, saveMessage } from "../../services/ChatMessageService";
 const { Text } = Typography;
 
 const ChatBox = () => {
+  const [sessionID, setSessionID] = useState<string>("");
   const [messages, setMessages] = useState([
     { sender: "popo", text: "Hi there. How are you feeling today?", time: getCurrentTime() },
   ]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const session = await createNewSession();
+      setSessionID(session);
+
+      const history = await fetchChatHistory(session);
+     const formattedHistory = Array.isArray(history)
+        ? history.map((msg: any) => ({
+            sender: msg.sender,
+            text: msg.message,
+            time: getCurrentTime(),
+          }))
+        : [];
+      setMessages((prev) => [...prev, ...formattedHistory]);
+    })();
+  }, []);
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -24,9 +43,14 @@ const ChatBox = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setLoading(true); 
+    await saveMessage(inputValue, sessionID,"user");
 
-    const botReply = await chatBotService(inputValue);
+    //  Prepare chat context for LLM
+    const context = [...messages, userMessage]
+      .map((m) => `${m.sender}: ${m.text}`)
+      .join("\n");
 
+    const botReply = await chatBotService(context);
     setLoading(false); 
 
     const botMessage = {
@@ -34,8 +58,12 @@ const ChatBox = () => {
       text: botReply,
       time: getCurrentTime(),
     };
+        //  Save bot reply to DB
+    await saveMessage(botReply, sessionID,"bot");
+
 
     setMessages((prev) => [...prev, botMessage]);
+     setLoading(false);
   };
 
   return (

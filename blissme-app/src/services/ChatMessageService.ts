@@ -1,0 +1,57 @@
+// 📁 src/services/ChatMessageService.ts
+
+import { getLocalStoragedata } from "../helpers/Storage";
+
+const API_BASE = "http://localhost:8080";
+
+export async function saveMessage(message: string, sessionID: string, sender: string) {
+    const token = getLocalStoragedata("token");
+
+
+    try {
+        const response = await fetch(`${API_BASE}/chat/save`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ message, sessionID, sender }),
+        });
+        return await response.json();
+    } catch (err) {
+        console.error("Error saving message:", err);
+    }
+}
+
+export async function fetchChatHistory(sessionID: string) {
+    const token = getLocalStoragedata("token");
+    try {
+        const response = await fetch(`${API_BASE}/chat/history/${sessionID}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return await response.json();
+    } catch (err) {
+        console.error("Error fetching history:", err);
+        return [];
+    }
+}
+
+export async function createNewSession() {
+    const token = getLocalStoragedata("token");
+
+    try {
+        const response = await fetch(`${API_BASE}/session/start`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        const data = await response.json();
+
+        return data.sessionID;
+    } catch (err) {
+        console.error("Error creating session:", err);
+    }
+}

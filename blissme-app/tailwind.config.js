@@ -9,14 +9,14 @@ export default {
       colors: {
         textColorOne: "#5F5757",
         textColorTwo: "#1713FF",
-        buttonColor : "#1B5E3B",
-        bgColorOne : "#A8D5BABD",
-        inputColorOne :"#F2C1B6",
-        inputColorTwo :"#47A37E",
-        inputColorThree :"#DCF2DE",
-        iconColor : "#1B5E3A"
+        buttonColor: "#1B5E3B",
+        bgColorOne: "#A8D5BABD",
+        inputColorOne: "#F2C1B6",
+        inputColorTwo: "#47A37E",
+        inputColorThree: "#DCF2DE",
+        iconColor: "#1B5E3A"
       },
-        animation: {
+      animation: {
         ping_slow: 'ping 4s cubic-bezier(0, 0, 0.2, 1) infinite',
       },
       screens: {
@@ -60,6 +60,17 @@ export default {
         "3xl": "1.875rem", //30px
         "4xl": "2rem", //36px
       },
+      keyframes: {
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-5deg)' },
+          '75%': { transform: 'rotate(5deg)' },
+        },
+      },
+      animation: {
+        wiggle: 'wiggle 0.5s ease-in-out infinite',
+      }
+
     },
     plugins: [],
   },

@@ -6,12 +6,15 @@ import MainLayout from "../app/layouts/MainLayout";
 import FrontPage from "../app/chatBox/FrontPage";
 import VoiceChatBox from "../app/chatBox/VoiceChatBox";
 import OnBordingLayout from "../app/layouts/OnBordingLayout";
+import Nickname from "../app/start/Nickname";
 
 const Routerset = () => {
   return (
     <Routes>
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
+      <Route path="/nick-name" element={<Nickname />} />
+
 
       <Route path="/onbording" element={<OnBordingLayout />}>
         <Route path="profile" element={<FrontPage />} />

@@ -2,8 +2,16 @@ import React from 'react';
 import { Input, Button } from 'antd';
 import heart from "../../assets/images/heart.png";
 import logo from "../../assets/images/logo.png";
+import { useNavigate } from 'react-router-dom';
 
 const Nickname = () => {
+    const navigate = useNavigate();
+
+    const handleNext = () => {
+        // Navigate to the next step, e.g., InputMode
+        navigate('/virtual-character');
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center relative">
 
@@ -30,6 +38,7 @@ const Nickname = () => {
 
                 <Button
                     type="default"
+                    onClick={handleNext}
                     className="bg-[#4B9B6E] hover:bg-[#1B5E3A] text-white border-none shadow-md"
                 >
                     Next

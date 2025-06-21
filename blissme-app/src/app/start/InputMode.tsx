@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import { Button } from 'antd';
 import logo from "../../assets/images/logo.png";
 import heart from "../../assets/images/heart.png";
+import { useNavigate } from 'react-router-dom';
 
 const InputMode = () => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const navigate = useNavigate();
+    const handleNext = () => {
+        // Navigate to the next step, e.g., Nickname
+        // navigate('/nickname');
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center relative">
@@ -51,6 +57,7 @@ const InputMode = () => {
 
                 <Button
                     type="default"
+                    onClick={handleNext}
                     className="bg-[#4B9B6E] hover:bg-[#1B5E3A] text-white border-none shadow-md"
                 >
                     Start

@@ -25,6 +25,7 @@ export async function saveMessage(message: string, sessionID: string, sender: st
 
 export async function fetchChatHistory(sessionID: string) {
     const token = getLocalStoragedata("token");
+
     try {
         const response = await fetch(`${API_BASE}/chat/history/${sessionID}`, {
             headers: {

@@ -11,60 +11,82 @@ const ChatBox = () => {
   const [messages, setMessages] = useState([
     { sender: "popo", text: "Hi there. How are you feeling today?", time: getCurrentTime() },
   ]);
+const [chatHistory, setChatHistory] = useState<
+  { sender: string; text: string; time: string }[]
+>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
-
+console.log("chatHistory", chatHistory);
+console.log("messages", messages);
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
       setSessionID(session);
 
-      const history = await fetchChatHistory(session);
-     const formattedHistory = Array.isArray(history)
-        ? history.map((msg: any) => ({
-            sender: msg.sender,
-            text: msg.message,
-            time: getCurrentTime(),
-          }))
-        : [];
-      setMessages((prev) => [...prev, ...formattedHistory]);
+    //   const history = await fetchChatHistory(session);
+    //   console.log("Chat History:", history);
+    //  const formattedHistory = Array.isArray(history)
+    //     ? history.map((msg: any) => ({
+    //         sender: msg.sender,
+    //         text: msg.message,
+    //         time: getCurrentTime(),
+    //       }))
+    //     : [];
+    //   console.log("Formatted History:", formattedHistory);
+    //   setMessages((prev) => [...prev, ...formattedHistory]);
     })();
   }, []);
 
   const handleSend = async () => {
-    if (!inputValue.trim()) return;
+  if (!inputValue.trim()) return;
 
-    const userMessage = {
-      sender: "you",
-      text: inputValue,
-      time: getCurrentTime(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-    setLoading(true); 
-    await saveMessage(inputValue, sessionID,"user");
-
-    //  Prepare chat context for LLM
-    const context = [...messages, userMessage]
-      .map((m) => `${m.sender}: ${m.text}`)
-      .join("\n");
-
-    const botReply = await chatBotService(context);
-    setLoading(false); 
-
-    const botMessage = {
-      sender: "popo",
-      text: botReply,
-      time: getCurrentTime(),
-    };
-        //  Save bot reply to DB
-    await saveMessage(botReply, sessionID,"bot");
-
-
-    setMessages((prev) => [...prev, botMessage]);
-     setLoading(false);
+  const userMessage = {
+    sender: "you",
+    text: inputValue,
+    time: getCurrentTime(),
   };
+
+  setMessages((prev) => [...prev, userMessage]);
+  setInputValue("");
+  setLoading(true);
+
+  // Save user message to DB
+  await saveMessage(inputValue, sessionID, "user");
+
+  // Fetch full updated history from DB
+  const updatedHistory = await fetchChatHistory(sessionID);
+
+  const formattedHistory = Array.isArray(updatedHistory)
+    ? updatedHistory.map((msg: any) => ({
+        sender: msg.sender === "bot" ? "popo" : "you",
+        text: msg.message,
+        time: getCurrentTime(),
+      }))
+    : [];
+
+  // Build context string from full history for LLM
+  const context = formattedHistory
+    .map((m) => `${m.sender}: ${m.text}`)
+    .join("\n");
+
+  // Get LLM response using full chat history + latest input
+  const botReply = await chatBotService(context, inputValue);
+
+  const botMessage = {
+    sender: "popo",
+    text: botReply,
+    time: getCurrentTime(),
+  };
+
+  // Save bot message to DB
+  await saveMessage(botReply, sessionID, "bot");
+
+  // Append bot reply to updated history and update UI
+  const finalMessages = [...formattedHistory, botMessage];
+  setMessages(finalMessages);
+  setChatHistory(finalMessages);
+  setLoading(false);
+};
 
   return (
     <div className="flex flex-col h-screen">

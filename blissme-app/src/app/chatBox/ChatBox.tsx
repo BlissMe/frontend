@@ -85,19 +85,18 @@ console.log("messages", messages);
       <div className="flex items-center justify-center py-4">
         <img src={assets.profile} width={120} height={120} />
         <Button
-    type="primary"
-    danger
-    size="small"
-    onClick={async () => {
-      const res = await endCurrentSession(sessionID); 
-      if (res.success) {
-        alert("Session ended and summary saved.");
-        setIsSessionEnded(true);
-         setMessages([]);
-        setChatHistory([]);
-        setSessionID("");
-        navigate("/login");
-
+            type="primary"
+            danger
+            size="small"
+            onClick={async () => {
+              const res = await endCurrentSession(sessionID); 
+              if (res.success) {
+                alert("Session ended and summary saved.");
+                setIsSessionEnded(true);
+                setMessages([]);
+                setChatHistory([]);
+                setSessionID("");
+                navigate("/login");
       } else {
         alert("Failed to end session.");
       }

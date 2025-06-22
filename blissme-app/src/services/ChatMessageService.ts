@@ -75,3 +75,21 @@ export async function endCurrentSession(sessionID: string) {
         console.error("Error ending session:", err);
     }
 }
+
+export async function fetchAllSummaries(): Promise<string[]> {
+    const token = getLocalStoragedata("token");
+
+    try {
+        const response = await fetch(`${API_BASE}/sessionSummary/session-summaries`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+        return data.summaries || [];
+    } catch (error) {
+        console.error("Error fetching summaries:", error);
+        return [];
+    }
+}

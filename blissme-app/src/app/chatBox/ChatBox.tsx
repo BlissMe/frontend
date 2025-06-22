@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
-import { createNewSession, fetchChatHistory, saveMessage ,endCurrentSession} from "../../services/ChatMessageService";
+import { createNewSession, fetchChatHistory, saveMessage ,endCurrentSession,fetchAllSummaries} from "../../services/ChatMessageService";
 const { Text } = Typography;
 
 const ChatBox = () => {
@@ -15,6 +15,7 @@ const ChatBox = () => {
 const [chatHistory, setChatHistory] = useState<
   { sender: string; text: string; time: string }[]
 >([]);
+const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -22,12 +23,16 @@ const [chatHistory, setChatHistory] = useState<
 
 console.log("chatHistory", chatHistory);
 console.log("messages", messages);
-  useEffect(() => {
-    (async () => {
-      const session = await createNewSession();
-      setSessionID(session);
-    })();
-  }, []);
+
+useEffect(() => {
+  (async () => {
+    const session = await createNewSession();
+    setSessionID(session);
+
+    const allSummaries = await fetchAllSummaries();
+    setSessionSummaries(allSummaries);
+  })();
+}, []);
 
   const handleSend = async () => {
   if (!inputValue.trim()) return;
@@ -62,7 +67,7 @@ console.log("messages", messages);
     .join("\n");
 
   // Get LLM response using full chat history + latest input
-  const botReply = await chatBotService(context, inputValue);
+  const botReply = await chatBotService(context, inputValue,sessionSummaries);
 
   const botMessage = {
     sender: "popo",
@@ -124,7 +129,7 @@ console.log("messages", messages);
               {loading && msg.sender === "popo" && index === messages.length - 1 ? (
                 <Spin size="small" />
               ) : (
-                <div
+                <div 
                   className={`p-3 rounded-lg max-w-xs ${
                     msg.sender === "you"
                       ? "bg-inputColorTwo text-right"

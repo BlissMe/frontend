@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
 import { createNewSession, fetchChatHistory, saveMessage ,endCurrentSession,fetchAllSummaries} from "../../services/ChatMessageService";
+import { savePHQ9Answer } from "../../services/Phq9Service";
 const { Text } = Typography;
 
 const ChatBox = () => {
@@ -18,8 +19,14 @@ const [chatHistory, setChatHistory] = useState<
 const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lastPhq9, setLastPhq9] = useState<{
+    id: number;
+    question: string;
+  } | null>(null);
   const navigate = useNavigate();
   const [isSessionEnded, setIsSessionEnded] = useState(false);
+  const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
+
 
 console.log("chatHistory", chatHistory);
 console.log("messages", messages);
@@ -34,7 +41,7 @@ useEffect(() => {
   })();
 }, []);
 
-  const handleSend = async () => {
+const handleSend = async () => {
   if (!inputValue.trim()) return;
 
   const userMessage = {
@@ -50,9 +57,18 @@ useEffect(() => {
   // Save user message to DB
   await saveMessage(inputValue, sessionID, "user");
 
-  // Fetch full updated history from DB
-  const updatedHistory = await fetchChatHistory(sessionID);
+  if (lastPhq9) {
+    await savePHQ9Answer(
+      sessionID,
+      lastPhq9.id,
+      lastPhq9.question,
+      inputValue // this is the user's answer
+    );
+    setLastPhq9(null); // clear it after saving
+  }
 
+  // ✅ Get updated chat history
+  const updatedHistory = await fetchChatHistory(sessionID);
   const formattedHistory = Array.isArray(updatedHistory)
     ? updatedHistory.map((msg: any) => ({
         sender: msg.sender === "bot" ? "popo" : "you",
@@ -61,25 +77,39 @@ useEffect(() => {
       }))
     : [];
 
-  // Build context string from full history for LLM
-  const context = formattedHistory
-    .map((m) => `${m.sender}: ${m.text}`)
-    .join("\n");
+  const context = formattedHistory.map((m) => `${m.sender}: ${m.text}`).join("\n");
 
-  // Get LLM response using full chat history + latest input
-  const botReply = await chatBotService(context, inputValue,sessionSummaries);
+  const botReply = await chatBotService(
+    context,
+    inputValue,
+    sessionSummaries,
+    askedPhq9Ids
+  );
 
-  const botMessage = {
+  const finalBotMsg = {
     sender: "popo",
-    text: botReply,
+    text: botReply.response,
     time: getCurrentTime(),
   };
 
-  // Save bot message to DB
-  await saveMessage(botReply, sessionID, "bot");
+  // Track PHQ-9 if a new question is asked
+if (
+  typeof botReply.phq9_questionID === "number" &&
+  typeof botReply.phq9_question === "string"
+) {
+  const questionID = botReply.phq9_questionID as number;
+  const question = botReply.phq9_question as string;
 
-  // Append bot reply to updated history and update UI
-  const finalMessages = [...formattedHistory, botMessage];
+  setAskedPhq9Ids((prev) => [...prev, questionID]);
+  setLastPhq9({
+    id: questionID,
+    question: question,
+  });
+}
+
+  await saveMessage(finalBotMsg.text, sessionID, "bot");
+
+  const finalMessages = [...formattedHistory, finalBotMsg];
   setMessages(finalMessages);
   setChatHistory(finalMessages);
   setLoading(false);

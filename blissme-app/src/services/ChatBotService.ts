@@ -3,29 +3,42 @@ const metadataServiceURL = "http://localhost:8000/";
 export async function chatBotService(
   history: string,
   userQuery: string,
-  sessionSummaries: string[]
-): Promise<string> {
+  sessionSummaries: string[],
+  askedPhqIds: number[]
+): Promise<{
+  response: string;
+  phq9_questionID: number | null;
+  phq9_question: string | null;
+}> {
   try {
     const response = await fetch(`${metadataServiceURL}ask`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         user_query: userQuery,
-        history: history, // send the string history 
-        summaries: sessionSummaries.length > 0 ? sessionSummaries : ["No summaries available"],
+        history: history,
+        summaries: sessionSummaries,
+        asked_phq_ids: askedPhqIds
       }),
     });
 
     const data = await response.json();
-    console.log(data);
-    return data.response;
+    console.log("Backend ask response:", data);
+    return {
+      response: data.response,
+      phq9_questionID: data.phq9_questionID ?? null,
+      phq9_question: data.phq9_question ?? null
+    };
   } catch (error) {
     console.error("chatBotService error:", error);
-    return "Sorry, something went wrong.";
+    return {
+      response: "Sorry, something went wrong.",
+      phq9_questionID: null,
+      phq9_question: null
+    };
   }
 }
+
 export async function profileDetailsService(
   virtualName: string,
   character: string,

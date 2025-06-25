@@ -10,7 +10,7 @@ const MainLayout = () => {
       <Sider
         width={250}
         className={
-          "visible sider !bg-bgColorOne !max-w-[230px] !min-w-[230px] !w-[230px]"
+          "visible sider !bg-g-gray-900 !max-w-[230px] !min-w-[230px] !w-[230px]"
         }
       >
         <Sidebar />

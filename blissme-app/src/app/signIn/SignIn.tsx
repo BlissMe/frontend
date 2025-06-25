@@ -4,7 +4,6 @@ import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { userSignInService } from "../../services/UserService";
-import { setLocalStorageData } from "../../helpers/Storage";
 
 const { Text } = Typography;
 
@@ -25,8 +24,6 @@ const SignIn: React.FC = () => {
 
       if (response.message) {
         message.success("Login successful!");
-        setLocalStorageData("token", response.token); 
-        console.log("Token:", response.token);
         navigate("/chat/text", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");
@@ -137,7 +134,7 @@ const SignIn: React.FC = () => {
               Don’t have an account?{" "}
               <span
                 className="text-textColorTwo cursor-pointer"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/")}
               >
                 Sign up
               </span>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Divider, Typography } from "antd";
 import { assets } from "../../assets/assets";
+
 const { Text } = Typography;
+
 interface Message {
   text: string;
   sender: "you" | "bot";
@@ -13,9 +15,11 @@ const VoiceChatBox: React.FC = () => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const chunks = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
-  const getTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const getTime = () =>
+    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -26,63 +30,102 @@ const VoiceChatBox: React.FC = () => {
   }, [messages]);
 
   const handleStartRecording = async () => {
-    setRecording(true);
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    chunks.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
 
-    recorder.ondataavailable = (e) => {
-      if (e.data.size > 0) chunks.current.push(e.data);
-    };
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/webm")
+        ? "audio/webm"
+        : "";
 
-    recorder.onstop = handleSendAudio;
+      if (!mimeType) {
+        alert("No supported MIME type found for MediaRecorder.");
+        return;
+      }
 
-    recorder.start();
-    setMediaRecorder(recorder);
+      const recorder = new MediaRecorder(stream, { mimeType });
+      chunks.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.current.push(e.data);
+          console.log("Captured chunk size:", e.data.size);
+        }
+      };
+
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks.current, { type: "audio/webm" });
+        console.log("Total blob size (KB):", blob.size / 1024);
+
+        if (blob.size < 1000) {
+          alert("Recording is too short or empty. Please try again.");
+          return;
+        }
+
+        // Play back the recorded audio
+        const testAudio = new Audio(URL.createObjectURL(blob));
+        testAudio.play();
+
+        await handleSendAudio(blob);
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setRecording(true);
+    } catch (err) {
+      alert("Microphone access denied or error occurred.");
+      console.error("Mic error:", err);
+    }
   };
 
   const handleStopRecording = () => {
     setRecording(false);
-    mediaRecorder?.stop();
+    if (mediaRecorder?.state === "recording") {
+      mediaRecorder.stop();
+    }
+    streamRef.current?.getTracks().forEach((track) => track.stop());
   };
 
-const handleSendAudio = async () => {
-  const blob = new Blob(chunks.current, { type: "audio/wav" });
-  const formData = new FormData();
-  formData.append("audio", blob, "recording.wav");
+  const handleSendAudio = async (blob: Blob) => {
+    const formData = new FormData();
+    formData.append("audio", blob, "recording.webm");
 
-  try {
-    const response = await fetch("http://localhost:8000/voice-chat", {
-      method: "POST",
-      body: formData,
-    });
-    const result = await response.json();
+    try {
+      const response = await fetch("http://localhost:8000/voice-chat", {
+        method: "POST",
+        body: formData,
+      });
 
-    const userMessage: Message = {
-      text: result.user_query,
-      sender: "you",
-      time: getTime(),
-    };
+      if (!response.ok) {
+        const errorText = await response.text();
+        alert("Server error: " + errorText);
+        return;
+      }
 
-    const botMessage: Message = {
-      text: result.response,
-      sender: "bot",
-      time: getTime(),
-    };
+      const result = await response.json();
 
-    setMessages((prev) => [...prev, userMessage, botMessage]);
+      const userMessage: Message = {
+        text: result.user_query,
+        sender: "you",
+        time: getTime(),
+      };
 
-    const audio = new Audio(`http://localhost:8000${result.audio_url}`);
-    audio.play();
-  } catch (err) {
-    console.error("Error:", err);
-  }
-};
+      const botMessage: Message = {
+        text: result.response,
+        sender: "bot",
+        time: getTime(),
+      };
 
-  const speak = (text: string) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    speechSynthesis.speak(utterance);
+      setMessages((prev) => [...prev, userMessage, botMessage]);
+
+      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+      audio.play();
+    } catch (err) {
+      alert("Failed to send audio. Please try again.");
+      console.error("Upload error:", err);
+    }
   };
 
   return (
@@ -91,16 +134,11 @@ const handleSendAudio = async () => {
         <img src={assets.profile} width={120} height={120} alt="Profile" />
       </div>
 
-      <div
-        id="message-container"
-        className="flex-1 overflow-y-auto px-4 space-y-6"
-      >
+      <div className="flex-1 overflow-y-auto px-4 space-y-6" id="message-container">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col ${
-              msg.sender === "you" ? "items-end" : "items-start"
-            }`}
+            className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"}`}
           >
             <div className="flex gap-2">
               <img
@@ -111,9 +149,7 @@ const handleSendAudio = async () => {
               />
               <div
                 className={`p-3 rounded-lg max-w-xs ${
-                  msg.sender === "you"
-                    ? "bg-inputColorTwo text-right"
-                    : "bg-inputColorOne text-left"
+                  msg.sender === "you" ? "bg-inputColorTwo" : "bg-inputColorOne"
                 }`}
               >
                 <Text className="text-sm">{msg.text}</Text>

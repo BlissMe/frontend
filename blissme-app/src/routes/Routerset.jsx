@@ -24,16 +24,13 @@ const Routerset = () => {
             <Route path="profile" element={<FrontPage />} />
           </Route>
 
-          <Route path="/chat" element={<MainLayout />}>
+          <Route path="/chat/*" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
           </Route>
         </>
       ) : (
-        <Route path="/chat" element={<MainLayout />}>
-          <Route path="text" element={<ChatBox />} />
-          <Route path="voice" element={<VoiceChatBox />} />
-        </Route>
+        <Route path="*" element={<Navigate to="/login" />} />
       )}
     </Routes>
   );

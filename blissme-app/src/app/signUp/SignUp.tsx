@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState} from "react";
+import { useNavigate} from "react-router-dom";
 import signup from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
@@ -25,14 +25,14 @@ const SignUp: React.FC = () => {
       };
 
       const response = await userSignUpService(userData);
-      console.log(response);
+      
       if (response.message) {
         message.success("Successfully Registered!");
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
         navigate("/chat/text", { replace: true });
       } else {
-        message.error(response.message || "Login failed. Please try again.");
+        message.error(response.message || "Signup failed. Please try again.");
       }
     } catch (error) {
       message.error("Something went wrong. Please try again later.");
@@ -74,14 +74,8 @@ const SignUp: React.FC = () => {
                 className="custom-label"
                 required={false}
                 rules={[
-                  {
-                    required: true,
-                    message: "Email is required!",
-                  },
-                  {
-                    type: "email",
-                    message: "Email is invalid!",
-                  },
+                  { required: true, message: "Email is required!" },
+                  { type: "email", message: "Email is invalid!" },
                 ]}
               >
                 <Input
@@ -155,7 +149,6 @@ const SignUp: React.FC = () => {
                 <div className="flex justify-center">
                   <Button
                     type="primary"
-                    htmlType="submit"
                     className="google_btn flex items-center gap-2"
                     onClick={googleAuth}
                   >

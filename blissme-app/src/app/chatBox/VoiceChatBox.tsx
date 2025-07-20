@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Divider, Typography } from "antd";
 import { assets } from "../../assets/assets";
+import ReactBarsLoader from "../../components/loader/ReactBarLoader";
 
 const { Text } = Typography;
 
@@ -12,8 +13,14 @@ interface Message {
 
 const VoiceChatBox: React.FC = () => {
   const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null
+  );
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isBotTyping, setIsBotTyping] = useState(false);
+  const [isWaitingForBotResponse, setIsWaitingForBotResponse] = useState(false);
+
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -27,7 +34,7 @@ const VoiceChatBox: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isBotTyping]);
 
   const handleStartRecording = async () => {
     try {
@@ -64,10 +71,6 @@ const VoiceChatBox: React.FC = () => {
           return;
         }
 
-        // Play back the recorded audio
-        const testAudio = new Audio(URL.createObjectURL(blob));
-        testAudio.play();
-
         await handleSendAudio(blob);
       };
 
@@ -82,6 +85,7 @@ const VoiceChatBox: React.FC = () => {
 
   const handleStopRecording = () => {
     setRecording(false);
+    setIsWaitingForBotResponse(true);
     if (mediaRecorder?.state === "recording") {
       mediaRecorder.stop();
     }
@@ -93,10 +97,15 @@ const VoiceChatBox: React.FC = () => {
     formData.append("audio", blob, "recording.webm");
 
     try {
+      setIsUploading(true);
+
       const response = await fetch("http://localhost:8000/voice-chat", {
         method: "POST",
         body: formData,
       });
+
+      setIsUploading(false);
+      setIsBotTyping(true);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -118,13 +127,21 @@ const VoiceChatBox: React.FC = () => {
         time: getTime(),
       };
 
-      setMessages((prev) => [...prev, userMessage, botMessage]);
+      setMessages((prev) => [...prev, userMessage]);
 
-      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
-      audio.play();
+      setTimeout(() => {
+        setMessages((prev) => [...prev, botMessage]);
+        setIsBotTyping(false);
+        setIsWaitingForBotResponse(false);
+        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+        audio.play();
+      }, 1000);
     } catch (err) {
       alert("Failed to send audio. Please try again.");
       console.error("Upload error:", err);
+      setIsUploading(false);
+      setIsBotTyping(false);
+      setIsWaitingForBotResponse(false);
     }
   };
 
@@ -134,11 +151,16 @@ const VoiceChatBox: React.FC = () => {
         <img src={assets.profile} width={120} height={120} alt="Profile" />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 space-y-6" id="message-container">
+      <div
+        className="flex-1 overflow-y-auto px-4 space-y-6"
+        id="message-container"
+      >
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"}`}
+            className={`flex flex-col ${
+              msg.sender === "you" ? "items-end" : "items-start"
+            }`}
           >
             <div className="flex gap-2">
               <img
@@ -164,6 +186,19 @@ const VoiceChatBox: React.FC = () => {
             </Text>
           </div>
         ))}
+
+        {isUploading && (
+          <div className="flex justify-end items-center gap-2">
+            <img src={assets.icon1} width={40} height={40} alt="" />
+            <ReactBarsLoader />
+          </div>
+        )}
+        {isBotTyping && (
+          <div className="flex justify-start items-center gap-2">
+            <img src={assets.icon2} width={40} height={40} alt="" />
+            <ReactBarsLoader />
+          </div>
+        )}
         <div ref={messageEndRef} />
       </div>
 
@@ -174,6 +209,7 @@ const VoiceChatBox: React.FC = () => {
           type="primary"
           onClick={recording ? handleStopRecording : handleStartRecording}
           className="rounded-full"
+          disabled={isWaitingForBotResponse}
         >
           {recording ? "Stop Recording" : "Start Recording"}
         </Button>

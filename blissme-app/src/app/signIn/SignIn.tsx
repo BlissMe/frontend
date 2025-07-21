@@ -134,7 +134,7 @@ const SignIn: React.FC = () => {
               Don’t have an account?{" "}
               <span
                 className="text-textColorTwo cursor-pointer"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/")}
               >
                 Sign up
               </span>

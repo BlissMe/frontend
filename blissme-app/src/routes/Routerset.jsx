@@ -8,6 +8,8 @@ import VoiceChatBox from "../app/chatBox/VoiceChatBox";
 import OnBordingLayout from "../app/layouts/OnBordingLayout";
 import { AuthContext } from "../app/context/AuthContext";
 import { useContext } from "react";
+import SendEmail from "../app/forget-password/SendEmail";
+import ResetPassword from "../app/forget-password/ResetPassword";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -18,13 +20,15 @@ const Routerset = () => {
 
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
+      <Route path="/forgot-password" element={<SendEmail />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      
       {token !== null && token !== "" ? (
         <>
           <Route path="/onbording" element={<OnBordingLayout />}>
             <Route path="profile" element={<FrontPage />} />
           </Route>
-
-          <Route path="/chat/*" element={<MainLayout />}>
+          <Route path="/chat" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
           </Route>

@@ -6,6 +6,9 @@ import MainLayout from "../app/layouts/MainLayout";
 import FrontPage from "../app/chatBox/FrontPage";
 import VoiceChatBox from "../app/chatBox/VoiceChatBox";
 import OnBordingLayout from "../app/layouts/OnBordingLayout";
+import Nickname from "../app/start/Nickname";
+import VirtualCharacter from "../app/start/VirtualCharacter";
+import InputMode from "../app/start/InputMode";
 import { AuthContext } from "../app/context/AuthContext";
 import { useContext } from "react";
 import SendEmail from "../app/forget-password/SendEmail";
@@ -20,6 +23,9 @@ const Routerset = () => {
 
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />
+      <Route path="/nick-name" element={<Nickname />} />
+      <Route path="/virtual-character" element={<VirtualCharacter />} />
+      <Route path="/input-mode" element={<InputMode />} />
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 

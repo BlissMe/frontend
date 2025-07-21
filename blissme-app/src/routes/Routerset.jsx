@@ -22,7 +22,7 @@ const Routerset = () => {
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      
+
       {token !== null && token !== "" ? (
         <>
           <Route path="/onbording" element={<OnBordingLayout />}>

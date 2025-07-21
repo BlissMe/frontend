@@ -1,6 +1,6 @@
-import React, { createContext, useState, ReactNode } from "react";
+import React, { createContext, useState, ReactNode, useEffect } from "react";
 import { ConfigProvider } from "antd";
-import { getLocalStoragedata } from "../../helpers/Storage";
+import { getLocalStoragedata, setLocalStorageData } from "../../helpers/Storage";
 
 // Define the shape of the AuthContext
 interface AuthContextType {
@@ -20,7 +20,20 @@ interface AuthProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthProviderProps) {
-  const [token, setToken] = useState<string | null>(getLocalStoragedata("token"));
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromURL = urlParams.get("token");
+  const storedToken = getLocalStoragedata("token");
+
+  const initialToken = tokenFromURL || storedToken;
+  const [token, setToken] = useState<string | null>(initialToken);
+
+  useEffect(() => {
+    if (tokenFromURL) {
+      setLocalStorageData("token", tokenFromURL);
+      const cleanURL = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanURL);
+    }
+  }, [tokenFromURL]);
 
   return (
     <AuthContext.Provider value={{ token, setToken }}>
@@ -41,3 +54,4 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
+

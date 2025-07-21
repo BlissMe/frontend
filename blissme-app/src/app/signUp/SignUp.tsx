@@ -31,7 +31,7 @@ const SignUp: React.FC = () => {
         message.success("Successfully Registered!");
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
-        navigate("/chat/text", { replace: true });
+        navigate("/nick-name", { replace: true });
       } else {
         message.error(response.message || "Signup failed. Please try again.");
       }

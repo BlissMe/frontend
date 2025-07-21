@@ -24,7 +24,7 @@ const SignIn: React.FC = () => {
 
       if (response.message) {
         message.success("Login successful!");
-        navigate("/chat/text", { replace: true });
+        navigate("/nick-name", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");
       }

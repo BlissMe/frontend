@@ -1,4 +1,4 @@
-import { Button, Divider, Input, Typography, Spin } from "antd";
+import { Button, Divider, Input, Typography } from "antd";
 import { assets } from "../../assets/assets";
 import { useState } from "react";
 import { getCurrentTime } from "../../helpers/Time";
@@ -7,10 +7,9 @@ const { Text } = Typography;
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([
-    { sender: "popo", text: "Hi there. How are you feeling today?", time: getCurrentTime() },
+    { sender: "popo", text: "Hi Popo! How are you?", time: getCurrentTime() },
   ]);
   const [inputValue, setInputValue] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -23,11 +22,7 @@ const ChatBox = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
-    setLoading(true); 
-
     const botReply = await chatBotService(inputValue);
-
-    setLoading(false); 
 
     const botMessage = {
       sender: "popo",
@@ -52,26 +47,21 @@ const ChatBox = () => {
               msg.sender === "you" ? "items-end" : "items-start"
             }`}
           >
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2">
               {msg.sender === "you" ? (
                 <img src={assets.icon1} alt="" width={40} height={40} />
               ) : (
                 <img src={assets.icon2} alt="" width={40} height={40} />
               )}
-
-              {loading && msg.sender === "popo" && index === messages.length - 1 ? (
-                <Spin size="small" />
-              ) : (
-                <div
-                  className={`p-3 rounded-lg max-w-xs ${
-                    msg.sender === "you"
-                      ? "bg-inputColorTwo text-right"
-                      : "bg-inputColorOne text-left"
-                  }`}
-                >
-                  <Text className="text-sm">{msg.text}</Text>
-                </div>
-              )}
+              <div
+                className={`p-3 rounded-lg max-w-xs ${
+                  msg.sender === "you"
+                    ? "bg-inputColorTwo text-right"
+                    : "bg-inputColorOne text-left"
+                }`}
+              >
+                <Text className="text-sm">{msg.text}</Text>
+              </div>
             </div>
             <Text
               className={`text-xs text-gray-500 mt-1 ${
@@ -82,12 +72,6 @@ const ChatBox = () => {
             </Text>
           </div>
         ))}
-        {loading && (
-          <div className="flex items-start gap-2">
-            <img src={assets.icon2} alt="" width={40} height={40} />
-            <Spin size="small" />
-          </div>
-        )}
       </div>
 
       <Divider className="m-0" />
@@ -107,7 +91,6 @@ const ChatBox = () => {
           onChange={(e) => setInputValue(e.target.value)}
           onPressEnter={handleSend}
           className="flex-1 bg-inputColorThree rounded-full px-4 py-2 border-none shadow-none focus:ring-0 focus:border-none hover:bg-inputColorThree"
-          disabled={loading}
         />
         <Button
           type="text"
@@ -119,7 +102,6 @@ const ChatBox = () => {
             />
           }
           onClick={handleSend}
-          disabled={loading}
         />
       </div>
     </div>

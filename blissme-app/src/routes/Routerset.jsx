@@ -22,7 +22,7 @@ const Routerset = () => {
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      
+
       {token !== null && token !== "" ? (
         <>
           <Route path="/onbording" element={<OnBordingLayout />}>
@@ -34,7 +34,10 @@ const Routerset = () => {
           </Route>
         </>
       ) : (
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/chat" element={<MainLayout />}>
+          <Route path="text" element={<ChatBox />} />
+          <Route path="voice" element={<VoiceChatBox />} />
+        </Route>
       )}
     </Routes>
   );

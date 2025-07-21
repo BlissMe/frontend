@@ -22,6 +22,7 @@ const SignUp: React.FC = () => {
       const userData = {
         email: values.email,
         password: values.password,
+        authType: "normal",
       };
 
       const response = await userSignUpService(userData);

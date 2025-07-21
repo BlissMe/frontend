@@ -3,9 +3,7 @@ import signin from "../../assets/images/signin.png";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import {
-  userSignInService,
-} from "../../services/UserService";
+import { userSignInService } from "../../services/UserService";
 
 const { Text } = Typography;
 
@@ -26,7 +24,7 @@ const SignIn: React.FC = () => {
 
       if (response.message) {
         message.success("Login successful!");
-        navigate("/onbording/profile", { replace: true });
+        navigate("/chat/text", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");
       }
@@ -136,7 +134,7 @@ const SignIn: React.FC = () => {
               Don’t have an account?{" "}
               <span
                 className="text-textColorTwo cursor-pointer"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/")}
               >
                 Sign up
               </span>

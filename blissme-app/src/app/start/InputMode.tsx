@@ -31,6 +31,12 @@ const InputMode = () => {
         dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode));
 
         console.log("Input mode selected:", selectedMode);
+
+        if (selectedMode === "Voice") {
+            navigate("/chat/voice", { replace: true });
+        } else if (selectedMode === "Text") {
+            navigate("/mood");
+        }
         // navigate('/input-mode');
     };
 

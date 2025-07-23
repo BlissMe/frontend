@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Divider, Typography } from "antd";
+import { Button, Divider, Typography, Modal } from "antd";
 import { assets } from "../../assets/assets";
 import ReactBarsLoader from "../../components/loader/ReactBarLoader";
+import { getCurrentTime } from "../../helpers/Time";
+import {
+  createNewSession,
+  fetchChatHistory,
+  saveMessage,
+  fetchAllSummaries,
+} from "../../services/ChatMessageService";
+import { savePHQ9Answer } from "../../services/Phq9Service";
 
 const { Text } = Typography;
 
@@ -10,23 +18,43 @@ interface Message {
   sender: "you" | "bot";
   time: string;
 }
+interface ApiResult {
+  audio_url?: string;
+  user_query?: string;
+  response?: string;
+  phq9_questionID?: number;
+  phq9_question?: string;
+  emotion_history?: string[];
+  overall_emotion?: string;
+}
 
 const VoiceChatBox: React.FC = () => {
   const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isWaitingForBotResponse, setIsWaitingForBotResponse] = useState(false);
+  const [sessionID, setSessionID] = useState<string>("");
+  const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
+  const [lastPhq9, setLastPhq9] = useState<{ id: number; question: string } | null>(null);
+  const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
+  const [isPhq9, setIsPhq9] = useState(false);
+  const [apiResult, setApiResult] = useState<ApiResult>({});
+  const [emotionHistory, setEmotionHistory] = useState<string[]>([]);
+  const [showEmotionModal, setShowEmotionModal] = useState(false);
+  const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
 
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
-  const getTime = () =>
-    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const phqOptions = [
+    "Not at all",
+    "Several days",
+    "More than half the days",
+    "Nearly every day",
+  ];
 
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,6 +63,15 @@ const VoiceChatBox: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isBotTyping]);
+
+  useEffect(() => {
+    (async () => {
+      const session = await createNewSession();
+      setSessionID(session);
+      const allSummaries = await fetchAllSummaries();
+      setSessionSummaries(allSummaries);
+    })();
+  }, []);
 
   const handleStartRecording = async () => {
     try {
@@ -58,19 +95,15 @@ const VoiceChatBox: React.FC = () => {
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
           chunks.current.push(e.data);
-          console.log("Captured chunk size:", e.data.size);
         }
       };
 
       recorder.onstop = async () => {
         const blob = new Blob(chunks.current, { type: "audio/webm" });
-        console.log("Total blob size (KB):", blob.size / 1024);
-
         if (blob.size < 1000) {
           alert("Recording is too short or empty. Please try again.");
           return;
         }
-
         await handleSendAudio(blob);
       };
 
@@ -95,9 +128,22 @@ const VoiceChatBox: React.FC = () => {
   const handleSendAudio = async (blob: Blob) => {
     const formData = new FormData();
     formData.append("audio", blob, "recording.webm");
+    formData.append("asked_phq_ids", JSON.stringify(askedPhq9Ids));
+    formData.append("summaries", JSON.stringify(sessionSummaries));
+    formData.append("emotion_history", JSON.stringify(emotionHistory));
 
     try {
       setIsUploading(true);
+      const updatedHistory = await fetchChatHistory(sessionID);
+      const formattedHistory = Array.isArray(updatedHistory)
+        ? updatedHistory.map((msg: any) => ({
+            sender: msg.sender === "bot" ? "Bot" : "User",
+            text: msg.message,
+          }))
+        : [];
+
+      const historyText = formattedHistory.map((m) => `${m.sender}: ${m.text}`).join("\n");
+      formData.append("history", historyText);
 
       const response = await fetch("http://localhost:8000/voice-chat", {
         method: "POST",
@@ -114,28 +160,52 @@ const VoiceChatBox: React.FC = () => {
       }
 
       const result = await response.json();
+      setApiResult(result);
 
       const userMessage: Message = {
         text: result.user_query,
         sender: "you",
-        time: getTime(),
+        time: getCurrentTime(),
       };
+      setMessages((prev) => [...prev, userMessage]);
+      await saveMessage(userMessage.text, sessionID, "user");
+
+      if (lastPhq9) {
+        await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, userMessage.text);
+        setLastPhq9(null);
+      }
+
+      if (
+        typeof result.phq9_questionID === "number" &&
+        typeof result.phq9_question === "string"
+      ) {
+        setAskedPhq9Ids((prev) => [...prev, result.phq9_questionID!]);
+        setLastPhq9({ id: result.phq9_questionID, question: result.phq9_question });
+        setIsPhq9(true);
+      }
 
       const botMessage: Message = {
-        text: result.response,
+        text: result.bot_response,
         sender: "bot",
-        time: getTime(),
+        time: getCurrentTime(),
       };
+      await saveMessage(botMessage.text, sessionID, "bot");
+      setMessages((prev) => [...prev, botMessage]);
 
-      setMessages((prev) => [...prev, userMessage]);
+      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+      audio.play();
 
-      setTimeout(() => {
-        setMessages((prev) => [...prev, botMessage]);
-        setIsBotTyping(false);
-        setIsWaitingForBotResponse(false);
-        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
-        audio.play();
-      }, 1000);
+      // Handle emotion state
+      if (result.emotion_history && Array.isArray(result.emotion_history)) {
+        setEmotionHistory(result.emotion_history);
+        if (result.emotion_history.length >= 3) {
+          setOverallEmotion(result.overall_emotion || null);
+          setShowEmotionModal(true);
+        }
+      }
+
+      setIsBotTyping(false);
+      setIsWaitingForBotResponse(false);
     } catch (err) {
       alert("Failed to send audio. Please try again.");
       console.error("Upload error:", err);
@@ -145,22 +215,66 @@ const VoiceChatBox: React.FC = () => {
     }
   };
 
+  const handlePhqAnswer = async (answer: string) => {
+    const answerMessage: Message = {
+      text: answer,
+      sender: "you",
+      time: getCurrentTime(),
+    };
+    setMessages((prev) => [...prev, answerMessage]);
+    setIsPhq9(false);
+    setIsBotTyping(true);
+
+    if (lastPhq9) {
+      await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, answer);
+      setLastPhq9(null);
+    }
+
+    await saveMessage(answer, sessionID, "user");
+
+    if (
+      typeof apiResult.phq9_questionID === "number" &&
+      typeof apiResult.phq9_question === "string"
+    ) {
+      setAskedPhq9Ids((prev) => [...prev, apiResult.phq9_questionID!]);
+      setLastPhq9({
+        id: apiResult.phq9_questionID,
+        question: apiResult.phq9_question,
+      });
+      setIsPhq9(true);
+    }
+
+    const botMessage: Message = {
+      text: apiResult.response || "No response from bot.",
+      sender: "bot",
+      time: getCurrentTime(),
+    };
+
+    await saveMessage(botMessage.text, sessionID, "bot");
+    setMessages((prev) => [...prev, botMessage]);
+
+    try {
+      const audio = new Audio(`http://localhost:8000${apiResult.audio_url}`);
+      await audio.play();
+    } catch (err) {
+      console.error("Failed to play audio:", err);
+    }
+
+    setIsBotTyping(false);
+    setIsWaitingForBotResponse(false);
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="flex items-center justify-center py-4">
         <img src={assets.profile} width={120} height={120} alt="Profile" />
       </div>
 
-      <div
-        className="flex-1 overflow-y-auto px-4 space-y-6"
-        id="message-container"
-      >
+      <div className="flex-1 overflow-y-auto px-4 space-y-6" id="message-container">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col ${
-              msg.sender === "you" ? "items-end" : "items-start"
-            }`}
+            className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"}`}
           >
             <div className="flex gap-2">
               <img
@@ -184,6 +298,21 @@ const VoiceChatBox: React.FC = () => {
             >
               {msg.time}
             </Text>
+
+            {isPhq9 && lastPhq9 && msg.sender === "bot" && index === messages.length - 1 && (
+              <div className="flex flex-wrap gap-2 mt-2 ml-10">
+                {phqOptions.map((option) => (
+                  <Button
+                    key={option}
+                    size="small"
+                    onClick={() => handlePhqAnswer(option)}
+                    className="bg-blue-100 hover:bg-blue-200 border-blue-300"
+                  >
+                    {option}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 
@@ -214,6 +343,16 @@ const VoiceChatBox: React.FC = () => {
           {recording ? "Stop Recording" : "Start Recording"}
         </Button>
       </div>
+
+      {/* Emotion Summary Modal */}
+      <Modal
+        title="User Emotion Summary"
+        open={showEmotionModal}
+        onOk={() => setShowEmotionModal(false)}
+        onCancel={() => setShowEmotionModal(false)}
+      >
+        <p><strong>Overall Emotion:</strong> {overallEmotion || "N/A"}</p>
+      </Modal>
     </div>
   );
 };

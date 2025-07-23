@@ -2,6 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Divider, Typography } from "antd";
 import { assets } from "../../assets/assets";
 import ReactBarsLoader from "../../components/loader/ReactBarLoader";
+import { getCurrentTime } from "../../helpers/Time";
+import {
+  createNewSession,
+  fetchChatHistory,
+  saveMessage,
+  fetchAllSummaries,
+} from "../../services/ChatMessageService";
+import { savePHQ9Answer } from "../../services/Phq9Service";
 
 const { Text } = Typography;
 
@@ -9,6 +17,13 @@ interface Message {
   text: string;
   sender: "you" | "bot";
   time: string;
+}
+interface ApiResult {
+  audio_url?: string;
+  user_query?: string;
+  response?: string;
+  phq9_questionID?: number;
+  phq9_question?: string;
 }
 
 const VoiceChatBox: React.FC = () => {
@@ -20,13 +35,26 @@ const VoiceChatBox: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isWaitingForBotResponse, setIsWaitingForBotResponse] = useState(false);
+  const [sessionID, setSessionID] = useState<string>("");
+  const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
+  const [lastPhq9, setLastPhq9] = useState<{
+    id: number;
+    question: string;
+  } | null>(null);
+  const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
+  const [isPhq9, setIsPhq9] = useState(false);
+  const [apiResult, setApiResult] = useState<ApiResult>({});
 
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
-  const getTime = () =>
-    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const phqOptions = [
+    "Not at all",
+    "Several days",
+    "More than half the days",
+    "Nearly every day",
+  ];
 
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,6 +64,15 @@ const VoiceChatBox: React.FC = () => {
     scrollToBottom();
   }, [messages, isBotTyping]);
 
+  useEffect(() => {
+    (async () => {
+      const session = await createNewSession();
+      setSessionID(session);
+
+      const allSummaries = await fetchAllSummaries();
+      setSessionSummaries(allSummaries);
+    })();
+  }, []);
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -58,13 +95,11 @@ const VoiceChatBox: React.FC = () => {
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
           chunks.current.push(e.data);
-          console.log("Captured chunk size:", e.data.size);
         }
       };
 
       recorder.onstop = async () => {
         const blob = new Blob(chunks.current, { type: "audio/webm" });
-        console.log("Total blob size (KB):", blob.size / 1024);
 
         if (blob.size < 1000) {
           alert("Recording is too short or empty. Please try again.");
@@ -95,15 +130,30 @@ const VoiceChatBox: React.FC = () => {
   const handleSendAudio = async (blob: Blob) => {
     const formData = new FormData();
     formData.append("audio", blob, "recording.webm");
+    formData.append("asked_phq_ids", JSON.stringify(askedPhq9Ids));
+    formData.append("summaries", JSON.stringify(sessionSummaries));
 
     try {
       setIsUploading(true);
+      const updatedHistory = await fetchChatHistory(sessionID);
+      const formattedHistory = Array.isArray(updatedHistory)
+        ? updatedHistory.map((msg: any) => ({
+            sender: msg.sender === "bot" ? "Bot" : "User",
+            text: msg.message,
+          }))
+        : [];
+
+      const historyText = formattedHistory
+        .map((m) => `${m.sender}: ${m.text}`)
+        .join("\n");
+
+      formData.append("history", historyText);
 
       const response = await fetch("http://localhost:8000/voice-chat", {
         method: "POST",
         body: formData,
       });
-
+      console.log(response);
       setIsUploading(false);
       setIsBotTyping(true);
 
@@ -114,28 +164,55 @@ const VoiceChatBox: React.FC = () => {
       }
 
       const result = await response.json();
+      console.log(result);
+      setApiResult(result);
 
       const userMessage: Message = {
         text: result.user_query,
         sender: "you",
-        time: getTime(),
+        time: getCurrentTime(),
       };
+      setMessages((prev) => [...prev, userMessage]);
+      await saveMessage(userMessage.text, sessionID, "user");
+
+      if (lastPhq9) {
+        await savePHQ9Answer(
+          sessionID,
+          lastPhq9.id,
+          lastPhq9.question,
+          userMessage.text
+        );
+        setLastPhq9(null);
+      }
+
+      if (
+        typeof result.phq9_questionID === "number" &&
+        typeof result.phq9_question === "string"
+      ) {
+        const questionID = result.phq9_questionID as number;
+        const question = result.phq9_question as string;
+
+        setAskedPhq9Ids((prev) => [...prev, questionID]);
+        setLastPhq9({
+          id: questionID,
+          question: question,
+        });
+        setIsPhq9(true);
+      }
 
       const botMessage: Message = {
-        text: result.response,
+        text: result.bot_response,
         sender: "bot",
-        time: getTime(),
+        time: getCurrentTime(),
       };
+      await saveMessage(botMessage.text, sessionID, "bot");
+      setMessages((prev) => [...prev, botMessage]);
 
-      setMessages((prev) => [...prev, userMessage]);
+      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+      audio.play();
 
-      setTimeout(() => {
-        setMessages((prev) => [...prev, botMessage]);
-        setIsBotTyping(false);
-        setIsWaitingForBotResponse(false);
-        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
-        audio.play();
-      }, 1000);
+      setIsBotTyping(false);
+      setIsWaitingForBotResponse(false);
     } catch (err) {
       alert("Failed to send audio. Please try again.");
       console.error("Upload error:", err);
@@ -143,6 +220,55 @@ const VoiceChatBox: React.FC = () => {
       setIsBotTyping(false);
       setIsWaitingForBotResponse(false);
     }
+  };
+
+  const handlePhqAnswer = async (answer: string) => {
+    const answerMessage: Message = {
+      text: answer,
+      sender: "you",
+      time: getCurrentTime(),
+    };
+    setMessages((prev) => [...prev, answerMessage]);
+    setIsPhq9(false);
+    setIsBotTyping(true);
+
+    if (lastPhq9) {
+      await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, answer);
+      setLastPhq9(null);
+    }
+
+    await saveMessage(answer, sessionID, "user");
+
+    // Safely use apiResult
+    if (
+      typeof apiResult.phq9_questionID === "number" &&
+      typeof apiResult.phq9_question === "string"
+    ) {
+      const questionID = apiResult.phq9_questionID;
+      const question = apiResult.phq9_question;
+      setAskedPhq9Ids((prev) => [...prev, questionID]);
+      setLastPhq9({ id: questionID, question });
+      setIsPhq9(true);
+    }
+
+    const botMessage: Message = {
+      text: apiResult.response || "No response from bot.",
+      sender: "bot",
+      time: getCurrentTime(),
+    };
+
+    await saveMessage(botMessage.text, sessionID, "bot");
+    setMessages((prev) => [...prev, botMessage]);
+
+    try {
+      const audio = new Audio(`http://localhost:8000${apiResult.audio_url}`);
+      await audio.play();
+    } catch (err) {
+      console.error("Failed to play audio:", err);
+    }
+
+    setIsBotTyping(false);
+    setIsWaitingForBotResponse(false);
   };
 
   return (
@@ -184,6 +310,24 @@ const VoiceChatBox: React.FC = () => {
             >
               {msg.time}
             </Text>
+
+            {isPhq9 &&
+              lastPhq9 &&
+              msg.sender === "bot" &&
+              index === messages.length - 1 && (
+                <div className="flex flex-wrap gap-2 mt-2 ml-10">
+                  {phqOptions.map((option) => (
+                    <Button
+                      key={option}
+                      size="small"
+                      onClick={() => handlePhqAnswer(option)}
+                      className="bg-blue-100 hover:bg-blue-200 border-blue-300"
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+              )}
           </div>
         ))}
 

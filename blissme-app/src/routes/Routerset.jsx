@@ -13,6 +13,7 @@ import { AuthContext } from "../app/context/AuthContext";
 import { useContext } from "react";
 import SendEmail from "../app/forget-password/SendEmail";
 import ResetPassword from "../app/forget-password/ResetPassword";
+import Mood from "../app/start/Mood";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -28,6 +29,7 @@ const Routerset = () => {
       <Route path="/input-mode" element={<InputMode />} />
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/mood" element={<Mood />} />
 
       {token !== null && token !== "" ? (
         <>

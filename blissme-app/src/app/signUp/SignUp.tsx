@@ -1,5 +1,5 @@
-import React, { useContext, useState} from "react";
-import { useNavigate} from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import signup from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
@@ -26,12 +26,12 @@ const SignUp: React.FC = () => {
       };
 
       const response = await userSignUpService(userData);
-      
+
       if (response.message) {
         message.success("Successfully Registered!");
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
-        navigate("/chat/text", { replace: true });
+        navigate("/nick-name", { replace: true });
       } else {
         message.error(response.message || "Signup failed. Please try again.");
       }

@@ -23,6 +23,7 @@ const SignIn: React.FC = () => {
       const response = await userSignInService(userData);
 
       if (response.message) {
+        localStorage.setItem("token", response.token);
         message.success("Login successful!");
         navigate("/chat/text", { replace: true });
       } else {

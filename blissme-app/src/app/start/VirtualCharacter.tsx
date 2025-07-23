@@ -1,17 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import logo from "../../assets/images/logo.png";
-import cat from "../../assets/images/cat.png";
 import heart from "../../assets/images/heart.png";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPreferencesSuccess } from '../../redux/reducers/userReducer';
+import { RootState } from '../../redux/store';
+
+const url = process.env.REACT_APP_API_URL;
+console.log("API URL:", url);
+
+interface Character {
+    _id: string;
+    name: string;
+    imageUrl: string;
+    characterId: number;
+    __v: number;
+}
 
 const VirtualCharacter = () => {
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-    const navigate = useNavigate();
+    const [characters, setCharacters] = useState<Character[]>([]);
+    const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    //Get nickname from Redux
+    const nickname = useSelector((state: RootState) => state.user.nickname);
+
+    useEffect(() => {
+        const fetchCharacters = async () => {
+            try {
+                const response = await axios.get<Character[]>(`${url}/`);
+                console.log("Characters fetched:", response.data);
+                setCharacters(response.data);
+            } catch (error: any) {
+                console.error("Error fetching characters:", error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCharacters();
+    }, []);
 
     const handleNext = () => {
-        // Navigate to the next step, e.g., InputMode
+        if (!selectedCharacterId) {
+            alert("Please select a virtual character!");
+            return;
+        }
+
+        dispatch(setPreferencesSuccess({
+            nickname,
+            virtualCharacter: selectedCharacterId,
+            inputMode: ""
+        }));
+
+        console.log("Virtual character selected:", selectedCharacterId);
         navigate('/input-mode');
     };
 
@@ -33,28 +80,33 @@ const VirtualCharacter = () => {
                         className="w-34 h-16 animate-wiggle animate-infinite"
                     />
 
-                    <div className=" bottom-0 w-[90%] bg-[#DCF2DE] shadow-md rounded-lg px-4 py-3 translate-y-[-10%]">
+                    <div className="bottom-0 w-[90%] bg-[#DCF2DE] shadow-md rounded-lg px-4 py-3 translate-y-[-10%]">
                         <label className="text-gray-600 text-sm text-center block max-w-full mb-2">
                             Pick a virtual character to chat with, just the way you like!
                         </label>
 
                         <div className="w-full overflow-x-auto p-2">
                             <div className="flex gap-4 w-max px-2">
-                                {[...Array(6)].map((_, index) => (
+                                {characters.map((character) => (
                                     <div
-                                        key={index}
-                                        onClick={() => setSelectedIndex(index)}
+                                        key={character._id}
+                                        onClick={() => setSelectedCharacterId(character.characterId)}
                                         className={`flex flex-col items-center min-w-[80px] bg-white bg-opacity-50 rounded-lg p-1 shadow-md transition-transform cursor-pointer hover:scale-105
-                                    ${selectedIndex === index ? 'border-2 border-[#1B5E3A]' : 'border border-transparent'}
-                                    `}
+                                            ${selectedCharacterId === character.characterId
+                                                ? 'border-2 border-[#1B5E3A]'
+                                                : 'border border-transparent'}
+                                        `}
                                     >
-                                        <img src={cat} alt={`Character ${index + 1}`} className="w-12 h-12 object-contain" />
-                                        <span className="mt-1 text-xs font-medium">{index % 2 === 0 ? 'Alex' : 'Luna'}</span>
+                                        <img
+                                            src={character.imageUrl}
+                                            alt={`Character ${character.name}`}
+                                            className="w-12 h-12 object-contain"
+                                        />
+                                        <span className="mt-1 text-xs font-medium">{character.name}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
-
                     </div>
                 </div>
 

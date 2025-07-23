@@ -3,13 +3,41 @@ import { Button } from 'antd';
 import logo from "../../assets/images/logo.png";
 import heart from "../../assets/images/heart.png";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPreferencesSuccess } from '../../redux/reducers/userReducer';
+import { setUserPreferences } from '../../redux/actions/userActions';
+import { RootState, AppDispatch } from '../../redux/store';
 
 const InputMode = () => {
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [selectedMode, setSelectedMode] = useState<string | null>(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
+
+    const nickname = useSelector((state: RootState) => state.user.nickname);
+    const virtualCharacter = useSelector((state: RootState) => state.user.virtualCharacter);
+
     const handleNext = () => {
-        // Navigate to the next step, e.g., Nickname
-        // navigate('/nickname');
+        if (!selectedMode) {
+            alert("Please select the input mode!");
+            return;
+        }
+
+        dispatch(setPreferencesSuccess({
+            nickname,
+            virtualCharacter,
+            inputMode: selectedMode
+        }));
+
+        dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode));
+
+        console.log("Input mode selected:", selectedMode);
+
+        if (selectedMode === "Voice") {
+            navigate("/chat/voice", { replace: true });
+        } else if (selectedMode === "Text") {
+            navigate("/mood");
+        }
+        // navigate('/input-mode');
     };
 
     return (
@@ -37,13 +65,13 @@ const InputMode = () => {
 
                         <div className="flex justify-center p-2">
                             <div className="flex gap-4 px-2">
-                                {["Voice", "Text"].map((mode, index) => (
+                                {["Voice", "Text"].map((mode) => (
                                     <div
-                                        key={index}
-                                        onClick={() => setSelectedIndex(index)}
+                                        key={mode}
+                                        onClick={() => setSelectedMode(mode)}
                                         className={`flex flex-col items-center justify-center w-20 h-10 bg-white bg-opacity-50 rounded-lg p-2 shadow-md transition-transform cursor-pointer hover:scale-105
-          ${selectedIndex === index ? 'border-2 border-[#1B5E3A]' : 'border border-transparent'}
-        `}
+        ${selectedMode === mode ? 'border-2 border-[#1B5E3A]' : 'border border-transparent'}
+      `}
                                     >
                                         <span className="text-sm font-medium text-gray-700">{mode}</span>
                                     </div>

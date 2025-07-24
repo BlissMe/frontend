@@ -63,7 +63,7 @@ const VirtualCharacter = () => {
     );
 
     console.log("Virtual character selected:", selectedCharacterId);
-    navigate("/input-mode");
+    navigate("/mode/input-mode");
   };
 
   return (

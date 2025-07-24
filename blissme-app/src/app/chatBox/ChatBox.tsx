@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
-import { createNewSession, fetchChatHistory, saveMessage ,endCurrentSession,fetchAllSummaries} from "../../services/ChatMessageService";
+import {
+  createNewSession,
+  fetchChatHistory,
+  saveMessage,
+  endCurrentSession,
+  fetchAllSummaries,
+} from "../../services/ChatMessageService";
 import { savePHQ9Answer } from "../../services/Phq9Service";
 const { Text } = Typography;
 

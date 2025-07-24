@@ -29,6 +29,7 @@ const SignUp: React.FC = () => {
 
       if (response.message) {
         message.success("Successfully Registered!");
+        console.log(response?.token)
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
         navigate("/nick-name", { replace: true });

@@ -25,9 +25,10 @@ const { setToken } = useContext(AuthContext);
       const response = await userSignInService(userData);
 
       if (response.message) {
-        localStorage.setItem("token", response.token);
-        message.success("Login successful!");
-        navigate("/nick-name", { replace: true });
+      message.success("Login successful!");
+      setToken(response?.token);
+      setLocalStorageData("token", response?.token);
+      navigate("/input-mode", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");
       }

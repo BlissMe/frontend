@@ -24,13 +24,13 @@ const Routerset = () => {
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/mood" element={<Mood />} />
 
       {token !== null && token !== "" ? (
         <>
           <Route path="/nick-name" element={<Nickname />} />
           <Route path="/virtual-character" element={<VirtualCharacter />} />
           <Route path="/input-mode" element={<InputMode />} />
+          <Route path="/mood" element={<Mood />} />
           <Route path="/chat" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />

@@ -21,7 +21,7 @@ interface Message {
 interface ApiResult {
   audio_url?: string;
   user_query?: string;
-  response?: string;
+  bot_response?: string;
   phq9_questionID?: number;
   phq9_question?: string;
   emotion_history?: string[];
@@ -160,7 +160,6 @@ const VoiceChatBox: React.FC = () => {
       }
 
       const result = await response.json();
-      setApiResult(result);
 
       const userMessage: Message = {
         text: result.user_query,
@@ -215,54 +214,94 @@ const VoiceChatBox: React.FC = () => {
     }
   };
 
-  const handlePhqAnswer = async (answer: string) => {
-    const answerMessage: Message = {
-      text: answer,
-      sender: "you",
-      time: getCurrentTime(),
-    };
-    setMessages((prev) => [...prev, answerMessage]);
-    setIsPhq9(false);
-    setIsBotTyping(true);
+ const handlePhqAnswer = async (answer: string) => {
+  const answerMessage: Message = {
+    text: answer,
+    sender: "you",
+    time: getCurrentTime(),
+  };
+  setMessages((prev) => [...prev, answerMessage]);
+  setIsPhq9(false);
+  setIsBotTyping(true);
 
-    if (lastPhq9) {
-      await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, answer);
-      setLastPhq9(null);
+  if (lastPhq9) {
+    await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, answer);
+    setLastPhq9(null);
+  }
+
+  await saveMessage(answer, sessionID, "user");
+
+  // Fetch updated chat history from backend
+  const updatedHistory = await fetchChatHistory(sessionID);
+  const formattedHistory = Array.isArray(updatedHistory)
+    ? updatedHistory.map((msg: any) => ({
+        sender: msg.sender === "bot" ? "Bot" : "User",
+        text: msg.message,
+      }))
+    : [];
+
+  // Prepare text history for sending to backend
+  const historyText = formattedHistory.map((m) => `${m.sender}: ${m.text}`).join("\n");
+
+  // Prepare form data for your backend (assuming similar to handleSendAudio but with empty audio)
+  const formData = new FormData();
+  formData.append("audio", new Blob([], { type: "audio/webm" }), "empty.webm"); // empty blob or handle differently
+  formData.append("asked_phq_ids", JSON.stringify(askedPhq9Ids));
+  formData.append("summaries", JSON.stringify(sessionSummaries));
+  formData.append("emotion_history", JSON.stringify(emotionHistory));
+  formData.append("history", historyText);
+
+  try {
+    const response = await fetch("http://localhost:8000/voice-chat", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      alert("Server error: " + errorText);
+      setIsBotTyping(false);
+      return;
     }
 
-    await saveMessage(answer, sessionID, "user");
+    const result: ApiResult = await response.json();
+    setApiResult(result);
 
-    if (
-      typeof apiResult.phq9_questionID === "number" &&
-      typeof apiResult.phq9_question === "string"
-    ) {
-      setAskedPhq9Ids((prev) => [...prev, apiResult.phq9_questionID!]);
-      setLastPhq9({
-        id: apiResult.phq9_questionID,
-        question: apiResult.phq9_question,
-      });
-      setIsPhq9(true);
-    }
-
+    // Save user message was done above; now save bot message from result
     const botMessage: Message = {
-      text: apiResult.response || "No response from bot.",
+      text: result.bot_response || "No response from bot.",
       sender: "bot",
       time: getCurrentTime(),
     };
-
     await saveMessage(botMessage.text, sessionID, "bot");
     setMessages((prev) => [...prev, botMessage]);
 
-    try {
-      const audio = new Audio(`http://localhost:8000${apiResult.audio_url}`);
+    // Update PHQ9 question if any
+    
+     if (
+        typeof result.phq9_questionID === "number" &&
+        typeof result.phq9_question === "string"
+      ) {
+        setAskedPhq9Ids((prev) => [...prev, result.phq9_questionID!]);
+        setLastPhq9({ id: result.phq9_questionID, question: result.phq9_question });
+        setIsPhq9(true);
+      }
+
+    // Play audio if any
+    if (result.audio_url) {
+      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
       await audio.play();
-    } catch (err) {
-      console.error("Failed to play audio:", err);
     }
 
-    setIsBotTyping(false);
-    setIsWaitingForBotResponse(false);
-  };
+  } catch (err) {
+    alert("Failed to process PHQ-9 answer. Please try again.");
+    console.error("PHQ-9 answer error:", err);
+  }
+
+  setIsBotTyping(false);
+  setIsWaitingForBotResponse(false);
+};
+
 
   return (
     <div className="flex flex-col h-screen">

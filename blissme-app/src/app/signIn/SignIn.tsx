@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import signin from "../../assets/images/signin.png";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { userSignInService } from "../../services/UserService";
+import { AuthContext } from "../context/AuthContext";
+import { setLocalStorageData } from "../../helpers/Storage";
 
 const { Text } = Typography;
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+const { setToken } = useContext(AuthContext);
   const onFinish = async (values: any) => {
     try {
       setLoading(true);

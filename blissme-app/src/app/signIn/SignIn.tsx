@@ -28,7 +28,7 @@ const { setToken } = useContext(AuthContext);
       message.success("Login successful!");
       setToken(response?.token);
       setLocalStorageData("token", response?.token);
-      navigate("/input-mode", { replace: true });
+      navigate("/mode/input-mode", { replace: true });
       } else {
         message.error(response.message || "Login failed. Please try again.");
       }

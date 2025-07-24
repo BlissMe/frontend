@@ -32,7 +32,7 @@ const SignUp: React.FC = () => {
         console.log(response?.token)
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
-        navigate("/nick-name", { replace: true });
+        navigate("/mode/nick-name", { replace: true });
       } else {
         message.error(response.message || "Signup failed. Please try again.");
       }

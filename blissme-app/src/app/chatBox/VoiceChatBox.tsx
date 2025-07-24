@@ -42,8 +42,6 @@ const VoiceChatBox: React.FC = () => {
   const [isPhq9, setIsPhq9] = useState(false);
   const [apiResult, setApiResult] = useState<ApiResult>({});
   const [emotionHistory, setEmotionHistory] = useState<string[]>([]);
-  const [showEmotionModal, setShowEmotionModal] = useState(false);
-  const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
 
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -194,15 +192,6 @@ const VoiceChatBox: React.FC = () => {
       const audio = new Audio(`http://localhost:8000${result.audio_url}`);
       audio.play();
 
-      // Handle emotion state
-      if (result.emotion_history && Array.isArray(result.emotion_history)) {
-        setEmotionHistory(result.emotion_history);
-        if (result.emotion_history.length >= 3) {
-          setOverallEmotion(result.overall_emotion || null);
-          setShowEmotionModal(true);
-        }
-      }
-
       setIsBotTyping(false);
       setIsWaitingForBotResponse(false);
     } catch (err) {
@@ -264,44 +253,45 @@ const VoiceChatBox: React.FC = () => {
       return;
     }
 
-    const result: ApiResult = await response.json();
-    setApiResult(result);
+      const result: ApiResult = await response.json();
+      setApiResult(result);
 
-    // Save user message was done above; now save bot message from result
-    const botMessage: Message = {
-      text: result.bot_response || "No response from bot.",
-      sender: "bot",
-      time: getCurrentTime(),
-    };
-    await saveMessage(botMessage.text, sessionID, "bot");
-    setMessages((prev) => [...prev, botMessage]);
+      // Save user message was done above; now save bot message from result
+      const botMessage: Message = {
+        text: result.bot_response || "No response from bot.",
+        sender: "bot",
+        time: getCurrentTime(),
+      };
+      await saveMessage(botMessage.text, sessionID, "bot");
+      setMessages((prev) => [...prev, botMessage]);
 
-    // Update PHQ9 question if any
-    
-     if (
+      // Update PHQ9 question if any
+
+      if (
         typeof result.phq9_questionID === "number" &&
         typeof result.phq9_question === "string"
       ) {
         setAskedPhq9Ids((prev) => [...prev, result.phq9_questionID!]);
-        setLastPhq9({ id: result.phq9_questionID, question: result.phq9_question });
+        setLastPhq9({
+          id: result.phq9_questionID,
+          question: result.phq9_question,
+        });
         setIsPhq9(true);
       }
 
-    // Play audio if any
-    if (result.audio_url) {
-      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
-      await audio.play();
+      // Play audio if any
+      if (result.audio_url) {
+        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+        await audio.play();
+      }
+    } catch (err) {
+      alert("Failed to process PHQ-9 answer. Please try again.");
+      console.error("PHQ-9 answer error:", err);
     }
 
-  } catch (err) {
-    alert("Failed to process PHQ-9 answer. Please try again.");
-    console.error("PHQ-9 answer error:", err);
-  }
-
-  setIsBotTyping(false);
-  setIsWaitingForBotResponse(false);
-};
-
+    setIsBotTyping(false);
+    setIsWaitingForBotResponse(false);
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -309,11 +299,16 @@ const VoiceChatBox: React.FC = () => {
         <img src={assets.profile} width={120} height={120} alt="Profile" />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 space-y-6" id="message-container">
+      <div
+        className="flex-1 overflow-y-auto px-4 space-y-6"
+        id="message-container"
+      >
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"}`}
+            className={`flex flex-col ${
+              msg.sender === "you" ? "items-end" : "items-start"
+            }`}
           >
             <div className="flex gap-2">
               <img
@@ -338,20 +333,23 @@ const VoiceChatBox: React.FC = () => {
               {msg.time}
             </Text>
 
-            {isPhq9 && lastPhq9 && msg.sender === "bot" && index === messages.length - 1 && (
-              <div className="flex flex-wrap gap-2 mt-2 ml-10">
-                {phqOptions.map((option) => (
-                  <Button
-                    key={option}
-                    size="small"
-                    onClick={() => handlePhqAnswer(option)}
-                    className="bg-blue-100 hover:bg-blue-200 border-blue-300"
-                  >
-                    {option}
-                  </Button>
-                ))}
-              </div>
-            )}
+            {isPhq9 &&
+              lastPhq9 &&
+              msg.sender === "bot" &&
+              index === messages.length - 1 && (
+                <div className="flex flex-wrap gap-2 mt-2 ml-10">
+                  {phqOptions.map((option) => (
+                    <Button
+                      key={option}
+                      size="small"
+                      onClick={() => handlePhqAnswer(option)}
+                      className="bg-blue-100 hover:bg-blue-200 border-blue-300"
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+              )}
           </div>
         ))}
 
@@ -382,16 +380,6 @@ const VoiceChatBox: React.FC = () => {
           {recording ? "Stop Recording" : "Start Recording"}
         </Button>
       </div>
-
-      {/* Emotion Summary Modal */}
-      <Modal
-        title="User Emotion Summary"
-        open={showEmotionModal}
-        onOk={() => setShowEmotionModal(false)}
-        onCancel={() => setShowEmotionModal(false)}
-      >
-        <p><strong>Overall Emotion:</strong> {overallEmotion || "N/A"}</p>
-      </Modal>
     </div>
   );
 };

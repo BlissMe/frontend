@@ -279,15 +279,16 @@ const ChatBox = () => {
                   alt="bot"
                   width={40}
                   height={40}
+                  
                 />
               ) : (
-<img
-  src={assets.i3}
-  alt=""
-  width={40}
-  height={40}
-  className="w-10 h-10 rounded-full object-cover"
-/>
+                <img
+                  src={assets.i3}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
               )}
 
               {loading &&
@@ -335,7 +336,13 @@ const ChatBox = () => {
         ))}
         {loading && (
           <div className="flex items-start gap-2">
-            <img src={assets.icon2} alt="" width={40} height={40} />
+            <img
+              src={assets.i3}
+              alt=""
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover"
+            />
             <Spin size="small" />
           </div>
         )}

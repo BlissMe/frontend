@@ -17,7 +17,7 @@ const MainLayout = () => {
       </Sider>
 
       <Layout
-        className="w-full flex flex-row h-screen bg-cover bg-center"
+        className="w-full flex flex-row h-screen bg-cover bg-center bg-gradient-to-b from-[#FFFFFF] to-[#5FB57F]"
         /* style={{
           backgroundImage: `url(${bgImage})`,
         }} */

@@ -15,6 +15,7 @@ import { savePHQ9Answer } from "../../services/Phq9Service";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
+import Avatar from "../../components/profile/Avatar";
 const { Text } = Typography;
 
 interface Character {
@@ -53,8 +54,6 @@ const ChatBox = () => {
   const selectId = useSelector(
     (state: RootState) => state.user.virtualCharacter
   );
-  console.log(selectId);
-  console.log("chatHistory", chatHistory);
   console.log("messages", messages);
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -74,6 +73,7 @@ const ChatBox = () => {
   const selectedCharacter = characters.find(
     (char) => char.characterId === selectId
   );
+  console.log("chatHistory", selectedCharacter);
 
   useEffect(() => {
     (async () => {
@@ -274,17 +274,11 @@ const ChatBox = () => {
           >
             <div className="flex gap-2 items-center">
               {msg.sender === "you" ? (
+                <Avatar username={selectedCharacter?.name ?? "User"} />
+              ) : (
                 <img
                   src={selectedCharacter?.imageUrl}
                   alt="bot"
-                  width={40}
-                  height={40}
-                  
-                />
-              ) : (
-                <img
-                  src={assets.i3}
-                  alt=""
                   width={40}
                   height={40}
                   className="w-10 h-10 rounded-full object-cover"
@@ -337,7 +331,7 @@ const ChatBox = () => {
         {loading && (
           <div className="flex items-start gap-2">
             <img
-              src={assets.i3}
+              src={selectedCharacter?.imageUrl}
               alt=""
               width={40}
               height={40}
@@ -348,13 +342,13 @@ const ChatBox = () => {
         )}
       </div>
 
-      <Divider className="m-0" />
-
+      {/*   <Divider className="m-0" />
+       */}
       {/* Input bar only if not in PHQ9 chit mode */}
       {!isPhq9 && (
-        <div className="flex items-center gap-2 p-4 bg-white">
+        <div className="flex items-center gap-2 p-4">
           <Input
-            placeholder="Type your message here..."
+            placeholder=" Type your message here..."
             size="large"
             suffix={
               <img
@@ -369,6 +363,7 @@ const ChatBox = () => {
             className="flex-1 bg-inputColorThree rounded-full px-4 py-2 border-none shadow-none focus:ring-0 focus:border-none hover:bg-inputColorThree"
             disabled={loading}
           />
+          <Divider className="h-8 bg-white" type="vertical" />
           <Button
             type="text"
             icon={

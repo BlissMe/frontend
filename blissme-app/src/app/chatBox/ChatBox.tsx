@@ -1,6 +1,6 @@
 import { Button, Divider, Input, Typography, Spin } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
@@ -8,36 +8,26 @@ import {
   createNewSession,
   fetchChatHistory,
   saveMessage,
-  endCurrentSession,
   fetchAllSummaries,
 } from "../../services/ChatMessageService";
 import { savePHQ9Answer } from "../../services/Phq9Service";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import axios from "axios";
 import Avatar from "../../components/profile/Avatar";
+import { useCharacterContext } from "../context/CharacterContext";
+import { AuthContext } from "../context/AuthContext";
+import { Message } from "../context/AuthContext"; 
+import Nickname from "../start/Nickname";
+
 const { Text } = Typography;
 
-interface Character {
-  _id: string;
-  name: string;
-  imageUrl: string;
-  characterId: number;
-  __v: number;
-}
-const url = process.env.REACT_APP_API_URL;
 const ChatBox = () => {
-  const [sessionID, setSessionID] = useState<string>("");
-  const [messages, setMessages] = useState([
-    {
-      sender: "popo",
-      text: "Hi there. How are you feeling today?",
-      time: getCurrentTime(),
-    },
-  ]);
-  const [chatHistory, setChatHistory] = useState<
-    { sender: string; text: string; time: string }[]
-  >([]);
+  const {
+    sessionID,
+    setSessionID,
+    setMessages,
+    setChatHistory,
+    messages,
+  } = useContext(AuthContext);
+
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,35 +35,9 @@ const ChatBox = () => {
     id: number;
     question: string;
   } | null>(null);
-  const navigate = useNavigate();
-  const [isSessionEnded, setIsSessionEnded] = useState(false);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const [characters, setCharacters] = useState<Character[]>([]);
-
-  const selectId = useSelector(
-    (state: RootState) => state.user.virtualCharacter
-  );
-  console.log("messages", messages);
-  useEffect(() => {
-    const fetchCharacters = async () => {
-      try {
-        const response = await axios.get<Character[]>(`${url}/`);
-        console.log("Characters fetched:", response.data);
-        setCharacters(response.data);
-      } catch (error: any) {
-        console.error("Error fetching characters:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCharacters();
-  }, []);
-  console.log("l", characters);
-  const selectedCharacter = characters.find(
-    (char) => char.characterId === selectId
-  );
-  console.log("chatHistory", selectedCharacter);
+  const { selectedCharacter ,nickname } = useCharacterContext();
 
   useEffect(() => {
     (async () => {
@@ -169,7 +133,7 @@ const ChatBox = () => {
       time: getCurrentTime(),
     };
 
-    setMessages((prev) => [...prev, answerMessage]);
+setMessages((prev: Message[]) => [...prev, answerMessage]);
     setIsPhq9(false); // disable chit buttons
     setLoading(true);
 
@@ -241,27 +205,8 @@ const ChatBox = () => {
           alt="bot"
           width={120}
           height={120}
-        />{" "}
-        <Button
-          type="primary"
-          danger
-          size="small"
-          onClick={async () => {
-            const res = await endCurrentSession(sessionID);
-            if (res.success) {
-              alert("Session ended and summary saved.");
-              setIsSessionEnded(true);
-              setMessages([]);
-              setChatHistory([]);
-              setSessionID("");
-              navigate("/login");
-            } else {
-              alert("Failed to end session.");
-            }
-          }}
-        >
-          End Session
-        </Button>
+        />
+      
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 space-y-6">
@@ -274,7 +219,7 @@ const ChatBox = () => {
           >
             <div className="flex gap-2 items-center">
               {msg.sender === "you" ? (
-                <Avatar username={selectedCharacter?.name ?? "User"} />
+                <Avatar username={nickname ?? "User"} />
               ) : (
                 <img
                   src={selectedCharacter?.imageUrl}

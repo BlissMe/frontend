@@ -10,6 +10,7 @@ import {
   fetchAllSummaries,
 } from "../../services/ChatMessageService";
 import { savePHQ9Answer } from "../../services/Phq9Service";
+import { useCharacterContext } from "../context/CharacterContext";
 
 const { Text } = Typography;
 
@@ -42,7 +43,8 @@ const VoiceChatBox: React.FC = () => {
   const [isPhq9, setIsPhq9] = useState(false);
   const [apiResult, setApiResult] = useState<ApiResult>({});
   const [emotionHistory, setEmotionHistory] = useState<string[]>([]);
-
+  const { characters} = useCharacterContext();
+console.log("ch",characters)
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);

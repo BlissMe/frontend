@@ -14,19 +14,14 @@ import { savePHQ9Answer } from "../../services/Phq9Service";
 import Avatar from "../../components/profile/Avatar";
 import { useCharacterContext } from "../context/CharacterContext";
 import { AuthContext } from "../context/AuthContext";
-import { Message } from "../context/AuthContext"; 
+import { Message } from "../context/AuthContext";
 import Nickname from "../start/Nickname";
 
 const { Text } = Typography;
 
 const ChatBox = () => {
-  const {
-    sessionID,
-    setSessionID,
-    setMessages,
-    setChatHistory,
-    messages,
-  } = useContext(AuthContext);
+  const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
+    useContext(AuthContext);
 
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -37,7 +32,7 @@ const ChatBox = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const { selectedCharacter ,nickname } = useCharacterContext();
+  const { selectedCharacter, nickname } = useCharacterContext();
 
   useEffect(() => {
     (async () => {
@@ -133,7 +128,7 @@ const ChatBox = () => {
       time: getCurrentTime(),
     };
 
-setMessages((prev: Message[]) => [...prev, answerMessage]);
+    setMessages((prev: Message[]) => [...prev, answerMessage]);
     setIsPhq9(false); // disable chit buttons
     setLoading(true);
 
@@ -206,7 +201,6 @@ setMessages((prev: Message[]) => [...prev, answerMessage]);
           width={120}
           height={120}
         />
-      
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 space-y-6">
@@ -295,13 +289,6 @@ setMessages((prev: Message[]) => [...prev, answerMessage]);
           <Input
             placeholder=" Type your message here..."
             size="large"
-            suffix={
-              <img
-                src={assets.mic_icon}
-                alt="mic"
-                className="w-5 h-5 object-contain"
-              />
-            }
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onPressEnter={handleSend}

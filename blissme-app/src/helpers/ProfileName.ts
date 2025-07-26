@@ -1,15 +1,15 @@
 export const getAvatarStyle = (username: string) => {
   const colors = [
-    "#FF6B6B", // red
-    "#6BCB77", // green
-    "#4D96FF", // blue
-    "#FFC75F", // yellow
-    "#FF9671", // orange
-    "#845EC2", // purple
-    "#2C73D2", // indigo
-    "#00C9A7", // teal
-    "#D65DB1", // pink
-    "#0081CF", // sky blue
+    "#6BCB77", // light green
+    "#28a745", // medium green
+    "#2ecc71", // emerald
+    "#27ae60", // dark green
+    "#00c853", // vivid green
+    "#66bb6a", // muted green
+    "#43a047", // forest green
+    "#1b5e20", // deep green
+    "#81c784", // pastel green
+    "#388e3c", // strong green
   ];
 
   // Create a hash from the username

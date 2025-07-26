@@ -16,7 +16,7 @@ interface CharacterContextType {
   selectedCharacterId: number | null;
   setSelectedCharacterId: (id: number | null) => void;
   selectedCharacter: Character | undefined;
-  nickname: string | undefined
+  nickname: string | undefined;
 }
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -34,9 +34,6 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const url = process.env.REACT_APP_API_URL;
   const nickname = useSelector((state: RootState) => state.user.nickname);
-console.log("7",nickname)
-const user = useSelector((state: RootState) => state.user);
-console.log("Redux user state:", user);
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -68,7 +65,7 @@ console.log("Redux user state:", user);
         selectedCharacterId,
         setSelectedCharacterId,
         selectedCharacter,
-        nickname
+        nickname,
       }}
     >
       {children}

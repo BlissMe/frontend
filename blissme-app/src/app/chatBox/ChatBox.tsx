@@ -232,7 +232,7 @@ const ChatBox = () => {
                 <div
                   className={`p-3 rounded-lg max-w-xs ${
                     msg.sender === "you"
-                      ? "bg-inputColorTwo text-right"
+                      ? "bg-inputColorTwo text-left"
                       : "bg-inputColorOne text-left"
                   }`}
                 >
@@ -242,7 +242,7 @@ const ChatBox = () => {
             </div>
             <Text
               className={`text-xs text-gray-500 mt-1 ${
-                msg.sender === "you" ? "" : "ml-10"
+                msg.sender === "you" ? "" : "ml-12"
               }`}
             >
               {msg.time}

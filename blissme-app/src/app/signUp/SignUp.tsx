@@ -8,6 +8,7 @@ import { userSignUpService } from "../../services/UserService";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
+import { useNotification } from "../context/notificationContext";
 
 const { Text } = Typography;
 
@@ -15,6 +16,7 @@ const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { setToken } = useContext(AuthContext);
+  const { openNotification } = useNotification();
 
   const onFinish = async (values: any) => {
     try {
@@ -27,18 +29,27 @@ const SignUp: React.FC = () => {
 
       const response = await userSignUpService(userData);
 
-      if (response.message) {
-        message.success("Successfully Registered!");
-        console.log(response?.token)
+      if (response.message === "Successfully Registered") {
+        openNotification("success", "Signup Successful", "Welcome!");
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
         navigate("/mode/nick-name", { replace: true });
       } else {
-        message.error(response.message || "Signup failed. Please try again.");
+        openNotification(
+          "error",
+          "Signup Failed",
+          response.message || "Signup failed.Please try again later"
+        );
       }
-    } catch (error) {
-      message.error("Something went wrong. Please try again later.");
-      console.error(error);
+    } catch (error: any) {
+      console.error("signup error:", error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong. Please try again later.";
+
+      openNotification("error", "Login Failed", errorMessage);
     } finally {
       setLoading(false);
     }

@@ -1,18 +1,21 @@
 import React, { useContext, useState } from "react";
 import signin from "../../assets/images/signin.png";
-import { Form, Input, Button, Checkbox, Typography, message } from "antd";
+import { Form, Input, Button, Checkbox, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { userSignInService } from "../../services/UserService";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
+import { useNotification } from "../context/notificationContext";
 
 const { Text } = Typography;
 
 const SignIn: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-const { setToken } = useContext(AuthContext);
+  const { setToken } = useContext(AuthContext);
+  const { openNotification } = useNotification();
+
   const onFinish = async (values: any) => {
     try {
       setLoading(true);
@@ -24,17 +27,27 @@ const { setToken } = useContext(AuthContext);
 
       const response = await userSignInService(userData);
 
-      if (response.message) {
-      message.success("Login successful!");
-      setToken(response?.token);
-      setLocalStorageData("token", response?.token);
-      navigate("/mode/input-mode", { replace: true });
+      if (response.message === "Login successful") {
+        openNotification("success", "Login Successful", "Welcome back!");
+        setToken(response.token);
+        setLocalStorageData("token", response.token);
+        navigate("/mode/input-mode", { replace: true });
       } else {
-        message.error(response.message || "Login failed. Please try again.");
+        openNotification(
+          "error",
+          "Login Failed",
+          response.message || "Login failed.Please try again later"
+        );
       }
-    } catch (error) {
-      message.error("Something went wrong. Please try again later.");
-      console.error(error);
+    } catch (error: any) {
+      console.error("Login error:", error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong. Please try again later.";
+
+      openNotification("error", "Login Failed", errorMessage);
     } finally {
       setLoading(false);
     }

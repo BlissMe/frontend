@@ -42,14 +42,22 @@ export async function userSignInService(userData : SignInPayload): Promise<any> 
       body: JSON.stringify(userData),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      return {
+        message: data.message || "Login failed",
+      };
     }
 
-    const data = await response.json();
-    console.log(data);
-    return data;
-  } catch (error) {
-    return "Sorry, something went wrong.";
+    return data; 
+
+  } catch (error: any) {
+    console.error("Fetch error in userSignInService:", error);
+
+    return {
+      message: "Something went wrong. Please try again later.",
+    };
   }
 }
+

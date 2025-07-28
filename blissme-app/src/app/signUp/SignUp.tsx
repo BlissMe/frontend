@@ -153,16 +153,21 @@ const SignUp: React.FC = () => {
                 </div>
               </Form.Item>
             </Form>
-            <Form>
-              <div className="flex justify-center my-4">
-                <Text className="text-center text-black text-sm">or</Text>
-              </div>
 
-              <Form.Item>
+            <div className="-mt-2 mb-2">
+              <div className="flex items-center justify-center w-full">
+                <div className="flex-grow h-px bg-gray-300" />
+                <span className="mx-2 text-sm text-gray-500">or</span>
+                <div className="flex-grow h-px bg-gray-300" />
+              </div>
+            </div>
+
+            <Form className="w-full">
+              <Form.Item className="m-0">
                 <div className="flex justify-center">
                   <Button
                     type="primary"
-                    className="google_btn flex items-center gap-2"
+                    className="google_btn flex items-center gap-2 h-[40px] px-4 text-sm"
                     onClick={googleAuth}
                   >
                     <img
@@ -170,20 +175,24 @@ const SignUp: React.FC = () => {
                       alt="google icon"
                       className="w-5 h-5"
                     />
-                    Sign up with Google
+                    Continue with Google
                   </Button>
                 </div>
               </Form.Item>
 
-              <Text className="block text-center text-sm md:text-base text-textColorOne">
-                Already have an account?{" "}
-                <span
-                  className="text-textColorTwo cursor-pointer"
-                  onClick={() => navigate("/login")}
-                >
-                  Sign In
-                </span>
-              </Text>
+              <div className="mt-2">
+                <Text className="block text-center text-sm text-textColorOne">
+                  <Text className="block text-center text-sm md:text-base text-textColorOne">
+                    Already have an account?{" "}
+                    <span
+                      className="text-textColorTwo cursor-pointer"
+                      onClick={() => navigate("/login")}
+                    >
+                      Sign In
+                    </span>
+                  </Text>
+                </Text>
+              </div>
             </Form>
           </div>
         </div>

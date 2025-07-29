@@ -14,6 +14,8 @@ import ResetPassword from "../app/forget-password/ResetPassword";
 import Mood from "../app/start/Mood";
 import Register from "../app/signUp/Register";
 import Login from "../app/signIn/Login";
+import Landing from "../app/start/Landing";
+import Home from "../app/start/Home";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -29,6 +31,8 @@ const Routerset = () => {
 
       <Route path="/register" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />
+      <Route path="/landing" element={<Landing />} />
+      <Route path="/home" element={<Home />} />
 
 
       {token !== null && token !== "" ? (

@@ -12,6 +12,8 @@ import { useContext } from "react";
 import SendEmail from "../app/forget-password/SendEmail";
 import ResetPassword from "../app/forget-password/ResetPassword";
 import Mood from "../app/start/Mood";
+import Register from "../app/signUp/Register";
+import Login from "../app/signIn/Login";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -24,6 +26,10 @@ const Routerset = () => {
       <Route path="/login" element={<SignIn />} />
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+
+      <Route path="/register" element={<Register />} />
+      <Route path="/sign-in" element={<Login />} />
+
 
       {token !== null && token !== "" ? (
         <>

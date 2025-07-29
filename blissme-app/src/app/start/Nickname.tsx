@@ -44,7 +44,7 @@ const Nickname = () => {
                 <Button
                     type="default"
                     onClick={handleNext}
-                    className="bg-[#4B9B6E] hover:bg-[#1B5E3A] text-white border-none shadow-md"
+                    className="bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:bg-[#1B5E3A] text-white border-none shadow-md"
                 >
                     Next
                 </Button>

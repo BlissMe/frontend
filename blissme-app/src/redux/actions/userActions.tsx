@@ -10,7 +10,7 @@ import {
 import { getLocalStoragedata } from '../../helpers/Storage';
 
 const url = process.env.REACT_APP_API_URL;
-const token = localStorage.getItem("token");
+const token = getLocalStoragedata("token");
 
 
 export const setUserPreferences =

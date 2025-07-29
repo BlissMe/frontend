@@ -1,12 +1,12 @@
-import { useState} from "react";
+import { useState } from "react";
 import { Button } from "antd";
 import logo from "../../assets/images/logo.png";
 import heart from "../../assets/images/heart.png";
 import { useNavigate } from "react-router-dom";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNotification } from "../context/notificationContext";
 
 const url = process.env.REACT_APP_API_URL;
-console.log("API URL:", url);
 
 type MoodType = "happy" | "sad" | "neutral" | "angry" | "surprised";
 
@@ -14,17 +14,16 @@ const Mood = () => {
   const [mood, setMood] = useState<MoodType>("neutral");
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { openNotification } = useNotification();
 
   //Get nickname from Redux
 
   const handleNext = () => {
     if (!mood) {
-      alert("Please select a mood!");
+      openNotification("warning", "Please select a mood!");
       return;
     }
-
-    console.log("Mood selected:", mood);
+    openNotification("success", "Mood selected successfully");
     navigate("/chat/text", { replace: true });
   };
 

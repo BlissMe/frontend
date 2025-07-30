@@ -5,17 +5,24 @@ import logo from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
+import { useNotification } from "../context/notificationContext";
 
 const Nickname = () => {
   const [nickname, setNicknameInput] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { openNotification } = useNotification();
 
   const handleNext = () => {
+    if (!nickname.trim()) {
+      openNotification("warning", "Nickname is required");
+      return;
+    }
+
     dispatch(
       setPreferencesSuccess({ nickname, virtualCharacter: 1, inputMode: "" })
     );
-    console.log("Nickname set to:", nickname);
+    openNotification("success", "Nickname saved successfully");
     navigate("/mode/virtual-character");
   };
 
@@ -42,7 +49,7 @@ const Nickname = () => {
             value={nickname}
             onChange={(e) => setNicknameInput(e.target.value)}
             className="absolute bottom-[-35%] w-[80%] rounded-lg py-2 bg-[#DCF2DE] shadow-md text-center 
-                                border border-transparent focus:border-[#BDF2D0] hover:border-[#BDF2D0] focus:ring-0"
+                       border border-transparent focus:border-[#BDF2D0] hover:border-[#BDF2D0] focus:ring-0"
           />
         </div>
 
@@ -50,6 +57,7 @@ const Nickname = () => {
           type="default"
           onClick={handleNext}
           className="bg-[#4B9B6E] hover:bg-[#1B5E3A] text-white border-none shadow-md"
+          //disabled={!nickname.trim()}
         >
           Next
         </Button>

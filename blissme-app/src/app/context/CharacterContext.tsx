@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
@@ -34,6 +40,9 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const url = process.env.REACT_APP_API_URL;
   const nickname = useSelector((state: RootState) => state.user.nickname);
+  const selectId = useSelector(
+    (state: RootState) => state.user.virtualCharacter
+  );
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -50,14 +59,26 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
 
     fetchCharacters();
   }, [url]);
-  const selectId = useSelector(
-    (state: RootState) => state.user.virtualCharacter
-  );
 
-  const selectedCharacter = characters.find(
-    (char) => char.characterId === selectId
-  );
-  console.log("chatHistory", selectedCharacter);
+  const selectedCharacter = useMemo(() => {
+    if (!characters.length || selectId == null) {
+      console.warn("Characters not loaded or selectId is null");
+      return undefined;
+    }
+
+    console.log("All characters:", characters);
+    console.log("Redux selectId:", selectId);
+
+    const result = characters.find(
+      (char) => Number(char.characterId) === Number(selectId)
+    );
+
+    console.log("Selected character result:", result);
+    return result;
+  }, [characters, selectId]);
+
+  if (loading) return null; // Or you can return a spinner
+
   return (
     <CharacterContext.Provider
       value={{

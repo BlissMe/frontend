@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
 import { setUserPreferences } from "../../redux/actions/userActions";
 import { RootState, AppDispatch } from "../../redux/store";
+import { useNotification } from "../context/notificationContext";
 
 const InputMode = () => {
   const [selectedMode, setSelectedMode] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { openNotification } = useNotification();
 
   const nickname = useSelector((state: RootState) => state.user.nickname);
   const virtualCharacter = useSelector(
@@ -20,7 +22,7 @@ const InputMode = () => {
 
   const handleNext = () => {
     if (!selectedMode) {
-      alert("Please select the input mode!");
+      openNotification("warning", "Please select the input mode!");
       return;
     }
 
@@ -34,14 +36,13 @@ const InputMode = () => {
 
     dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode));
 
-    console.log("Input mode selected:", selectedMode);
+    openNotification("success", "Input mode selected successfully!");
 
     if (selectedMode === "Voice") {
       navigate("/chat/voice", { replace: true });
     } else if (selectedMode === "Text") {
       navigate("/mode/mood");
     }
-    // navigate('/input-mode');
   };
 
   return (

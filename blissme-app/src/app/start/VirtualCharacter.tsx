@@ -7,9 +7,9 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
 import { RootState } from "../../redux/store";
+import { useNotification } from "../context/notificationContext";
 
 const url = process.env.REACT_APP_API_URL;
-console.log("API URL:", url);
 
 interface Character {
   _id: string;
@@ -28,6 +28,7 @@ const VirtualCharacter = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { openNotification } = useNotification();
 
   //Get nickname from Redux
   const nickname = useSelector((state: RootState) => state.user.nickname);
@@ -50,7 +51,7 @@ const VirtualCharacter = () => {
 
   const handleNext = () => {
     if (!selectedCharacterId) {
-      alert("Please select a virtual character!");
+      openNotification("warning", "Please select a virtual character!");
       return;
     }
 
@@ -61,8 +62,7 @@ const VirtualCharacter = () => {
         inputMode: "",
       })
     );
-
-    console.log("Virtual character selected:", selectedCharacterId);
+    openNotification("success", "Virtual character selected successfully");
     navigate("/mode/input-mode");
   };
 

@@ -7,6 +7,7 @@ import Avatar from "./Avatar";
 import { useCharacterContext } from "../../app/context/CharacterContext";
 import { AuthContext } from "../../app/context/AuthContext";
 import { endCurrentSession } from "../../services/ChatMessageService";
+import { useNotification } from "../../app/context/notificationContext";
 
 const ProfileDropdown: React.FC = () => {
   const { nickname } = useCharacterContext();
@@ -20,15 +21,17 @@ const ProfileDropdown: React.FC = () => {
     setChatHistory,
     setIsSessionEnded,
   } = useContext(AuthContext);
+  const { openNotification } = useNotification();
 
   const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
     if (key === "3") {
       if (sessionID) {
         const res = await endCurrentSession(sessionID);
-        if (res.success) {
-          message.success("Session ended and summary saved.");
+        if (!res.success) {
+          openNotification("warning", "Logout failed. Please try again.");
+          return;
         } else {
-          message.warning("Failed to end session.");
+          openNotification("success", "Logout successfully");
         }
       }
 
@@ -38,6 +41,7 @@ const ProfileDropdown: React.FC = () => {
       setSessionID("");
       setToken(null);
       localStorage.removeItem("token");
+      localStorage.removeItem("reduxState");
 
       navigate("/login");
     } else {

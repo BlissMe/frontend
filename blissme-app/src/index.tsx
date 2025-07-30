@@ -7,6 +7,7 @@ import { AuthContextProvider } from "./app/context/AuthContext";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { CharacterProvider } from "./app/context/CharacterContext";
+import { NotificationProvider } from "./app/context/notificationContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -16,7 +17,9 @@ root.render(
     <Provider store={store}>
       <AuthContextProvider>
         <CharacterProvider>
+          <NotificationProvider>
           <App />
+          </NotificationProvider>
         </CharacterProvider>
       </AuthContextProvider>
     </Provider>

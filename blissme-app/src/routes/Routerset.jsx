@@ -22,7 +22,7 @@ const Routerset = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<SignUp />} />
+      <Route path="/" element={<Landing />} />
 
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<SignIn />} />

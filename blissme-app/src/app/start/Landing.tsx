@@ -52,22 +52,12 @@ const Landing = () => {
                 style={logoStyle}
 
             />
-            {/* <h1
-                style={{
-                    textAlign: 'center',
-                    fontFamily: 'merienda',
-                    color: 'black',
-                    fontSize: '20px',
-                    fontWeight: '600'
-                }}
-            >
-                Welcome to BlissMe App! BlissMe is your AI-powered companion for mental well-being, here to listen, support, and guide you, anytime.
-            </h1> */}
-            <div className="flex justify-center mt-4">
+
+            <div className="flex justify-center mt-4 z-10">
                 <Button
                     type="primary"
                     htmlType="submit"
-                    className="w-full md:w-[150px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                    className="w-full md:w-[180px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
                     loading={loading}
                     onClick={() => { setLoading(true); Navigate('/home'); }}
                 >

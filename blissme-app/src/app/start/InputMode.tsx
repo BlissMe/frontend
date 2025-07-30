@@ -7,8 +7,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPreferencesSuccess } from '../../redux/reducers/userReducer';
 import { setUserPreferences } from '../../redux/actions/userActions';
 import { RootState, AppDispatch } from '../../redux/store';
+import { LayeredBackground } from 'animated-backgrounds';
 
 const InputMode = () => {
+    const layers = [
+        {
+            animation: 'starryNight',
+            opacity: 0.7,
+            blendMode: 'normal',
+            speed: 0.3
+        },
+        {
+            animation: 'cosmicDust',
+            opacity: 0.4,
+            blendMode: 'screen',
+            speed: 0.7
+        },
+        {
+            animation: 'auroraBorealis',
+            opacity: 0.3,
+            blendMode: 'overlay',
+            speed: 1.1
+        }
+    ];
+
     const [selectedMode, setSelectedMode] = useState<string | null>(null);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -42,6 +64,9 @@ const InputMode = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center relative">
+            <div className="absolute inset-0 z-10">
+                <LayeredBackground layers={layers} />
+            </div>
             <div className="absolute inset-0 z-0 bg-cover bg-center opacity-20 bg-[#BDF2D0]"></div>
 
             <div className="z-10 bg-[#BDF2D0] bg-opacity-10 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20 relative">
@@ -86,7 +111,7 @@ const InputMode = () => {
                 <Button
                     type="default"
                     onClick={handleNext}
-                    className="bg-[#4B9B6E] hover:bg-[#1B5E3A] text-white border-none shadow-md"
+                    className="bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:bg-[#1B5E3A] text-white border-none shadow-md"
                 >
                     Start
                 </Button>

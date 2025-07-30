@@ -15,33 +15,6 @@ import bg7 from '../../assets/images/b7.jpg';
 const { Text } = Typography;
 
 const Login = () => {
-
-    // const layers = [
-    //     { animation: 'starryNight', opacity: 0.8, blendMode: 'normal', speed: 0.5 },
-    //     { animation: 'cosmicDust', opacity: 0.6, blendMode: 'screen', speed: 1.0 },
-    //     { animation: 'auroraBorealis', opacity: 0.4, blendMode: 'overlay', speed: 1.5 }
-    // ];
-    // const cosmicScene = [
-    //     {
-    //         animation: 'starryNight',
-    //         opacity: 0.8,
-    //         blendMode: 'normal',
-    //         speed: 0.3
-    //     },
-    //     {
-    //         animation: 'cosmicDust',
-    //         opacity: 0.6,
-    //         blendMode: 'screen',
-    //         speed: 0.8
-    //     },
-    //     {
-    //         animation: 'auroraBorealis',
-    //         opacity: 0.4,
-    //         blendMode: 'overlay',
-    //         speed: 1.2
-    //     }
-    // ];
-
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { setToken } = useContext(AuthContext);

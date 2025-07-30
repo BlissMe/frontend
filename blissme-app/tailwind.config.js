@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         Roboto: ["Roboto", "sans-serif"],
+        merienda: ['Merienda', 'cursive'],
       },
       colors: {
         textColorOne: "#5F5757",
@@ -69,7 +70,8 @@ export default {
       },
       animation: {
         wiggle: 'wiggle 0.5s ease-in-out infinite',
-      }
+      },
+
 
     },
     plugins: [],

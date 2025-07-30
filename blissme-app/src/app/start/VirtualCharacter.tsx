@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Button } from "antd";
 import logo from "../../assets/images/logo.png";
 import heart from "../../assets/images/heart.png";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
-import { RootState } from "../../redux/store";
-import { useNotification } from "../context/notificationContext";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPreferencesSuccess } from '../../redux/reducers/userReducer';
+import { RootState } from '../../redux/store';
+import { LayeredBackground } from 'animated-backgrounds';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -20,11 +20,30 @@ interface Character {
 }
 
 const VirtualCharacter = () => {
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(
-    null
-  );
-  const [loading, setLoading] = useState<boolean>(true);
+    const layers = [
+        {
+            animation: 'starryNight',
+            opacity: 0.7,
+            blendMode: 'normal',
+            speed: 0.3
+        },
+        {
+            animation: 'cosmicDust',
+            opacity: 0.4,
+            blendMode: 'screen',
+            speed: 0.7
+        },
+        {
+            animation: 'auroraBorealis',
+            opacity: 0.3,
+            blendMode: 'overlay',
+            speed: 1.1
+        }
+    ];
+
+    const [characters, setCharacters] = useState<Character[]>([]);
+    const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -76,6 +95,17 @@ const VirtualCharacter = () => {
             className="w-32 h-10 object-contain"
           />
         </div>
+    return (
+        <div className="min-h-screen flex items-center justify-center relative">
+            <div className="absolute inset-0 z-10">
+                <LayeredBackground layers={layers} />
+            </div>
+            <div className="absolute inset-0 z-0 bg-cover bg-center opacity-20 bg-[#BDF2D0]"></div>
+
+            <div className="z-10 bg-[#BDF2D0] bg-opacity-10 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20 relative">
+                <div className="flex flex-col items-center mb-0">
+                    <img src={logo} alt="BlissMe Logo" className="w-32 h-10 object-contain" />
+                </div>
 
         <h3 className="text-black text-xl md:text-2xl mb-2">
           Welcome to BlissMe App
@@ -135,6 +165,16 @@ const VirtualCharacter = () => {
       </div>
     </div>
   );
+                <Button
+                    type="default"
+                    onClick={handleNext}
+                    className="bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:bg-[#1B5E3A] text-white border-none shadow-md"
+                >
+                    Next
+                </Button>
+            </div>
+        </div>
+    );
 };
 
 export default VirtualCharacter;

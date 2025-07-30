@@ -41,6 +41,7 @@ const ProfileDropdown: React.FC = () => {
       setSessionID("");
       setToken(null);
       localStorage.removeItem("token");
+      localStorage.removeItem("reduxState");
 
       navigate("/login");
     } else {

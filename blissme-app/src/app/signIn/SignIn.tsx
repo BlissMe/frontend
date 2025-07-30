@@ -8,6 +8,9 @@ import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import { useNotification } from "../context/notificationContext";
 import { assets } from "../../assets/assets";
+import { useDispatch } from "react-redux";
+import { getUserPreferences } from "../../redux/actions/userActions";
+import { AppDispatch } from "../../redux/store";
 
 const { Text } = Typography;
 
@@ -17,6 +20,7 @@ const SignIn: React.FC = () => {
   const { setToken } = useContext(AuthContext);
   const { openNotification } = useNotification();
 
+const dispatch = useDispatch<AppDispatch>(); 
   const onFinish = async (values: any) => {
     try {
       setLoading(true);
@@ -27,17 +31,25 @@ const SignIn: React.FC = () => {
       };
 
       const response = await userSignInService(userData);
+      console.log("re", response);
 
       if (response.message === "Login successful") {
         openNotification("success", "Login Successful", "Welcome back!");
+
+        // Set token in memory and storage
         setToken(response.token);
         setLocalStorageData("token", response.token);
+
+        // ✅ Fetch user preferences
+        await dispatch(getUserPreferences());
+
+        // ✅ Navigate after preferences are loaded
         navigate("/mode/input-mode", { replace: true });
       } else {
         openNotification(
           "error",
           "Login Failed",
-          response.message || "Login failed.Please try again later"
+          response.message || "Login failed. Please try again later"
         );
       }
     } catch (error: any) {
@@ -53,6 +65,7 @@ const SignIn: React.FC = () => {
       setLoading(false);
     }
   };
+
   const googleAuth = () => {
     window.open(`http://localhost:8080/auth/google`, "_self");
   };

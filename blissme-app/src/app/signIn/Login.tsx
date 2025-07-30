@@ -11,40 +11,66 @@ import { userSignInService } from "../../services/UserService";
 import MessageBubble from '../../components/Background/MessageBubble';
 
 import bg7 from '../../assets/images/b7.jpg';
-
+import { useNotification } from "../context/notificationContext";
+import { getUserPreferences } from "../../redux/actions/userActions";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
 const { Text } = Typography;
 
 const Login = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { setToken } = useContext(AuthContext);
-    const onFinish = async (values: any) => {
+     const { openNotification } = useNotification();
+     const dispatch = useDispatch<AppDispatch>(); 
+     
+     const onFinish = async (values: any) => {
         try {
-            setLoading(true);
-
-            const userData = {
-                email: values.email,
-                password: values.password,
-            };
-
-            const response = await userSignInService(userData);
-
-            if (response.message) {
-                message.success("Login successful!");
-                setToken(response?.token);
-                setLocalStorageData("token", response?.token);
-                navigate("/input-mode", { replace: true });
-            } else {
-                message.error(response.message || "Login failed. Please try again.");
-            }
-        } catch (error) {
-            message.error("Something went wrong. Please try again later.");
-            console.error(error);
+          setLoading(true);
+    
+          const userData = {
+            email: values.email,
+            password: values.password,
+          };
+    
+          const response = await userSignInService(userData);
+          console.log("re", response);
+    
+          if (response.message === "Login successful") {
+            openNotification("success", "Login Successful", "Welcome back!");
+    
+            // Set token in memory and storage
+            setToken(response.token);
+            setLocalStorageData("token", response.token);
+    
+            // ✅ Fetch user preferences
+            await dispatch(getUserPreferences());
+    
+            // ✅ Navigate after preferences are loaded
+            navigate("/mode/input-mode", { replace: true });
+          } else {
+            openNotification(
+              "error",
+              "Login Failed",
+              response.message || "Login failed. Please try again later"
+            );
+          }
+        } catch (error: any) {
+          console.error("Login error:", error);
+    
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            "Something went wrong. Please try again later.";
+    
+          openNotification("error", "Login Failed", errorMessage);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
-    };
-
+      };
+const googleAuth = () => {
+    window.open(`http://localhost:8080/auth/google`, "_self");
+  };
 
     return (
         <div

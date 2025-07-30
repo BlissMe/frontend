@@ -43,7 +43,7 @@ const ProfileDropdown: React.FC = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("reduxState");
 
-      navigate("/login");
+      navigate("/sign-in");
     } else {
       message.info(`Clicked on item ${key}`);
     }

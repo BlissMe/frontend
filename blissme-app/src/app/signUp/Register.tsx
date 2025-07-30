@@ -1,7 +1,5 @@
-import { AnimatedBackground, LayeredBackground } from 'animated-backgrounds';
-import React, { useContext, useState, useRef } from "react";
+import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import signup from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography, message, Modal } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { assets } from "../../assets/assets";

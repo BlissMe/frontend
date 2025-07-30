@@ -1,11 +1,7 @@
-import { AnimatedBackground, LayeredBackground } from 'animated-backgrounds';
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import signup from "../../assets/images/signup.jpg";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
-import { assets } from "../../assets/assets";
-import { userSignUpService } from "../../services/UserService";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
@@ -20,31 +16,31 @@ const { Text } = Typography;
 
 const Login = () => {
 
-    const layers = [
-        { animation: 'starryNight', opacity: 0.8, blendMode: 'normal', speed: 0.5 },
-        { animation: 'cosmicDust', opacity: 0.6, blendMode: 'screen', speed: 1.0 },
-        { animation: 'auroraBorealis', opacity: 0.4, blendMode: 'overlay', speed: 1.5 }
-    ];
-    const cosmicScene = [
-        {
-            animation: 'starryNight',
-            opacity: 0.8,
-            blendMode: 'normal',
-            speed: 0.3
-        },
-        {
-            animation: 'cosmicDust',
-            opacity: 0.6,
-            blendMode: 'screen',
-            speed: 0.8
-        },
-        {
-            animation: 'auroraBorealis',
-            opacity: 0.4,
-            blendMode: 'overlay',
-            speed: 1.2
-        }
-    ];
+    // const layers = [
+    //     { animation: 'starryNight', opacity: 0.8, blendMode: 'normal', speed: 0.5 },
+    //     { animation: 'cosmicDust', opacity: 0.6, blendMode: 'screen', speed: 1.0 },
+    //     { animation: 'auroraBorealis', opacity: 0.4, blendMode: 'overlay', speed: 1.5 }
+    // ];
+    // const cosmicScene = [
+    //     {
+    //         animation: 'starryNight',
+    //         opacity: 0.8,
+    //         blendMode: 'normal',
+    //         speed: 0.3
+    //     },
+    //     {
+    //         animation: 'cosmicDust',
+    //         opacity: 0.6,
+    //         blendMode: 'screen',
+    //         speed: 0.8
+    //     },
+    //     {
+    //         animation: 'auroraBorealis',
+    //         opacity: 0.4,
+    //         blendMode: 'overlay',
+    //         speed: 1.2
+    //     }
+    // ];
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);

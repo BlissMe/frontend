@@ -134,6 +134,14 @@ body {
   }
 }
 
+.ant-notification {
+  z-index: 9999 !important;
+}
+.ant-notification-notice-message {
+  display: block !important;
+  color: #000 !important;
+  font-weight: bold;
+}
 canvas.animated-background-canvas {
   position: fixed !important;
   top: 0;

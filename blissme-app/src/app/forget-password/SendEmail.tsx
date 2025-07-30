@@ -3,6 +3,8 @@ import axios from "axios";
 import signin from "../../assets/images/signin.png";
 import { Button, Form, Input, Typography, message } from "antd";
 import { MailOutlined } from "@ant-design/icons";
+import { useNotification } from "../context/notificationContext";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -11,6 +13,8 @@ const SendEmail: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const { openNotification } = useNotification();
 
   const handleSubmit = async (values: { email: string }) => {
     setIsLoading(true);
@@ -19,14 +23,20 @@ const SendEmail: React.FC = () => {
         "http://localhost:8080/authuser/forgot-password",
         { email: values.email }
       );
-
+      openNotification("success", "Reset successful", response.data.message);
       message.success(response.data.message, 5);
+      navigate("/login");
       setIsSubmitted(true);
       setIsButtonDisabled(true);
       form.resetFields();
     } catch (err: any) {
       console.error("Full error:", err);
       const errorMsg = err.response?.data?.message || "Something went wrong";
+      openNotification(
+        "error",
+        "Unable to reset your password",
+        errorMsg || "Something went wrong. Please try again."
+      );
       message.error(String(errorMsg), 5);
     } finally {
       setIsLoading(false);

@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { Button } from 'antd';
+import { useState } from "react";
+import { Button } from "antd";
 import logo from "../../assets/images/logo.png";
 import heart from "../../assets/images/heart.png";
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPreferencesSuccess } from '../../redux/reducers/userReducer';
-import { setUserPreferences } from '../../redux/actions/userActions';
-import { RootState, AppDispatch } from '../../redux/store';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
+import { setUserPreferences } from "../../redux/actions/userActions";
+import { RootState, AppDispatch } from "../../redux/store";
+import { useNotification } from "../context/notificationContext";
 import { LayeredBackground } from 'animated-backgrounds';
 
 const InputMode = () => {
@@ -34,34 +35,39 @@ const InputMode = () => {
     const [selectedMode, setSelectedMode] = useState<string | null>(null);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
+    const { openNotification } = useNotification();
 
-    const nickname = useSelector((state: RootState) => state.user.nickname);
-    const virtualCharacter = useSelector((state: RootState) => state.user.virtualCharacter);
+  const nickname = useSelector((state: RootState) => state.user.nickname);
+  const virtualCharacter = useSelector(
+    (state: RootState) => state.user.virtualCharacter
+  );
 
-    const handleNext = () => {
-        if (!selectedMode) {
-            alert("Please select the input mode!");
-            return;
-        }
+const handleNext = () => {
+    if (!selectedMode) {
+      openNotification("warning", "Please select the input mode!");
+      return;
+    }
 
-        dispatch(setPreferencesSuccess({
-            nickname,
-            virtualCharacter,
-            inputMode: selectedMode
-        }));
+    dispatch(
+      setPreferencesSuccess({
+        nickname,
+        virtualCharacter,
+        inputMode: selectedMode,
+      })
+    );
 
-        dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode));
+    dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode));
 
-        console.log("Input mode selected:", selectedMode);
+    openNotification("success", "Input mode selected successfully!");
 
-        if (selectedMode === "Voice") {
-            navigate("/chat/voice", { replace: true });
-        } else if (selectedMode === "Text") {
-            navigate("/mood");
-        }
-        // navigate('/input-mode');
-    };
+    if (selectedMode === "Voice") {
+      navigate("/chat/voice", { replace: true });
+    } else if (selectedMode === "Text") {
+      navigate("/mode/mood");
+    }
+  };
 
+        
     return (
         <div className="min-h-screen flex items-center justify-center relative">
             <div className="absolute inset-0 z-10">
@@ -117,7 +123,12 @@ const InputMode = () => {
                 </Button>
             </div>
         </div>
+
     );
+
+   
+
+  
 };
 
 export default InputMode;

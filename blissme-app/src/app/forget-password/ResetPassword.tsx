@@ -4,6 +4,8 @@ import axios from "axios";
 import { Form, Input, Button, Typography, Alert, message } from "antd";
 import signin from "../../assets/images/signin.png";
 import { LockOutlined } from "@ant-design/icons";
+import { useNotification } from "../context/notificationContext";
+import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 
 const { Text } = Typography;
 
@@ -18,6 +20,7 @@ const ResetPassword: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
   const [form] = Form.useForm();
+  const { openNotification } = useNotification();
 
   useEffect(() => {
     setIsButtonDisabled(newPassword.trim().length === 0);
@@ -35,6 +38,7 @@ const ResetPassword: React.FC = () => {
           newPassword,
         }
       );
+      openNotification("success", "Reset successful", res.data.message);
       message.success(res.data.message, 5);
       setNewPassword("");
       setIsButtonDisabled(true);
@@ -42,6 +46,11 @@ const ResetPassword: React.FC = () => {
     } catch (err: any) {
       console.error("Full error:", err);
       const errorMsg = err.response?.data?.message || "Something went wrong";
+       openNotification(
+        "error",
+        "Unable to reset your password",
+        errorMsg || "Something went wrong. Please try again."
+      );
       message.error(String(errorMsg), 5);
     } finally {
       setIsLoading(false);
@@ -74,9 +83,9 @@ const ResetPassword: React.FC = () => {
             <Form.Item
               name="password"
               label="New Password *"
-              rules={[
-                { required: true, message: "Please enter your new password!" },
-              ]}
+              className="custom-label"
+              rules={[{ validator: passwordFieldValidation }]}
+             
             >
               <Input.Password
                 prefix={<LockOutlined />}

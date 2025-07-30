@@ -12,6 +12,7 @@ import { useContext } from "react";
 import SendEmail from "../app/forget-password/SendEmail";
 import ResetPassword from "../app/forget-password/ResetPassword";
 import Mood from "../app/start/Mood";
+import ModelLayout from "../app/layouts/ModelLayout";
 import Register from "../app/signUp/Register";
 import Login from "../app/signIn/Login";
 import Landing from "../app/start/Landing";
@@ -37,10 +38,13 @@ const Routerset = () => {
 
       {token !== null && token !== "" ? (
         <>
-          <Route path="/nick-name" element={<Nickname />} />
-          <Route path="/virtual-character" element={<VirtualCharacter />} />
-          <Route path="/input-mode" element={<InputMode />} />
-          <Route path="/mood" element={<Mood />} />
+          <Route path="/mode" element={<ModelLayout />}>
+            <Route path="nick-name" element={<Nickname />} />
+            <Route path="virtual-character" element={<VirtualCharacter />} />
+            <Route path="input-mode" element={<InputMode />} />
+            <Route path="mood" element={<Mood />} />
+          </Route>
+
           <Route path="/chat" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />

@@ -125,19 +125,6 @@ const ResetPassword: React.FC = () => {
       </div>
     </div>
 
-    //         <Form.Item>
-    //           <div className="flex justify-center">
-    //             <Button
-    //               type="primary"
-    //               htmlType="submit"
-    //               disabled={isButtonDisabled}
-    //               className={`w-full md:w-[250px] h-[40px] text-base md:text-md rounded-full font-bold text-white ${
-    //                 isButtonDisabled
-    //                   ? "bg-gray-400 cursor-not-allowed"
-    //                   : "!bg-buttonColor hover:!bg-buttonColor"
-    //               }`}
-    //               loading={isLoading}
-
   );
 };
 

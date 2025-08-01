@@ -9,6 +9,7 @@ import {
   Upload,
   Modal,
   message,
+  Divider,
 } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import {
@@ -183,8 +184,7 @@ const Settings: React.FC = () => {
       navigate("/sign-in");
     } catch (err: any) {
       console.error("Delete account error:", err);
-      const errorMsg =
-        err.response?.data?.message || "Something went wrong";
+      const errorMsg = err.response?.data?.message || "Something went wrong";
       openNotification("error", "Delete Failed", errorMsg);
       message.error(errorMsg, 5);
     } finally {
@@ -197,100 +197,51 @@ const Settings: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6">Settings</h1>
       <Tabs defaultActiveKey="1">
         <TabPane tab="Profile" key="1">
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSave}
-            initialValues={{ nickname: nickname || "", email: email }}
-          >
-            <Form.Item label="Avatar">
-              <Upload showUploadList={false} beforeUpload={() => false}>
-                <Avatar size={64} src="https://i.pravatar.cc/150?img=4" />
-                <Button className="ml-4" icon={<UploadOutlined />}>
-                  Upload
-                </Button>
-              </Upload>
-            </Form.Item>
-
-            <Form.Item
-              name="nickname"
-              label="Nick Name"
-              rules={[{ required: true, message: "Please enter your nickname" }]}
+          <div className="max-w-md">
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSave}
+              initialValues={{ nickname: nickname || "", email: email }}
             >
-              <Input />
-            </Form.Item>
+              <Form.Item label="Avatar">
+                <Upload showUploadList={false} beforeUpload={() => false}>
+                  <Avatar size={64} src="https://i.pravatar.cc/150?img=4" />
+                  <Button className="ml-4" icon={<UploadOutlined />}>
+                    Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
 
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: "Please enter your email" },
-                { type: "email", message: "Please enter a valid email" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
+              <Form.Item
+                name="nickname"
+                label="Nick Name"
+                rules={[
+                  { required: true, message: "Please enter your nickname" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
 
-            <Button type="primary" htmlType="submit" className="mt-2">
-              Save Changes
-            </Button>
-          </Form>
-        </TabPane>
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[
+                  { required: true, message: "Please enter your email" },
+                  { type: "email", message: "Please enter a valid email" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
 
-        <TabPane tab="Notifications" key="2">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-300">
-                General Notifications
-              </span>
-              <Switch
-                checked={notifications.general}
-                onChange={(value) =>
-                  setNotifications({ ...notifications, general: value })
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-300">
-                Therapy Reminders
-              </span>
-              <Switch
-                checked={notifications.therapyReminders}
-                onChange={(value) =>
-                  setNotifications({
-                    ...notifications,
-                    therapyReminders: value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 dark:text-gray-300">
-                Weekly Progress Reports
-              </span>
-              <Switch
-                checked={notifications.progressReports}
-                onChange={(value) =>
-                  setNotifications({
-                    ...notifications,
-                    progressReports: value,
-                  })
-                }
-              />
-            </div>
+              <Button type="primary" htmlType="submit" className="mt-2">
+                Save Changes
+              </Button>
+            </Form>
           </div>
         </TabPane>
 
-        <TabPane tab="Appearance" key="3">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-gray-700 dark:text-gray-300">Dark Mode</span>
-            <Switch checked={isDarkMode} onChange={setIsDarkMode} />
-          </div>
-        </TabPane>
-
-        <TabPane tab="Security" key="4">
+        <TabPane tab="Security" key="2">
           <div className="max-w-md">
             <Title level={4} className="!mb-4">
               Change Password
@@ -352,8 +303,25 @@ const Settings: React.FC = () => {
               </Form.Item>
             </Form>
           </div>
+          <Divider className="bg-black mt-4" />
 
-          <div className="mt-8">
+          <div className="mt-4">
+            <Title level={4} className="!mb-4">
+              Delete Account
+            </Title>
+
+            <p className="text-sm text-black mb-2 max-w-xl">
+              Deleting your account will permanently erase all your data from
+              our system. This includes your login information, therapy
+              progress, saved reports, and any preferences or settings you've
+              configured.
+            </p>
+
+            <p className="text-sm text-black mb-4 max-w-xl">
+              If you're experiencing issues, please contact our support team
+              first. We may be able to help without account deletion.
+            </p>
+
             <Button danger onClick={() => setIsDeleteModalVisible(true)}>
               Delete Account
             </Button>
@@ -361,33 +329,34 @@ const Settings: React.FC = () => {
         </TabPane>
       </Tabs>
 
-     <Modal
-  title="Are you sure you want to delete your account?"
-  visible={isDeleteModalVisible}
-  onOk={handleDeleteAccount}
-  onCancel={() => setIsDeleteModalVisible(false)}
-  okText="Yes, delete"
-  okType="danger"
-  cancelText="Cancel"
-  centered
->
-  <div className="space-y-3">
-    <p className="text-red-600 font-medium">
-      ⚠️ This action is irreversible. Once you delete your account, all associated data will be permanently removed.
-    </p>
+      <Modal
+        title="Are you sure you want to delete your account?"
+        visible={isDeleteModalVisible}
+        onOk={handleDeleteAccount}
+        onCancel={() => setIsDeleteModalVisible(false)}
+        okText="Yes, delete"
+        okType="danger"
+        cancelText="Cancel"
+        centered
+      >
+        <div className="space-y-3">
+          <p className="text-red-600 font-medium">
+            ⚠️ This action is irreversible. Once you delete your account, all
+            associated data will be permanently removed.
+          </p>
 
-    <ul className="list-disc list-inside text-sm text-gray-700">
-      <li>Your profile and login credentials</li>
-      <li>All saved therapy progress and reports</li>
-      <li>Any personalized recommendations and history</li>
-    </ul>
+          <ul className="list-disc list-inside text-sm text-gray-700">
+            <li>Your profile and login credentials</li>
+            <li>All saved therapy progress and reports</li>
+            <li>Any personalized recommendations and history</li>
+          </ul>
 
-    <p className="text-sm text-gray-600 mt-2">
-      If you’re sure, click “Yes, delete” to permanently remove your account.
-    </p>
-  </div>
-</Modal>
-
+          <p className="text-sm text-gray-600 mt-2">
+            If you’re sure, click “Yes, delete” to permanently remove your
+            account.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 };

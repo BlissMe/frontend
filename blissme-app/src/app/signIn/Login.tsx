@@ -41,6 +41,8 @@ const Login = () => {
 
         setToken(response.token);
         setLocalStorageData("token", response.token);
+        setLocalStorageData("user", response.email);
+        setLocalStorageData("userId", response?.userID);
 
         await dispatch(getUserPreferences());
 
@@ -134,7 +136,10 @@ const Login = () => {
                 label="Password "
                 className="custom-label"
                 required={false}
-                rules={[{ validator: passwordFieldValidation }]}
+                rules={[
+                  { required: true, message: "Password is required!" },
+                  { validator: passwordFieldValidation },
+                ]}
               >
                 <Input.Password
                   prefix={<LockOutlined />}

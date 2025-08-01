@@ -73,6 +73,8 @@ const Register = () => {
         openNotification("success", "Signup Successful", "Welcome!");
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
+        setLocalStorageData("user", response?.email);
+        setLocalStorageData("userId", response?.userID);
         navigate("/mode/nick-name", { replace: true });
       } else {
         openNotification(
@@ -155,7 +157,10 @@ const Register = () => {
                 name="password"
                 label="Password"
                 className="custom-label"
-                rules={[{ validator: passwordFieldValidation, required: true }]}
+                rules={[
+                  { required: true, message: "Password is required!" },
+                  { validator: passwordFieldValidation },
+                ]}
               >
                 <Input.Password
                   prefix={<LockOutlined />}

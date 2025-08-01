@@ -17,6 +17,7 @@ import Register from "../app/signUp/Register";
 import Login from "../app/signIn/Login";
 import Landing from "../app/start/Landing";
 import Home from "../app/start/Home";
+import Setting from "../app/settings/Setting";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -48,7 +49,10 @@ const Routerset = () => {
           <Route path="/chat" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
+            <Route path="setting" element={<Setting />} />
+
           </Route>
+
         </>
       ) : (
         <Route path="*" element={<Navigate to="/login" />} />

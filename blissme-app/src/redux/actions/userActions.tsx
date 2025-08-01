@@ -9,6 +9,9 @@ import {
   getPreferencesFailure,
   getPreferencesSuccess,
   getPreferencesRequest,
+  updatePreferencesRequest,
+  updatePreferencesSuccess,
+  updatePreferencesFailure,
 } from "../reducers/userReducer";
 import { getLocalStoragedata } from "../../helpers/Storage";
 
@@ -100,3 +103,43 @@ export const getUserPreferences = () => async (dispatch: AppDispatch) => {
     );
   }
 };
+
+export const updateUserPreferences =
+  (nickname?: string, virtualCharacter?: number, inputMode?: string) =>
+  async (dispatch: AppDispatch) => {
+    try {
+      const token = getLocalStoragedata("token");
+
+      dispatch(updatePreferencesRequest());
+
+      const payload: any = {};
+      if (nickname !== undefined) payload.nickname = nickname;
+      if (virtualCharacter !== undefined) payload.virtualCharacter = virtualCharacter;
+      if (inputMode !== undefined) payload.inputMode = inputMode;
+
+      const response = await axios.put(
+        `${url}/update-preferences`, 
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(
+        updatePreferencesSuccess({
+          nickname: payload.nickname ?? "",
+          virtualCharacter: payload.virtualCharacter ?? 1,
+          inputMode: payload.inputMode ?? "",
+        })
+      );
+    } catch (error: any) {
+      dispatch(
+        updatePreferencesFailure(
+          error?.response?.data?.message || "Error occurred while updating preferences"
+        )
+      );
+    }
+  };
+

@@ -14,7 +14,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/chat/text" className="flex items-center gap-2 hover:text-blue-400">
+          <Link to="/chat/setting" className="flex items-center gap-2 hover:text-blue-400">
             <SettingOutlined />
             Settings
           </Link>

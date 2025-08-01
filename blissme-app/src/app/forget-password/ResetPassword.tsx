@@ -46,7 +46,7 @@ const ResetPassword: React.FC = () => {
     } catch (err: any) {
       console.error("Full error:", err);
       const errorMsg = err.response?.data?.message || "Something went wrong";
-       openNotification(
+      openNotification(
         "error",
         "Unable to reset your password",
         errorMsg || "Something went wrong. Please try again."
@@ -84,8 +84,10 @@ const ResetPassword: React.FC = () => {
               name="password"
               label="New Password *"
               className="custom-label"
-              rules={[{ validator: passwordFieldValidation }]}
-             
+              rules={[
+                { required: true, message: "Please enter new password" },
+                { validator: passwordFieldValidation },
+              ]}
             >
               <Input.Password
                 prefix={<LockOutlined />}

@@ -77,7 +77,7 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
     return result;
   }, [characters, selectId]);
 
-  if (loading) return null; // Or you can return a spinner
+  //if (loading) return null; 
 
   return (
     <CharacterContext.Provider
@@ -104,4 +104,4 @@ const useCharacterContext = () => {
   return context;
 };
 
-export { CharacterProvider, useCharacterContext };
+export { CharacterProvider, useCharacterContext }; 

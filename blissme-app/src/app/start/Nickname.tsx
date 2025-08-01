@@ -53,7 +53,7 @@ const Nickname = () => {
       {/* Static background image layer */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center"
-        // style={{ backgroundImage: `url(${bg2})` }}
+      // style={{ backgroundImage: `url(${bg2})` }}
       />
 
       {/* Animated background layers on top */}
@@ -62,7 +62,7 @@ const Nickname = () => {
       </div>
 
       {/* Main content container */}
-      <div className="z-20 bg-[#BDF2D0] bg-opacity-10 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20">
+      <div className="z-20 bg-[#BDF2D0] bg-opacity-80 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20">
         <div className="flex flex-col items-center mb-0">
           <img src={logo} alt="BlissMe Logo" className="w-34 h-12" />
         </div>

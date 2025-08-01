@@ -23,7 +23,6 @@ import {
 import { useCharacterContext } from "../context/CharacterContext";
 import { useNotification } from "../context/notificationContext";
 import {
-  setUserPreferences,
   updateUserPreferences,
 } from "../../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -58,9 +57,7 @@ const Settings: React.FC = () => {
   const userId = Number(getLocalStoragedata("userId"));
   const { openNotification } = useNotification();
   const inputMode = useSelector((state: RootState) => state.user.inputMode);
-  const [selectedCharacterId, setSelectedCharacterId] = useState(
-    Number(getLocalStoragedata("selectedCharacterId"))
-  );
+  const selectedCharacterId = Number(getLocalStoragedata("selectedCharacterId"));
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -160,10 +157,8 @@ const Settings: React.FC = () => {
       setChangePwdVisible(false);
       pwdForm.resetFields();
     } catch (err: any) {
-      console.error("Full error:", err);
       const errorMsg = err.response?.data?.message || "Something went wrong";
       openNotification("error", "Change Failed", errorMsg);
-      message.error(errorMsg, 5);
     }
   };
 
@@ -179,14 +174,11 @@ const Settings: React.FC = () => {
       );
 
       openNotification("success", "Account Deleted", res.data.message);
-      message.success("Account deleted successfully");
       localStorage.clear();
       navigate("/sign-in");
     } catch (err: any) {
-      console.error("Delete account error:", err);
       const errorMsg = err.response?.data?.message || "Something went wrong";
       openNotification("error", "Delete Failed", errorMsg);
-      message.error(errorMsg, 5);
     } finally {
       setIsDeleteModalVisible(false);
     }
@@ -341,7 +333,7 @@ const Settings: React.FC = () => {
       >
         <div className="space-y-3">
           <p className="text-red-600 font-medium">
-            ⚠️ This action is irreversible. Once you delete your account, all
+            <ExclamationCircleOutlined/> This action is irreversible. Once you delete your account, all
             associated data will be permanently removed.
           </p>
 

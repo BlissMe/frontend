@@ -25,32 +25,33 @@ import {
   setUserPreferences,
   updateUserPreferences,
 } from "../../redux/actions/userActions";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import Title from "antd/es/typography/Title";
 import axios from "axios";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
+import { useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
-const { confirm } = Modal;
 
 interface ResetResponse {
   message: string;
 }
+
 const Settings: React.FC = () => {
   const { nickname } = useCharacterContext();
   const [form] = Form.useForm();
+  const [pwdForm] = Form.useForm();
   const token = getLocalStoragedata("token") || "";
   const dispatch = useDispatch<AppDispatch>();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [changePwdVisible, setChangePwdVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [notifications, setNotifications] = useState({
     general: true,
     therapyReminders: false,
     progressReports: true,
   });
-  const [changePwdVisible, setChangePwdVisible] = useState(false);
-  const [pwdForm] = Form.useForm();
 
   const [email, setEmail] = useState(getLocalStoragedata("user"));
   const userId = Number(getLocalStoragedata("userId"));
@@ -59,28 +60,14 @@ const Settings: React.FC = () => {
   const [selectedCharacterId, setSelectedCharacterId] = useState(
     Number(getLocalStoragedata("selectedCharacterId"))
   );
-  console.log(selectedCharacterId);
+  const navigate = useNavigate();
+
   useEffect(() => {
     form.setFieldsValue({
       nickname: nickname || "",
       email: email,
     });
   }, [nickname, email, form]);
-
-  const showDeleteConfirm = () => {
-    confirm({
-      title: "Are you sure you want to delete your account?",
-      icon: <ExclamationCircleOutlined />,
-      content: "This action cannot be undone.",
-      okText: "Yes, delete",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk() {
-        // TODO: Call API to delete account
-        message.success("Account deleted");
-      },
-    });
-  };
 
   const handleSave = async (values: any) => {
     const { nickname: newNickname, email: newEmail } = values;
@@ -150,38 +137,58 @@ const Settings: React.FC = () => {
         return;
       }
 
-      const token = getLocalStoragedata("token");
       if (!token) {
         message.error("You must be logged in to change your password.");
         return;
       }
 
-      try {
-        const res = await axios.post<ResetResponse>(
-          "http://localhost:8080/authuser/change-password",
-          {
-            currentPassword,
-            newPassword,
+      const res = await axios.post<ResetResponse>(
+        "http://localhost:8080/authuser/change-password",
+        {
+          currentPassword,
+          newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(res);
+        }
+      );
 
-        openNotification("success", "Password Changed", res.data.message);
-        setChangePwdVisible(false);
-        pwdForm.resetFields();
-      } catch (err: any) {
-        console.error("Full error:", err);
-        const errorMsg = err.response?.data?.message || "Something went wrong";
-        openNotification("error", "Change Failed", errorMsg);
-        message.error(String(errorMsg), 5);
-      }
-    } catch (error) {
-      // Form validation error already handled
+      openNotification("success", "Password Changed", res.data.message);
+      setChangePwdVisible(false);
+      pwdForm.resetFields();
+    } catch (err: any) {
+      console.error("Full error:", err);
+      const errorMsg = err.response?.data?.message || "Something went wrong";
+      openNotification("error", "Change Failed", errorMsg);
+      message.error(errorMsg, 5);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const res = await axios.delete<ResetResponse>(
+        "http://localhost:8080/authuser/delete-account",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      openNotification("success", "Account Deleted", res.data.message);
+      message.success("Account deleted successfully");
+      localStorage.clear();
+      navigate("/sign-in");
+    } catch (err: any) {
+      console.error("Delete account error:", err);
+      const errorMsg =
+        err.response?.data?.message || "Something went wrong";
+      openNotification("error", "Delete Failed", errorMsg);
+      message.error(errorMsg, 5);
+    } finally {
+      setIsDeleteModalVisible(false);
     }
   };
 
@@ -194,10 +201,7 @@ const Settings: React.FC = () => {
             form={form}
             layout="vertical"
             onFinish={handleSave}
-            initialValues={{
-              nickname: nickname || "",
-              email: email,
-            }}
+            initialValues={{ nickname: nickname || "", email: email }}
           >
             <Form.Item label="Avatar">
               <Upload showUploadList={false} beforeUpload={() => false}>
@@ -211,9 +215,7 @@ const Settings: React.FC = () => {
             <Form.Item
               name="nickname"
               label="Nick Name"
-              rules={[
-                { required: true, message: "Please enter your nickname" },
-              ]}
+              rules={[{ required: true, message: "Please enter your nickname" }]}
             >
               <Input />
             </Form.Item>
@@ -351,14 +353,41 @@ const Settings: React.FC = () => {
             </Form>
           </div>
 
-          {/* Delete Account */}
           <div className="mt-8">
-            <Button danger onClick={showDeleteConfirm}>
+            <Button danger onClick={() => setIsDeleteModalVisible(true)}>
               Delete Account
             </Button>
           </div>
         </TabPane>
       </Tabs>
+
+     <Modal
+  title="Are you sure you want to delete your account?"
+  visible={isDeleteModalVisible}
+  onOk={handleDeleteAccount}
+  onCancel={() => setIsDeleteModalVisible(false)}
+  okText="Yes, delete"
+  okType="danger"
+  cancelText="Cancel"
+  centered
+>
+  <div className="space-y-3">
+    <p className="text-red-600 font-medium">
+      ⚠️ This action is irreversible. Once you delete your account, all associated data will be permanently removed.
+    </p>
+
+    <ul className="list-disc list-inside text-sm text-gray-700">
+      <li>Your profile and login credentials</li>
+      <li>All saved therapy progress and reports</li>
+      <li>Any personalized recommendations and history</li>
+    </ul>
+
+    <p className="text-sm text-gray-600 mt-2">
+      If you’re sure, click “Yes, delete” to permanently remove your account.
+    </p>
+  </div>
+</Modal>
+
     </div>
   );
 };

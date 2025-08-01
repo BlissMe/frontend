@@ -40,8 +40,7 @@ const ProfileDropdown: React.FC = () => {
       setChatHistory([]);
       setSessionID("");
       setToken(null);
-      localStorage.removeItem("token");
-      localStorage.removeItem("reduxState");
+      localStorage.clear()
 
       navigate("/sign-in");
     } else {

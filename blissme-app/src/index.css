@@ -172,3 +172,7 @@ canvas.animated-background-canvas {
   margin-bottom: 12px;
   /* default is 24px; reduce as needed */
 }
+
+.Modal-root {
+  z-index: 9999 !important;
+}

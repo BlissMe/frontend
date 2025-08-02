@@ -6,6 +6,8 @@ import signin from "../../assets/images/signin.png";
 import { LockOutlined } from "@ant-design/icons";
 import { useNotification } from "../context/notificationContext";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
+import MessageBubble from "../../components/Background/MessageBubble";
+import bg from "../../assets/images/fpw.png";
 
 const { Text } = Typography;
 
@@ -58,68 +60,71 @@ const ResetPassword: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col md:flex-row">
-      <div className="block md:block w-full md:w-1/2 h-72 md:h-full">
-        <img
-          src={signin}
-          alt="Signin"
-          className="w-full h-full object-cover md:object-cover object-center"
-        />
-      </div>
-      <div className="flex flex-col gap-4 items-center justify-center w-full md:w-1/2 h-full px-4 md:py-8 bg-gradient-to-b from-[#FFFFFF] to-[#5FB57F]">
-        <div className="flex flex-col items-center w-full gap-2 md:mt-6">
-          <Text className="text-black text-2xl md:text-3xl font-semibold">
-            Reset Your Password
-          </Text>
-        </div>
+    <div
+      className="relative z-0 min-h-screen w-full overflow-hidden bg-cover bg-center"
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+      <div className="min-h-screen w-full flex items-center justify-center  relative z-10">
+        <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
+          {/* Message Bubble on top */}
+          <MessageBubble />
 
-        <div className="flex flex-col items-center w-full max-w-[400px]">
-          <Form
-            layout="vertical"
-            className="w-full"
-            onSubmitCapture={handleReset}
-            form={form}
-          >
-            <Form.Item
-              name="password"
-              label="New Password *"
-              className="custom-label"
-              rules={[
-                { required: true, message: "Please enter new password" },
-                { validator: passwordFieldValidation },
-              ]}
+          {/* Form & other content below */}
+          <div className="flex flex-col items-center w-full ">
+            <div className="flex flex-col items-center w-full gap-1 mb-2">
+              <Text
+                className="text-black text-2xl md:text-3xl font-semibold "
+                style={{ fontFamily: "Merienda, cursive" }}
+              >
+                Reset Your Password
+              </Text>
+
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center w *:-full ">
+            <Form
+              layout="vertical"
+              className="w-[380px] sm:w-[400px]"
+              onSubmitCapture={handleReset}
+              form={form}
             >
-              <Input.Password
-                prefix={<LockOutlined />}
-                size="large"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-                maxLength={60}
-              />
-            </Form.Item>
 
-            <Form.Item>
-              <div className="flex justify-center">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={isButtonDisabled}
-                  className={`w-full md:w-[250px] h-[40px] text-base md:text-md rounded-full font-bold text-white ${
-                    isButtonDisabled
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "!bg-buttonColor hover:!bg-buttonColor"
-                  }`}
-                  loading={isLoading}
-                >
-                  Reset Password
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
+              <Form.Item
+                name="password"
+                label="New Password   "
+                className="custom-label"
+                rules={[{ validator: passwordFieldValidation, required: true }]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  size="large"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  maxLength={60}
+                />
+              </Form.Item>
+
+              <Form.Item>
+                <div className="flex justify-center">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={isButtonDisabled}
+                    className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                    loading={isLoading}
+                  >
+                    Reset Password
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
         </div>
       </div>
     </div>
+
   );
 };
 

@@ -5,6 +5,8 @@ import { Button, Form, Input, Typography, message } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { useNotification } from "../context/notificationContext";
 import { useNavigate } from "react-router-dom";
+import MessageBubble from "../../components/Background/MessageBubble";
+import rpw from "../../assets/images/rpw.png";
 
 const { Text } = Typography;
 
@@ -59,80 +61,83 @@ const SendEmail: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex h-screen flex-col md:flex-row">
-      <div className="block md:block w-full md:w-1/2 h-72 md:h-full">
-        <img
-          src={signin}
-          alt="Signin"
-          className="w-full h-full object-cover object-center"
-        />
-      </div>
+    <div
+      className="relative z-0 min-h-screen w-full overflow-hidden bg-cover bg-center"
+      style={{ backgroundImage: `url(${rpw})` }}
+    >
+      <div className="min-h-screen w-full flex items-center justify-center  relative z-10">
+        <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
+          <MessageBubble />
 
-      <div className="flex flex-col gap-4 items-center justify-center w-full md:w-1/2 h-full px-4 md:py-8 bg-gradient-to-b from-[#FFFFFF] to-[#5FB57F]">
-        <div className="flex flex-col items-center w-full gap-2 md:mt-6">
-          <Text className="text-black text-2xl md:text-3xl font-semibold">
-            Forgot Your Password
-          </Text>
-          <Text className="text-textColorOne text-sm md:text-base font-normal block text-center">
-            Enter your email and we’ll send you a link to reset your password.
-          </Text>
-        </div>
+          <div className="flex flex-col items-center w-full ">
+            <div className="flex flex-col items-center w-full gap-1 mb-2">
+              <Text
+                className="text-black text-2xl md:text-3xl font-semibold "
+                style={{ fontFamily: "Merienda, cursive" }}
+              >
+                Forgot Your Password
+              </Text>
+              <Text
+                className="text-[15px] font-normal text-center"
+                style={{ fontFamily: "Merienda, cursive" }}
+              >
+                Enter your email to get a reset link.
+              </Text>
+            </div>
+          </div>
 
-        <div className="flex flex-col items-center w-full max-w-[400px]">
-          <Form
-            form={form}
-            layout="vertical"
-            className="w-full"
-            onFinish={handleSubmit}
-            onFieldsChange={handleFormChange}
-          >
-            <Form.Item
-              name="email"
-              label="Enter Your Email *"
-              rules={[
-                {
-                  required: true,
-                  message: "Email is required!",
-                },
-                {
-                  type: "email",
-                  message: "Email is invalid!",
-                },
-              ]}
+          <div className="flex flex-col items-center w *:-full ">
+            <Form
+              form={form}
+              layout="vertical"
+              className="w-full"
+              onFinish={handleSubmit}
+              onFieldsChange={handleFormChange}
             >
-              <Input
-                prefix={<MailOutlined />}
-                placeholder="Enter your email"
-                onKeyDown={(e) => {
-                  const key = e.key;
-                  if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {
-                    e.preventDefault();
-                  }
-                }}
-                size="large"
-                maxLength={100}
-                autoComplete="off"
-              />
-            </Form.Item>
+              <Form.Item
+                name="email"
+                label="Enter Your Email "
+                rules={[
+                  {
+                    required: true,
+                    message: "Email is required!",
+                  },
+                  {
+                    type: "email",
+                    message: "Email is invalid!",
+                  },
+                ]}
+              >
+                <Input
+                  prefix={<MailOutlined />}
+                  placeholder="Enter your email"
+                  onKeyDown={(e) => {
+                    const key = e.key;
+                    if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {
+                      e.preventDefault();
+                    }
+                  }}
+                  size="large"
+                  maxLength={100}
+                  autoComplete="off"
+                />
+              </Form.Item>
 
-            <Form.Item>
-              <div className="flex justify-center">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={isButtonDisabled}
-                  className={`w-full md:w-[250px] h-[40px] text-base md:text-md rounded-full font-bold text-white ${
-                    isButtonDisabled
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "!bg-buttonColor hover:!bg-buttonColor"
-                  }`}
-                  loading={isLoading}
-                >
-                  Send Reset Link
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
+              <Form.Item>
+                <div className="flex justify-center">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={isButtonDisabled}
+                    className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                    loading={isLoading}
+                  >
+                    Send Reset Link
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
         </div>
       </div>
     </div>

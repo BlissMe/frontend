@@ -4,15 +4,16 @@ import {
   Form,
   Input,
   Button,
-  Switch,
-  Avatar,
   Upload,
   Modal,
   message,
   Divider,
+  Avatar,
+  Tooltip,
 } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import {
+  updateCharcaterService,
   updateEmailService,
   updateNicknameService,
 } from "../../services/UserService";
@@ -22,9 +23,7 @@ import {
 } from "../../helpers/Storage";
 import { useCharacterContext } from "../context/CharacterContext";
 import { useNotification } from "../context/notificationContext";
-import {
-  updateUserPreferences,
-} from "../../redux/actions/userActions";
+import { updateUserPreferences } from "../../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import Title from "antd/es/typography/Title";
@@ -39,47 +38,145 @@ interface ResetResponse {
 }
 
 const Settings: React.FC = () => {
-  const { nickname } = useCharacterContext();
+  const { nickname, selectId, characters, fetchCharacters } =
+    useCharacterContext();
   const [form] = Form.useForm();
   const [pwdForm] = Form.useForm();
   const token = getLocalStoragedata("token") || "";
   const dispatch = useDispatch<AppDispatch>();
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  const [changePwdVisible, setChangePwdVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [notifications, setNotifications] = useState({
-    general: true,
-    therapyReminders: false,
-    progressReports: true,
-  });
-
   const [email, setEmail] = useState(getLocalStoragedata("user"));
   const userId = Number(getLocalStoragedata("userId"));
   const { openNotification } = useNotification();
   const inputMode = useSelector((state: RootState) => state.user.inputMode);
-  const selectedCharacterId = Number(getLocalStoragedata("selectedCharacterId"));
+  const selectedCharacterId = Number(
+    getLocalStoragedata("selectedCharacterId")
+  );
   const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isFormChanged, setIsFormChanged] = useState(false);
 
-  useEffect(() => {
-    form.setFieldsValue({
-      nickname: nickname || "",
-      email: email,
-    });
-  }, [nickname, email, form]);
+  const handleFileChange = (info: any) => {
+    if (info.file.status === "removed") {
+      setFile(null);
+      setPreviewUrl(null);
+    } else {
+      const selectedFile = info.file;
+      if (selectedFile) {
+        const actualFile = selectedFile.originFileObj || selectedFile;
+        setFile(actualFile);
+        const tempUrl = URL.createObjectURL(actualFile);
+        setPreviewUrl(tempUrl);
+      }
+    }
+  };
+
+  const selectedCharacter = characters.find(
+    (char) => char.characterId === selectId
+  );
+
+  const [originalCharacterName, setOriginalCharacterName] = useState(
+    selectedCharacter?.name
+  );
+
+  type UploadedCharacter = {
+    name: string;
+    imageUrl: string;
+    characterId: number;
+    _id: string;
+    __v: number;
+  };
+
+  const uploadCharacterImage = async (
+    name: string
+  ): Promise<UploadedCharacter | null> => {
+    if (!file) return null;
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("image", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/blissme/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const data = response.data as {
+        message: string;
+        character: UploadedCharacter;
+      };
+      return data.character;
+    } catch (err: any) {
+      console.error("Image upload failed:", err);
+      message.error("Image upload failed");
+      return null;
+    }
+  };
 
   const handleSave = async (values: any) => {
-    const { nickname: newNickname, email: newEmail } = values;
+    const {
+      nickname: newNickname,
+      email: newEmail,
+      name: newCharacterName,
+    } = values;
 
     try {
       let nicknameChanged = false;
       let emailChanged = false;
+      let characterUpdated = false;
+
+      const isCharacterNameChanged = newCharacterName !== originalCharacterName;
+      const isCharacterImageChanged = !!file;
+
+      if (isCharacterNameChanged && isCharacterImageChanged) {
+        setUploading(true);
+        const uploadedCharacter = await uploadCharacterImage(newCharacterName);
+        setUploading(false);
+        if (uploadedCharacter) {
+          const updateCharResponse = await updateCharcaterService(
+            {
+              virtualCharacter: uploadedCharacter.characterId,
+            },
+            token
+          );
+
+          if (updateCharResponse.message === "Virtual character updated") {
+            await fetchCharacters();
+            dispatch(
+              updateUserPreferences(
+                newNickname,
+                uploadedCharacter.characterId,
+                inputMode
+              )
+            );
+            setOriginalCharacterName(newCharacterName);
+            form.resetFields();
+            setFile(null);
+            characterUpdated = true;
+          } else {
+            openNotification(
+              "error",
+              "Character update failed",
+              updateCharResponse.message
+            );
+          }
+        }
+      } else if (isCharacterNameChanged || isCharacterImageChanged) {
+        openNotification(
+          "warning",
+          "To update the character, you must change both name and image."
+        );
+      }
 
       if (newNickname !== nickname) {
         const response = await updateNicknameService(
-          {
-            userId: userId,
-            nickname: newNickname,
-          },
+          { userId: userId, nickname: newNickname },
           token
         );
         if (response.message === "Nickname updated") {
@@ -88,11 +185,7 @@ const Settings: React.FC = () => {
             updateUserPreferences(newNickname, selectedCharacterId, inputMode)
           );
         } else {
-          openNotification(
-            "error",
-            "Nickname update failed",
-            response.message || "Nickname update failed. Please try again later"
-          );
+          openNotification("error", "Nickname update failed", response.message);
         }
       }
 
@@ -103,22 +196,15 @@ const Settings: React.FC = () => {
           setEmail(newEmail);
           emailChanged = true;
         } else {
-          openNotification(
-            "error",
-            "Email update failed",
-            response.message || "Email update failed. Please try again later"
-          );
+          openNotification("error", "Email update failed", response.message);
         }
       }
 
-      if (nicknameChanged && emailChanged) {
+      if (nicknameChanged || emailChanged || characterUpdated) {
         openNotification("success", "Profile updated successfully");
-      } else if (nicknameChanged) {
-        openNotification("success", "Nickname updated successfully");
-      } else if (emailChanged) {
-        openNotification("success", "Email updated successfully");
       }
     } catch (error: any) {
+      setUploading(false);
       const errorMessage =
         error?.response?.data?.message || "Failed to update profile";
       openNotification("error", "Profile Update Failed", errorMessage);
@@ -147,14 +233,11 @@ const Settings: React.FC = () => {
           newPassword,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       openNotification("success", "Password Changed", res.data.message);
-      setChangePwdVisible(false);
       pwdForm.resetFields();
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Something went wrong";
@@ -167,9 +250,7 @@ const Settings: React.FC = () => {
       const res = await axios.delete<ResetResponse>(
         "http://localhost:8080/authuser/delete-account",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -184,6 +265,37 @@ const Settings: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedCharacter) {
+      setOriginalCharacterName(selectedCharacter.name);
+      form.setFieldsValue({
+        nickname: nickname || "",
+        email: email,
+        name: selectedCharacter.name,
+      });
+    }
+  }, [selectedCharacter]);
+
+  useEffect(() => {
+    const values = form.getFieldsValue();
+    const isNicknameChanged = values.nickname !== nickname;
+    const isEmailChanged = values.email !== email;
+    const isCharacterNameChanged = values.name !== originalCharacterName;
+    const isImageChanged = !!file;
+
+    const characterChanged = isCharacterNameChanged && isImageChanged;
+
+    setIsFormChanged(isNicknameChanged || isEmailChanged || characterChanged);
+  }, [file, form, nickname, email, originalCharacterName]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10">
       <h1 className="text-3xl font-bold mb-6">Settings</h1>
@@ -194,15 +306,78 @@ const Settings: React.FC = () => {
               form={form}
               layout="vertical"
               onFinish={handleSave}
-              initialValues={{ nickname: nickname || "", email: email }}
+              initialValues={{
+                nickname: nickname || "",
+                email: email,
+                name: originalCharacterName,
+              }}
+              /*  onValuesChange={(_, values) => {
+                const isNicknameChanged = values.nickname !== nickname;
+                const isEmailChanged = values.email !== email;
+                const isCharacterNameChanged =
+                  values.name !== originalCharacterName;
+                const isImageChanged = !!file;
+
+                const characterChanged =
+                  isCharacterNameChanged && isImageChanged;
+
+                setIsFormChanged(
+                  isNicknameChanged || isEmailChanged || characterChanged
+                );
+              }} */
             >
-              <Form.Item label="Avatar">
-                <Upload showUploadList={false} beforeUpload={() => false}>
-                  <Avatar size={64} src="https://i.pravatar.cc/150?img=4" />
-                  <Button className="ml-4" icon={<UploadOutlined />}>
-                    Upload
-                  </Button>
-                </Upload>
+              <Form.Item
+                name="name"
+                label={
+                  <span className="flex items-center space-x-1">
+                    Character Name
+                    <Tooltip
+                      title="If you change the character name, you need to change the image as well to enable Save.
+"
+                    >
+                      <ExclamationCircleOutlined className="text-yellow-500 ml-3" />
+                    </Tooltip>
+                  </span>
+                }
+                rules={[
+                  { required: true, message: "Please enter character name" },
+                ]}
+              >
+                <Input placeholder="Enter character name" />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <span className="flex items-center space-x-1">
+                    Character Image
+                    <Tooltip
+                      title="If you change the character image, you need to change character name as well to enable Save.
+"
+                    >
+                      <ExclamationCircleOutlined className="text-yellow-500 ml-3" />
+                    </Tooltip>
+                  </span>
+                }
+                required
+              >
+                <div className="flex items-center space-x-4">
+                  <Avatar
+                    size={64}
+                    src={previewUrl || selectedCharacter?.imageUrl}
+                    shape="circle"
+                  />
+                  <Upload
+                    beforeUpload={() => false}
+                    onChange={handleFileChange}
+                    fileList={file ? [{ uid: "-1", name: file.name }] : []}
+                    maxCount={1}
+                    accept="image/*"
+                  >
+                    <Button icon={<UploadOutlined />}>
+                      Change Virual Character
+                    </Button>
+                  </Upload>
+                </div>
               </Form.Item>
 
               <Form.Item
@@ -226,7 +401,13 @@ const Settings: React.FC = () => {
                 <Input />
               </Form.Item>
 
-              <Button type="primary" htmlType="submit" className="mt-2">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="mt-2"
+                loading={uploading}
+                disabled={!isFormChanged}
+              >
                 Save Changes
               </Button>
             </Form>
@@ -238,11 +419,9 @@ const Settings: React.FC = () => {
             <Title level={4} className="!mb-4">
               Change Password
             </Title>
-
             <Form
               form={pwdForm}
               layout="vertical"
-              name="change_password_form"
               onFinish={handleChangePassword}
             >
               <Form.Item
@@ -253,7 +432,7 @@ const Settings: React.FC = () => {
                   { validator: passwordFieldValidation },
                 ]}
               >
-                <Input.Password className="!rounded-md" />
+                <Input.Password />
               </Form.Item>
 
               <Form.Item
@@ -264,7 +443,7 @@ const Settings: React.FC = () => {
                   { validator: passwordFieldValidation },
                 ]}
               >
-                <Input.Password className="!rounded-md" />
+                <Input.Password />
               </Form.Item>
 
               <Form.Item
@@ -285,35 +464,24 @@ const Settings: React.FC = () => {
                   }),
                 ]}
               >
-                <Input.Password className="!rounded-md" />
+                <Input.Password />
               </Form.Item>
 
-              <Form.Item className="mb-0">
-                <Button type="primary" htmlType="submit" className="!w-full">
-                  Update Password
-                </Button>
-              </Form.Item>
+              <Button type="primary" htmlType="submit" block>
+                Update Password
+              </Button>
             </Form>
           </div>
+
           <Divider className="bg-black mt-4" />
 
           <div className="mt-4">
             <Title level={4} className="!mb-4">
               Delete Account
             </Title>
-
             <p className="text-sm text-black mb-2 max-w-xl">
-              Deleting your account will permanently erase all your data from
-              our system. This includes your login information, therapy
-              progress, saved reports, and any preferences or settings you've
-              configured.
+              Deleting your account will permanently erase all your data...
             </p>
-
-            <p className="text-sm text-black mb-4 max-w-xl">
-              If you're experiencing issues, please contact our support team
-              first. We may be able to help without account deletion.
-            </p>
-
             <Button danger onClick={() => setIsDeleteModalVisible(true)}>
               Delete Account
             </Button>
@@ -333,20 +501,13 @@ const Settings: React.FC = () => {
       >
         <div className="space-y-3">
           <p className="text-red-600 font-medium">
-            <ExclamationCircleOutlined/> This action is irreversible. Once you delete your account, all
-            associated data will be permanently removed.
+            <ExclamationCircleOutlined /> This action is irreversible.
           </p>
-
           <ul className="list-disc list-inside text-sm text-gray-700">
             <li>Your profile and login credentials</li>
             <li>All saved therapy progress and reports</li>
             <li>Any personalized recommendations and history</li>
           </ul>
-
-          <p className="text-sm text-gray-600 mt-2">
-            If you’re sure, click “Yes, delete” to permanently remove your
-            account.
-          </p>
         </div>
       </Modal>
     </div>

@@ -142,3 +142,35 @@ export async function updateEmailService(
     };
   }
 }
+
+interface UpdateCharatorPayload {
+  virtualCharacter: Number;
+}
+
+export async function updateCharcaterService(
+  payload: UpdateCharatorPayload,
+  token: string
+): Promise<any> {
+  try {
+    const response = await fetch(`${metadataServiceURL}api/blissme/preferences/character`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { message: data.message || "Email update failed" };
+    }
+
+    return data;
+  } catch (error: any) {
+    return {
+      message: error.message || "Something went wrong. Please try again later.",
+    };
+  }
+}

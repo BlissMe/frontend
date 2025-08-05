@@ -217,6 +217,15 @@ const VoiceChatBox: React.FC = () => {
       const audio = new Audio(`http://localhost:8000${result.audio_url}`);
       audio.play();
 
+        // Handle emotion state
+      if (result.emotion_history && Array.isArray(result.emotion_history)) {
+        setEmotionHistory(result.emotion_history);
+        if (result.emotion_history.length >= 3) {
+          setOverallEmotion(result.overall_emotion || null);
+          setShowEmotionModal(true);
+        }
+      }
+
       setIsBotTyping(false);
       setIsWaitingForBotResponse(false);
     } catch (err) {

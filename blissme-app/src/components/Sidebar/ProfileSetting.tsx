@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Tabs,
-  Form,
-  Input,
-  Button,
-  Upload,
-  message,
-  Avatar,
-  Tooltip,
-} from "antd";
+import { Form, Input, Button, Upload, message, Avatar, Tooltip } from "antd";
 import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   updateCharcaterService,
@@ -23,21 +14,15 @@ import { updateUserPreferences } from "../../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../app/context/notificationContext";
 import { useCharacterContext } from "../../app/context/CharacterContext";
 
-interface ResetResponse {
-  message: string;
-}
 const ProfileSetting = () => {
   const { nickname, selectId, characters, fetchCharacters } =
     useCharacterContext();
   const [form] = Form.useForm();
-  const [pwdForm] = Form.useForm();
   const token = getLocalStoragedata("token") || "";
   const dispatch = useDispatch<AppDispatch>();
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [email, setEmail] = useState(getLocalStoragedata("user"));
   const userId = Number(getLocalStoragedata("userId"));
   const { openNotification } = useNotification();

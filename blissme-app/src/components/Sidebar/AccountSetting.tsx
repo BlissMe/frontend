@@ -1,25 +1,40 @@
-import { useState} from "react";
-import { Form, Input, Button, message, Divider, Modal } from "antd";
+import { useState } from "react";
+import {
+  Form,
+  Input,
+  Button,
+  message,
+  Modal,
+  Tabs,
+  Checkbox,
+  Divider,
+} from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import { getLocalStoragedata } from "../../helpers/Storage";
-import Title from "antd/es/typography/Title";
-import axios from "axios";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import { useNavigate } from "react-router-dom";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useNotification } from "../../app/context/notificationContext";
 
 interface ResetResponse {
   message: string;
 }
 
+const { TabPane } = Tabs;
+
 const AccountSetting = () => {
   const [pwdForm] = Form.useForm();
   const token = getLocalStoragedata("token") || "";
   const navigate = useNavigate();
+  const { openNotification } = useNotification();
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const { openNotification } = useNotification();
+  const [activeTabKey, setActiveTabKey] = useState("1");
+  const [confirmDeleteChecked, setConfirmDeleteChecked] = useState(false);
+
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key);
+  };
 
   const handleChangePassword = async () => {
     try {
@@ -36,40 +51,59 @@ const AccountSetting = () => {
         return;
       }
 
-      const res = await axios.post<ResetResponse>(
+      const res = await fetch(
         "http://localhost:8080/authuser/change-password",
         {
-          currentPassword,
-          newPassword,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ currentPassword, newPassword }),
         }
       );
 
-      openNotification("success", "Password Changed", res.data.message);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Something went wrong");
+      }
+
+      const data: ResetResponse = await res.json();
+
+      openNotification("success", "Password Changed", data.message);
       pwdForm.resetFields();
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Something went wrong";
-      openNotification("error", "Change Failed", errorMsg);
+      openNotification(
+        "error",
+        "Change Failed",
+        err.message || "Something went wrong"
+      );
     }
   };
 
   const handleDeleteAccount = async () => {
     try {
-      const res = await axios.delete<ResetResponse>(
-        "http://localhost:8080/authuser/delete-account",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetch("http://localhost:8080/authuser/delete-account", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      openNotification("success", "Account Deleted", res.data.message);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Something went wrong");
+      }
+
+      const data: ResetResponse = await res.json();
+
+      openNotification("success", "Account Deleted", data.message);
       localStorage.clear();
       navigate("/sign-in");
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Something went wrong";
-      openNotification("error", "Delete Failed", errorMsg);
+      openNotification(
+        "error",
+        "Delete Failed",
+        err.message || "Something went wrong"
+      );
     } finally {
       setIsDeleteModalVisible(false);
     }
@@ -77,115 +111,154 @@ const AccountSetting = () => {
 
   return (
     <>
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md">
-        <Title level={4} className="!mb-6 text-gray-800">
-          Change Password
-        </Title>
-        <Form form={pwdForm} layout="vertical" onFinish={handleChangePassword}>
-          <Form.Item
-            name="currentPassword"
-            label={
-              <span className="font-medium text-gray-700">
-                Current Password
-              </span>
-            }
-            rules={[
-              { required: true, message: "Please enter current password" },
-              { validator: passwordFieldValidation },
-            ]}
-          >
-            <Input.Password className="h-10" />
-          </Form.Item>
-
-          <Form.Item
-            name="newPassword"
-            label={
-              <span className="font-medium text-gray-700">New Password</span>
-            }
-            rules={[
-              { required: true, message: "Please enter new password" },
-              { validator: passwordFieldValidation },
-            ]}
-          >
-            <Input.Password className="h-10" />
-          </Form.Item>
-
-          <Form.Item
-            name="confirmPassword"
-            label={
-              <span className="font-medium text-gray-700">
-                Confirm New Password
-              </span>
-            }
-            dependencies={["newPassword"]}
-            rules={[
-              { required: true, message: "Please confirm new password" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Passwords do not match"));
-                },
-              }),
-            ]}
-          >
-            <Input.Password className="h-10" />
-          </Form.Item>
-
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md"
-          >
-            Update Password
-          </Button>
-        </Form>
-      </div>
-
-      <Divider className="bg-gray-300 my-8" />
-
       <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-6">
-        <Title level={4} className="!mb-4 text-gray-800">
-          Delete Account
-        </Title>
-        <p className="text-sm text-gray-600 mb-4">
-          Deleting your account will permanently erase all your data, including:
-        </p>
-        <ul className="list-disc list-inside text-sm text-gray-700 mb-4">
-          <li>Your profile and login credentials</li>
-          <li>All saved therapy progress and reports</li>
-          <li>Any personalized recommendations and history</li>
-        </ul>
-        <Button
-          danger
-          onClick={() => setIsDeleteModalVisible(true)}
-          className="border-red-600 text-red-600 hover:bg-red-50"
-        >
-          Delete Account
-        </Button>
+        <Tabs activeKey={activeTabKey} onChange={handleTabChange} centered>
+          <TabPane tab="Change Password" key="1">
+            <Form
+              form={pwdForm}
+              layout="vertical"
+              onFinish={handleChangePassword}
+            >
+              <Form.Item
+                name="currentPassword"
+                label={
+                  <span className="font-medium text-gray-700">
+                    Current Password
+                  </span>
+                }
+                rules={[
+                  { required: true, message: "Please enter current password" },
+                  { validator: passwordFieldValidation },
+                ]}
+              >
+                <Input.Password className="h-10" />
+              </Form.Item>
+
+              <Form.Item
+                name="newPassword"
+                label={
+                  <span className="font-medium text-gray-700">
+                    New Password
+                  </span>
+                }
+                rules={[
+                  { required: true, message: "Please enter new password" },
+                  { validator: passwordFieldValidation },
+                ]}
+              >
+                <Input.Password className="h-10" />
+              </Form.Item>
+
+              <Form.Item
+                name="confirmPassword"
+                label={
+                  <span className="font-medium text-gray-700">
+                    Confirm New Password
+                  </span>
+                }
+                dependencies={["newPassword"]}
+                rules={[
+                  { required: true, message: "Please confirm new password" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("newPassword") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Passwords do not match")
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password className="h-10" />
+              </Form.Item>
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md"
+              >
+                Update Password
+              </Button>
+            </Form>
+          </TabPane>
+
+          <TabPane tab="Delete Account" key="2">
+            <p className="text-sm text-gray-600 mb-4">
+              Deleting your account will <strong>permanently erase</strong> all
+              your data, including:
+            </p>
+            <ul className="list-disc list-inside text-sm text-gray-700 mb-4">
+              <li>Your profile and login credentials</li>
+              <li>All saved therapy progress and reports</li>
+              <li>Any personalized recommendations and history</li>
+            </ul>
+
+            <Divider />
+
+            <p className="text-sm text-gray-600 mb-4">
+              If you are sure you want to proceed, please confirm by checking
+              the box below:
+            </p>
+
+            <Checkbox
+              checked={confirmDeleteChecked}
+              onChange={(e) => setConfirmDeleteChecked(e.target.checked)}
+            >
+              I understand that deleting my account is{" "}
+              <strong>irreversible</strong> and I want to proceed.
+            </Checkbox>
+
+            <Button
+              danger
+              disabled={!confirmDeleteChecked}
+              onClick={() => setIsDeleteModalVisible(true)}
+              className="border-red-600 text-red-600 hover:bg-red-50 mt-4"
+            >
+              Delete Account
+            </Button>
+          </TabPane>
+        </Tabs>
       </div>
 
       <Modal
-        title="Are you sure you want to delete your account?"
-        visible={isDeleteModalVisible}
+        title={
+          <div className="text-center text-xl font-semibold text-gray-800">
+            💔 Are you sure you want to delete account?
+          </div>
+        }
+        open={isDeleteModalVisible}
         onOk={handleDeleteAccount}
         onCancel={() => setIsDeleteModalVisible(false)}
-        okText="Yes, delete"
+        okText="Yes, delete my account"
         okType="danger"
-        cancelText="Cancel"
+        cancelText="Keep my account"
         centered
       >
-        <div className="space-y-3">
-          <p className="text-red-600 font-medium flex items-center gap-2">
-            <ExclamationCircleOutlined /> This action is irreversible.
+        <div className="space-y-5 text-center px-2">
+          <p className="text-red-600 font-medium flex justify-center items-center gap-2 text-sm">
+            <ExclamationCircleOutlined className="text-lg" />
+            This action is <strong>permanent</strong> and cannot be undone.
           </p>
-          <ul className="list-disc list-inside text-sm text-gray-700">
-            <li>Your profile and login credentials</li>
-            <li>All saved therapy progress and reports</li>
-            <li>Any personalized recommendations and history</li>
-          </ul>
+
+          <p className="text-gray-700 text-base">
+            We’re truly <span className="font-semibold">sad to see you go</span>
+            . Your presence meant a lot to us.
+          </p>
+
+          <p className="text-gray-600 text-sm">
+            If something didn’t meet your expectations, we’d love to hear your
+            feedback.
+            <br />
+            Every voice matters in helping us grow 💬
+          </p>
+
+          <p className="text-gray-500 text-xs italic">
+            Thank you for being with us. We hope our paths cross again someday.
+            🌟
+          </p>
         </div>
       </Modal>
     </>

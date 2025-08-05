@@ -340,7 +340,7 @@ const Settings: React.FC = () => {
       const result = await response.json();
       if (response.ok) {
         message.success(result.message || "Face signup successful!");
-        setIsWebcamOn(false); // ✅ turn off webcam
+        setIsWebcamOn(false); 
       } else {
         message.error(result.detail || "Signup failed.");
       }

@@ -80,7 +80,7 @@ const InputMode = () => {
         })
       );
       dispatch(updateUserPreferences(nickname, virtualCharacter, selectedMode));
-      setLocalStorageData("selec", virtualCharacter);
+      setLocalStorageData("selectedCharacterId", virtualCharacter);
     }
     openNotification("success", "Input mode selected successfully!");
 

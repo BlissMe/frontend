@@ -61,7 +61,7 @@ const VirtualCharacter = () => {
       try {
         const response = await axios.get<Character[]>(`${url}/`);
         console.log("Characters fetched:", response.data);
-        setLocalStorageData("selec",selectedCharacterId)
+        setLocalStorageData("selectedCharacterId",selectedCharacterId)
         setCharacters(response.data);
       } catch (error: any) {
         console.error("Error fetching characters:", error.message);

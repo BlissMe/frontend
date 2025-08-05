@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Tabs,
   Form,
@@ -11,7 +11,12 @@ import {
   Avatar,
   Tooltip,
 } from "antd";
-import { UploadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  ExclamationCircleOutlined,
+  MailOutlined,
+  CameraOutlined,
+} from "@ant-design/icons";
 import {
   updateCharcaterService,
   updateEmailService,
@@ -30,6 +35,7 @@ import Title from "antd/es/typography/Title";
 import axios from "axios";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import { useNavigate } from "react-router-dom";
+import Webcam from "react-webcam";
 
 const { TabPane } = Tabs;
 
@@ -57,7 +63,9 @@ const Settings: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isFormChanged, setIsFormChanged] = useState(false);
-
+  const webcamRef = useRef<Webcam | null>(null);
+  const [isWebcamOn, setIsWebcamOn] = useState(true);
+  const [loading, setLoading] = useState(false);
   const handleFileChange = (info: any) => {
     if (info.file.status === "removed") {
       setFile(null);
@@ -296,6 +304,54 @@ const Settings: React.FC = () => {
     };
   }, [previewUrl]);
 
+  useEffect(() => {
+    const storedEmail = getLocalStoragedata("user");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+  }, []);
+
+  const capture = async () => {
+    if (!webcamRef.current) {
+      message.error("Webcam not ready.");
+      return;
+    }
+
+    const imageSrc = webcamRef.current.getScreenshot();
+
+    if (!imageSrc) {
+      message.error("Failed to capture image.");
+      return;
+    }
+
+    if (!email) {
+      message.error("No email found in localStorage.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:8000/face-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, image: imageSrc }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        message.success(result.message || "Face signup successful!");
+        setIsWebcamOn(false); 
+      } else {
+        message.error(result.detail || "Signup failed.");
+      }
+    } catch (err) {
+      console.error(err);
+      message.error("Error connecting to face signup service.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10">
       <h1 className="text-3xl font-bold mb-6">Settings</h1>
@@ -414,7 +470,7 @@ const Settings: React.FC = () => {
           </div>
         </TabPane>
 
-        <TabPane tab="Security" key="2">
+        <TabPane tab="Account Setting" key="2">
           <div className="max-w-md">
             <Title level={4} className="!mb-4">
               Change Password
@@ -485,6 +541,40 @@ const Settings: React.FC = () => {
             <Button danger onClick={() => setIsDeleteModalVisible(true)}>
               Delete Account
             </Button>
+          </div>
+        </TabPane>
+        <TabPane tab="Security and Privacy" key="3">
+          <div className="max-w-md">
+            <Title level={4} className="!mb-4">
+              Biometrics{" "}
+            </Title>
+            <Form layout="vertical" className="w-[380px] sm:w-[400px]">
+              <div className="flex justify-center mb-4">
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  className="rounded border"
+                  width={320}
+                  height={240}
+                />
+              </div>
+
+              <Form.Item>
+                <div className="flex justify-center">
+                  <Button
+                    type="primary"
+                    icon={<CameraOutlined />}
+                    onClick={capture}
+                    loading={loading}
+                    className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                    block
+                  >
+                    Save setting
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
           </div>
         </TabPane>
       </Tabs>

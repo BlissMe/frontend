@@ -18,6 +18,9 @@ import Login from "../app/signIn/Login";
 import Landing from "../app/start/Landing";
 import Home from "../app/start/Home";
 import Setting from "../app/settings/Setting";
+import ProfileSetting from "../components/Sidebar/ProfileSetting";
+import AccountSetting from "../components/Sidebar/AccountSetting";
+import SecuritySetting from "../components/Sidebar/SecuritySetting";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -36,7 +39,6 @@ const Routerset = () => {
       <Route path="/landing" element={<Landing />} />
       <Route path="/home" element={<Home />} />
 
-
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>
@@ -45,14 +47,14 @@ const Routerset = () => {
             <Route path="input-mode" element={<InputMode />} />
             <Route path="mood" element={<Mood />} />
           </Route>
-
           <Route path="/chat" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
             <Route path="setting" element={<Setting />} />
-
+            <Route path="setting/profile" element={<ProfileSetting />} />
+            <Route path="setting/account" element={<AccountSetting />} />
+            <Route path="setting/security" element={<SecuritySetting />} />
           </Route>
-
         </>
       ) : (
         <Route path="*" element={<Navigate to="/login" />} />

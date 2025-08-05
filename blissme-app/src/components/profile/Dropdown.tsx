@@ -24,7 +24,11 @@ const ProfileDropdown: React.FC = () => {
   const { openNotification } = useNotification();
 
   const handleMenuClick: MenuProps["onClick"] = async ({ key }) => {
-    if (key === "3") {
+    if (key === "1") {
+      navigate("/chat/setting/profile"); 
+    } else if (key === "2") {
+      //navigate("/notification");
+    } else if (key === "3") {
       if (sessionID) {
         const res = await endCurrentSession(sessionID);
         if (!res.success) {
@@ -40,7 +44,7 @@ const ProfileDropdown: React.FC = () => {
       setChatHistory([]);
       setSessionID("");
       setToken(null);
-      localStorage.clear()
+      localStorage.clear();
 
       navigate("/sign-in");
     } else {

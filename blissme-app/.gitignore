@@ -27,3 +27,5 @@ yarn-error.log*
 .env.*.local
 
 src/app/ExtraCodes/
+
+src/app/ExtraCodes/

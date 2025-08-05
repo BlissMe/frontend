@@ -33,7 +33,7 @@ const ChatBox = () => {
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
   const { selectedCharacter, nickname } = useCharacterContext();
-
+console.log(selectedCharacter)
   useEffect(() => {
     (async () => {
       const session = await createNewSession();

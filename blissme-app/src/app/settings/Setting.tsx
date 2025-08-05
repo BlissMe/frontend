@@ -50,8 +50,9 @@ const Settings: React.FC = () => {
   const { openNotification } = useNotification();
   const inputMode = useSelector((state: RootState) => state.user.inputMode);
   const selectedCharacterId = Number(
-    getLocalStoragedata("selectedCharacterId")
+    getLocalStoragedata("selec")
   );
+  console.log("k",selectedCharacterId)
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -76,7 +77,7 @@ const Settings: React.FC = () => {
   const selectedCharacter = characters.find(
     (char) => char.characterId === selectId
   );
-
+console.log("se",selectedCharacter)
   const [originalCharacterName, setOriginalCharacterName] = useState(
     selectedCharacter?.name
   );

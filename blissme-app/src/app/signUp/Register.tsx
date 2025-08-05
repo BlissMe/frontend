@@ -75,6 +75,7 @@ const Register = () => {
         setLocalStorageData("token", response?.token);
         setLocalStorageData("user", response?.email);
         setLocalStorageData("userId", response?.userID);
+        setLocalStorageData("isSignUp", true);
         navigate("/mode/nick-name", { replace: true });
       } else {
         openNotification(

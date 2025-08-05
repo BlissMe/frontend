@@ -37,8 +37,8 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const url = process.env.REACT_APP_API_URL;
   const nickname = useSelector((state: RootState) => state.user.nickname);
-  const selectId = useSelector(
-    (state: RootState) => state.user.virtualCharacter
+  const selectId = Number(
+    useSelector((state: RootState) => state.user.virtualCharacter)
   );
 
   const fetchCharacters = async () => {

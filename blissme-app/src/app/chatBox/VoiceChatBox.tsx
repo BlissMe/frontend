@@ -60,7 +60,8 @@ const VoiceChatBox: React.FC = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, nickname } = useCharacterContext();
-
+  const [showEmotionModal, setShowEmotionModal] = useState(false);
+  const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
   const phqOptions = [
     "Not at all",
     "Several days",
@@ -215,6 +216,15 @@ const VoiceChatBox: React.FC = () => {
 
       const audio = new Audio(`http://localhost:8000${result.audio_url}`);
       audio.play();
+
+        // Handle emotion state
+      if (result.emotion_history && Array.isArray(result.emotion_history)) {
+        setEmotionHistory(result.emotion_history);
+        if (result.emotion_history.length >= 3) {
+          setOverallEmotion(result.overall_emotion || null);
+          setShowEmotionModal(true);
+        }
+      }
 
       setIsBotTyping(false);
       setIsWaitingForBotResponse(false);
@@ -448,6 +458,17 @@ const VoiceChatBox: React.FC = () => {
           />
         )}
       </div>
+      {/* Emotion Summary Modal */}
+      <Modal
+        title="User Emotion Summary"
+        open={showEmotionModal}
+        onOk={() => setShowEmotionModal(false)}
+        onCancel={() => setShowEmotionModal(false)}
+      >
+        <p>
+          <strong>Overall Emotion:</strong> {overallEmotion || "N/A"}
+        </p>
+      </Modal>
     </div>
   );
 };

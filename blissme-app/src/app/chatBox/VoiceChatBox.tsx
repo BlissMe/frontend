@@ -60,7 +60,8 @@ const VoiceChatBox: React.FC = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, nickname } = useCharacterContext();
-
+  const [showEmotionModal, setShowEmotionModal] = useState(false);
+  const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
   const phqOptions = [
     "Not at all",
     "Several days",
@@ -448,6 +449,17 @@ const VoiceChatBox: React.FC = () => {
           />
         )}
       </div>
+      {/* Emotion Summary Modal */}
+      <Modal
+        title="User Emotion Summary"
+        open={showEmotionModal}
+        onOk={() => setShowEmotionModal(false)}
+        onCancel={() => setShowEmotionModal(false)}
+      >
+        <p>
+          <strong>Overall Emotion:</strong> {overallEmotion || "N/A"}
+        </p>
+      </Modal>
     </div>
   );
 };

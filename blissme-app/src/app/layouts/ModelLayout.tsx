@@ -5,8 +5,8 @@ import LiveLoader from "../../components/loader/LiveLoader";
 const ModelLayout = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      <LiveLoader />
-      <Layout>
+{/*       <LiveLoader />
+ */}      <Layout>
         <Outlet />
       </Layout>
     </div>

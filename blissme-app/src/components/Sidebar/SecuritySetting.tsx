@@ -33,22 +33,51 @@ const SecuritySetting = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/face-signup", {
+      console.log("Sending image:", imageSrc);
+
+      // Step 1: Send image to FastAPI to get descriptor
+      const fastApiResponse = await fetch("http://localhost:8000/generate-descriptor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, image: imageSrc }),
+        body: JSON.stringify({ image: imageSrc }),
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        message.success(result.message || "Face signup successful!");
+      const fastApiResult = await fastApiResponse.json();
+
+      if (!fastApiResponse.ok) {
+        message.error(fastApiResult.detail || "No face detected. Please adjust your position.");
+        return;
+      }
+
+      const descriptor = fastApiResult.descriptor;
+
+      // Step 2: Send descriptor to Express backend for registration
+      const expressResponse = await fetch("http://localhost:8080/authUser/face-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, descriptor }),
+      });
+
+      const expressResult = await expressResponse.json();
+
+      if (expressResponse.ok) {
+        message.success(expressResult.message || "Face registered successfully!");
+
+        // ✅ Properly stop the webcam stream
+        if (webcamRef.current && webcamRef.current.video) {
+          const stream = webcamRef.current.video.srcObject as MediaStream;
+          if (stream) {
+            stream.getTracks().forEach((track) => track.stop());
+          }
+        }
+
         setIsWebcamOn(false);
       } else {
-        message.error(result.detail || "Signup failed.");
+        message.error(expressResult.message || "Failed to register face.");
       }
     } catch (err) {
-      console.error(err);
-      message.error("Error connecting to face signup service.");
+      console.error("Face registration error:", err);
+      message.error("Error during face registration. Try again.");
     } finally {
       setLoading(false);
     }

@@ -230,6 +230,18 @@ const ProfileSetting = () => {
           email: email,
           name: originalCharacterName,
         }}
+        onValuesChange={(_, values) => {
+          const isNicknameChanged = values.nickname !== nickname;
+          const isEmailChanged = values.email !== email;
+          const isCharacterNameChanged = values.name !== originalCharacterName;
+          const isImageChanged = !!file;
+
+          const characterChanged = isCharacterNameChanged && isImageChanged;
+
+          setIsFormChanged(
+            isNicknameChanged || isEmailChanged || characterChanged
+          );
+        }}
       >
         <Form.Item
           name="name"

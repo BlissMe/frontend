@@ -21,6 +21,7 @@ import Setting from "../app/settings/Setting";
 import ProfileSetting from "../components/Sidebar/ProfileSetting";
 import AccountSetting from "../components/Sidebar/AccountSetting";
 import SecuritySetting from "../components/Sidebar/SecuritySetting";
+import FaceSignin from "../app/signIn/FaceSignIn";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -29,8 +30,8 @@ const Routerset = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
 
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/login" element={<SignIn />} />
+      {/* <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<SignIn />} /> */}
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -38,7 +39,7 @@ const Routerset = () => {
       <Route path="/sign-in" element={<Login />} />
       <Route path="/landing" element={<Landing />} />
       <Route path="/home" element={<Home />} />
-
+      <Route path="/face-auth" element={<FaceSignin />} />
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>
@@ -57,7 +58,7 @@ const Routerset = () => {
           </Route>
         </>
       ) : (
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/sign-in" />} />
       )}
     </Routes>
   );

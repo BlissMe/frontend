@@ -217,7 +217,7 @@ const ProfileSetting = () => {
     };
   }, [previewUrl]);
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-6">
+    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">
         Profile Settings
       </h2>
@@ -284,7 +284,7 @@ const ProfileSetting = () => {
             >
               <Button
                 icon={<UploadOutlined />}
-                className="bg-blue-500 text-white hover:bg-blue-600"
+                className="bg-green-500 text-white hover:bg-green-600"
               >
                 Change Virtual Character
               </Button>
@@ -314,7 +314,7 @@ const ProfileSetting = () => {
         <Button
           type="primary"
           htmlType="submit"
-          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md"
+          className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md"
           loading={uploading}
           disabled={!isFormChanged}
         >

@@ -111,7 +111,7 @@ const AccountSetting = () => {
 
   return (
     <>
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-6">
+      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32">
         <Tabs activeKey={activeTabKey} onChange={handleTabChange} centered>
           <TabPane tab="Change Password" key="1">
             <Form
@@ -178,7 +178,7 @@ const AccountSetting = () => {
                 type="primary"
                 htmlType="submit"
                 block
-                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md"
+                className="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md"
               >
                 Update Password
               </Button>

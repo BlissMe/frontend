@@ -178,6 +178,7 @@ const SecuritySetting = () => {
                   message.warning("You must accept the consent to continue.");
                 }
               }}
+              className="bg-green-600 hover:bg-green-700"
             >
               Continue
             </Button>
@@ -186,7 +187,7 @@ const SecuritySetting = () => {
 
         <TabPane tab="Face Recognition Setup" key="2" disabled={!consentGiven}>
           <Form layout="vertical" className="w-[380px] sm:w-[400px]">
-            <div className="flex justify-center mb-4">
+            <div className="flex item center justify-center mb-4">
               {isWebcamOn && (
                 <Webcam
                   audio={false}
@@ -200,7 +201,7 @@ const SecuritySetting = () => {
             </div>
 
             <Form.Item>
-              <div className="flex justify-center">
+              <div className="flex justify-center items-center">
                 <Button
                   type="primary"
                   icon={<CameraOutlined />}

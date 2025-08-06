@@ -11,7 +11,7 @@ const SecuritySetting = () => {
   const [email, setEmail] = useState(getLocalStoragedata("user"));
   const webcamRef = useRef<Webcam | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isWebcamOn, setIsWebcamOn] = useState(true);
+  const [isWebcamOn, setIsWebcamOn] = useState(false); // initially false
   const [consentGiven, setConsentGiven] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
   const { openNotification } = useNotification();
@@ -108,12 +108,13 @@ const SecuritySetting = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Biometrics </h2>
+    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Biometrics-Face Recongnition</h2>
       <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
         <TabPane tab="Consent Form" key="1">
           <Form layout="vertical" className="w-[380px] sm:w-[400px] space-y-4">
             <div className="bg-gray-100 p-4 rounded text-sm text-gray-700">
+              {/* Consent Text */}
               <p className="mb-2 font-semibold text-base">
                 Purpose of Data Collection:
               </p>
@@ -187,8 +188,8 @@ const SecuritySetting = () => {
 
         <TabPane tab="Face Recognition Setup" key="2" disabled={!consentGiven}>
           <Form layout="vertical" className="w-[380px] sm:w-[400px]">
-            <div className="flex item center justify-center mb-4">
-              {isWebcamOn && (
+            <div className="flex justify-center items-center mb-4">
+              {isWebcamOn ? (
                 <Webcam
                   audio={false}
                   ref={webcamRef}
@@ -197,6 +198,15 @@ const SecuritySetting = () => {
                   width={320}
                   height={240}
                 />
+              ) : (
+                <div
+                  className="w-[180px] h-[180px] rounded-full border-4 border-dashed border-gray-400 flex items-center justify-center cursor-pointer hover:border-[#3FBFA8] transition"
+                  onClick={() => setIsWebcamOn(true)}
+                >
+                  <CameraOutlined
+                    style={{ fontSize: "48px", color: "#3FBFA8" }}
+                  />
+                </div>
               )}
             </div>
 
@@ -207,8 +217,9 @@ const SecuritySetting = () => {
                   icon={<CameraOutlined />}
                   onClick={capture}
                   loading={loading}
-                  className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                  className="w-[200px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
                   block
+                  disabled={!isWebcamOn}
                 >
                   Save Setting
                 </Button>

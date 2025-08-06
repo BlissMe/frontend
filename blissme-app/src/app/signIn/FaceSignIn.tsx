@@ -1,5 +1,5 @@
 import { useState, useRef, useContext } from "react";
-import { Button, message, Typography } from "antd";
+import { Button, Typography } from "antd";
 import Webcam from "react-webcam";
 import { CameraOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ import bg7 from "../../assets/images/b7.jpeg";
 const FaceSignin = () => {
   const webcamRef = useRef<Webcam | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isWebcamOn, setIsWebcamOn] = useState(true);
+  const [isWebcamOn, setIsWebcamOn] = useState(false);
   const { openNotification } = useNotification();
   const navigate = useNavigate();
   const { setToken } = useContext(AuthContext);
@@ -91,45 +91,55 @@ const FaceSignin = () => {
       <div className="min-h-screen w-full flex items-center justify-center relative z-10">
         <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
           <MessageBubble />
-          <div className="flex flex-col items-center w-full">
-            <div className="flex flex-col items-center w-full gap-1 mb-2">
-              <Text
-                className="text-black text-2xl md:text-3xl font-semibold"
-                style={{ fontFamily: "Merienda, cursive" }}
-              >
-                Face Sign-In
-              </Text>
-              <Text
-                className="text-[15px] font-normal text-center"
-                style={{ fontFamily: "Merienda, cursive" }}
-              >
-                Please look into the camera and capture your face to sign in
-                securely.
-              </Text>
-            </div>
+
+          <div className="flex flex-col items-center w-full gap-1 mb-2">
+            <Text
+              className="text-black text-2xl md:text-3xl font-semibold"
+              style={{ fontFamily: "Merienda, cursive" }}
+            >
+              Face Sign-In
+            </Text>
+            <Text
+              className="text-[15px] font-normal text-center"
+              style={{ fontFamily: "Merienda, cursive" }}
+            >
+              Please look into the camera and capture your face to sign in
+              securely.
+            </Text>
           </div>
-          <div className="flex flex-col items-center w-full">
-              {isWebcamOn && (
-                <Webcam
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat="image/jpeg"
-                  className="rounded border mb-4"
-                  width={320}
-                  height={240}
+
+          <div className="flex flex-col items-center w-full mb-4">
+            {isWebcamOn ? (
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                className="rounded border"
+                width={320}
+                height={240}
+              />
+            ) : (
+              <div
+                className="w-[180px] h-[180px] rounded-full border-4 border-dashed border-gray-400 flex items-center justify-center cursor-pointer hover:border-[#3FBFA8] transition"
+                onClick={() => setIsWebcamOn(true)}
+              >
+                <CameraOutlined
+                  style={{ fontSize: "48px", color: "#3FBFA8" }}
                 />
-              )}
-              <Button
-                type="primary"
-                icon={<CameraOutlined />}
-                onClick={handleFaceLogin}
-                loading={loading}
-                    className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
-              >
-                Face Login
-              </Button>
-          
+              </div>
+            )}
           </div>
+
+          <Button
+            type="primary"
+            icon={<CameraOutlined />}
+            onClick={handleFaceLogin}
+            loading={loading}
+            disabled={!isWebcamOn}
+            className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+          >
+            Continue
+          </Button>
         </div>
       </div>
     </div>

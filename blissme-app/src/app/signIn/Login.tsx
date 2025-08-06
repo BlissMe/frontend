@@ -10,11 +10,12 @@ import { userSignInService } from "../../services/UserService";
 
 import MessageBubble from "../../components/Background/MessageBubble";
 
-import bg7 from "../../assets/images/b7.jpg";
+import bg7 from "../../assets/images/b7.jpeg";
 import { useNotification } from "../context/notificationContext";
 import { getUserPreferences } from "../../redux/actions/userActions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
+import { assets } from "../../assets/assets";
 const { Text } = Typography;
 
 const Login = () => {
@@ -175,11 +176,42 @@ const Login = () => {
                 </div>
               </Form.Item>
             </Form>
-
+            <div className="flex items-center justify-center mb-2">
+              <div className="w-20 h-px bg-gray-400"></div>
+              <span className="px-3 text-sm text-black whitespace-nowrap">
+                Signin With Others
+              </span>
+              <div className="w-20 h-px bg-gray-400"></div>
+            </div>
+            <Button
+              type="default"
+              className="google_btn flex items-center gap-4 mt-3"
+              onClick={() => navigate("/face-auth")}
+            >
+              <img
+                src={assets.face_recognition}
+                alt="face icon"
+                className="w-6 h-6"
+              />
+              Sign in with Face
+            </Button>
             <Form>
-              <div className="flex justify-center mb-2">
-                <Text className="text-center text-black text-sm">or</Text>
-              </div>
+              <Form.Item>
+                <div className="flex justify-center">
+                  <Button
+                    type="primary"
+                    className="google_btn flex items-center gap-2"
+                    onClick={googleAuth}
+                  >
+                    <img
+                      src={assets.google}
+                      alt="google icon"
+                      className="w-5 h-5"
+                    />
+                    Sign in with Google
+                  </Button>
+                </div>
+              </Form.Item>
 
               <Text className="block text-center text-sm md:text-base text-textColorOne">
                 Don’t have an account?{" "}

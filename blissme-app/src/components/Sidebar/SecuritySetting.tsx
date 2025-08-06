@@ -3,6 +3,7 @@ import { Form, Button, message, Tabs, Checkbox } from "antd";
 import { CameraOutlined } from "@ant-design/icons";
 import { getLocalStoragedata } from "../../helpers/Storage";
 import Webcam from "react-webcam";
+import { useNotification } from "../../app/context/notificationContext";
 
 const { TabPane } = Tabs;
 
@@ -13,42 +14,86 @@ const SecuritySetting = () => {
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [consentGiven, setConsentGiven] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
+  const { openNotification } = useNotification();
 
   const capture = async () => {
     if (!webcamRef.current) {
-      message.error("Webcam not ready.");
+      openNotification("error", "Webcam not ready.");
       return;
     }
 
     const imageSrc = webcamRef.current.getScreenshot();
     if (!imageSrc) {
-      message.error("Failed to capture image.");
+      openNotification("error", "Failed to capture image.");
       return;
     }
 
     if (!email) {
-      message.error("No email found in localStorage.");
+      openNotification("error", "No user found");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/face-signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, image: imageSrc }),
-      });
+      console.log("Sending image:", imageSrc);
 
-      const result = await response.json();
-      if (response.ok) {
-        message.success(result.message || "Face signup successful!");
+      // Step 1: Send image to FastAPI to get descriptor
+      const fastApiResponse = await fetch(
+        "http://localhost:8000/generate-descriptor",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: imageSrc }),
+        }
+      );
+
+      const fastApiResult = await fastApiResponse.json();
+
+      if (!fastApiResponse.ok) {
+        openNotification(
+          "error",
+          fastApiResult.detail || "Face not detected. Try again."
+        );
+        return;
+      }
+
+      const descriptor = fastApiResult.descriptor;
+
+      // Step 2: Send descriptor to Express backend for registration
+      const expressResponse = await fetch(
+        "http://localhost:8080/authUser/face-register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, descriptor }),
+        }
+      );
+
+      const expressResult = await expressResponse.json();
+
+      if (expressResponse.ok) {
+        openNotification(
+          "success",
+          expressResult.message || "Face registered successfully!"
+        );
+
+        if (webcamRef.current && webcamRef.current.video) {
+          const stream = webcamRef.current.video.srcObject as MediaStream;
+          if (stream) {
+            stream.getTracks().forEach((track) => track.stop());
+          }
+        }
+
         setIsWebcamOn(false);
       } else {
-        message.error(result.detail || "Signup failed.");
+        openNotification(
+          "error",
+          expressResult.message || "Failed to register face."
+        );
       }
     } catch (err) {
-      console.error(err);
-      message.error("Error connecting to face signup service.");
+      console.error("Face registration error:", err);
+      openNotification("error", "Error during face registration. Try again.");
     } finally {
       setLoading(false);
     }
@@ -133,6 +178,7 @@ const SecuritySetting = () => {
                   message.warning("You must accept the consent to continue.");
                 }
               }}
+              className="bg-green-600 hover:bg-green-700"
             >
               Continue
             </Button>
@@ -141,7 +187,7 @@ const SecuritySetting = () => {
 
         <TabPane tab="Face Recognition Setup" key="2" disabled={!consentGiven}>
           <Form layout="vertical" className="w-[380px] sm:w-[400px]">
-            <div className="flex justify-center mb-4">
+            <div className="flex item center justify-center mb-4">
               {isWebcamOn && (
                 <Webcam
                   audio={false}
@@ -155,7 +201,7 @@ const SecuritySetting = () => {
             </div>
 
             <Form.Item>
-              <div className="flex justify-center">
+              <div className="flex justify-center items-center">
                 <Button
                   type="primary"
                   icon={<CameraOutlined />}

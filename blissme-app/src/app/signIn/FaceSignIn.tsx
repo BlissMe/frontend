@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNotification } from "../context/notificationContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import MessageBubble from "../../components/Background/MessageBubble";
-import bg6 from "../../assets/images/b6.jpeg";
+import bg7 from "../../assets/images/b7.jpeg";
 
 const FaceSignin = () => {
   const webcamRef = useRef<Webcam | null>(null);
@@ -86,7 +86,7 @@ const FaceSignin = () => {
   return (
     <div
       className="relative z-0 min-h-screen w-full overflow-hidden bg-cover bg-center flex items-center justify-center"
-      style={{ backgroundImage: `url(${bg6})` }}
+      style={{ backgroundImage: `url(${bg7})` }}
     >
       <div className="min-h-screen w-full flex items-center justify-center relative z-10">
         <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">

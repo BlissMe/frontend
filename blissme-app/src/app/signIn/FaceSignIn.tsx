@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNotification } from "../context/notificationContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import MessageBubble from "../../components/Background/MessageBubble";
-import bg6 from "../../assets/images/b6.jpg";
+import bg6 from "../../assets/images/b6.jpeg";
 
 const FaceSignin = () => {
   const webcamRef = useRef<Webcam | null>(null);

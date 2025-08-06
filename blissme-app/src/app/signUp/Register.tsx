@@ -17,7 +17,7 @@ import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import "../../index.css";
 import MessageBubble from "../../components/Background/MessageBubble";
-import bg6 from "../../assets/images/b6.jpg";
+import bg6 from "../../assets/images/b6.jpeg";
 import { useNotification } from "../context/notificationContext";
 
 const { Text } = Typography;

@@ -3,6 +3,7 @@ import { Form, Button, message, Tabs, Checkbox } from "antd";
 import { CameraOutlined } from "@ant-design/icons";
 import { getLocalStoragedata } from "../../helpers/Storage";
 import Webcam from "react-webcam";
+import { useNotification } from "../../app/context/notificationContext";
 
 const { TabPane } = Tabs;
 
@@ -13,21 +14,22 @@ const SecuritySetting = () => {
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [consentGiven, setConsentGiven] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
+  const { openNotification } = useNotification();
 
   const capture = async () => {
     if (!webcamRef.current) {
-      message.error("Webcam not ready.");
+      openNotification("error", "Webcam not ready.");
       return;
     }
 
     const imageSrc = webcamRef.current.getScreenshot();
     if (!imageSrc) {
-      message.error("Failed to capture image.");
+      openNotification("error", "Failed to capture image.");
       return;
     }
 
     if (!email) {
-      message.error("No email found in localStorage.");
+      openNotification("error", "No user found");
       return;
     }
 
@@ -36,34 +38,45 @@ const SecuritySetting = () => {
       console.log("Sending image:", imageSrc);
 
       // Step 1: Send image to FastAPI to get descriptor
-      const fastApiResponse = await fetch("http://localhost:8000/generate-descriptor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: imageSrc }),
-      });
+      const fastApiResponse = await fetch(
+        "http://localhost:8000/generate-descriptor",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: imageSrc }),
+        }
+      );
 
       const fastApiResult = await fastApiResponse.json();
 
       if (!fastApiResponse.ok) {
-        message.error(fastApiResult.detail || "No face detected. Please adjust your position.");
+        openNotification(
+          "error",
+          fastApiResult.detail || "Face not detected. Try again."
+        );
         return;
       }
 
       const descriptor = fastApiResult.descriptor;
 
       // Step 2: Send descriptor to Express backend for registration
-      const expressResponse = await fetch("http://localhost:8080/authUser/face-register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, descriptor }),
-      });
+      const expressResponse = await fetch(
+        "http://localhost:8080/authUser/face-register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, descriptor }),
+        }
+      );
 
       const expressResult = await expressResponse.json();
 
       if (expressResponse.ok) {
-        message.success(expressResult.message || "Face registered successfully!");
+        openNotification(
+          "success",
+          expressResult.message || "Face registered successfully!"
+        );
 
-        // ✅ Properly stop the webcam stream
         if (webcamRef.current && webcamRef.current.video) {
           const stream = webcamRef.current.video.srcObject as MediaStream;
           if (stream) {
@@ -73,11 +86,14 @@ const SecuritySetting = () => {
 
         setIsWebcamOn(false);
       } else {
-        message.error(expressResult.message || "Failed to register face.");
+        openNotification(
+          "error",
+          expressResult.message || "Failed to register face."
+        );
       }
     } catch (err) {
       console.error("Face registration error:", err);
-      message.error("Error during face registration. Try again.");
+      openNotification("error", "Error during face registration. Try again.");
     } finally {
       setLoading(false);
     }

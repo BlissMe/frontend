@@ -10,7 +10,7 @@ import { userSignInService } from "../../services/UserService";
 
 import MessageBubble from "../../components/Background/MessageBubble";
 
-import bg7 from "../../assets/images/b7.jpg";
+import bg7 from "../../assets/images/b7.jpeg";
 import { useNotification } from "../context/notificationContext";
 import { getUserPreferences } from "../../redux/actions/userActions";
 import { useDispatch } from "react-redux";

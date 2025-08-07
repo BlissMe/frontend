@@ -8,6 +8,9 @@ import { useNotification } from "../context/notificationContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import MessageBubble from "../../components/Background/MessageBubble";
 import bg7 from "../../assets/images/b7.jpeg";
+import { getUserPreferences } from "../../redux/actions/userActions";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
 
 const FaceSignin = () => {
   const webcamRef = useRef<Webcam | null>(null);
@@ -16,6 +19,7 @@ const FaceSignin = () => {
   const { openNotification } = useNotification();
   const navigate = useNavigate();
   const { setToken } = useContext(AuthContext);
+  const dispatch = useDispatch<AppDispatch>();
   const { Text } = Typography;
 
   const handleFaceLogin = async () => {
@@ -68,6 +72,8 @@ const FaceSignin = () => {
         openNotification("success", "Login successful!");
         setLocalStorageData("token", expressResult.token);
         setToken(expressResult.token);
+        setLocalStorageData("isFaceSign", true);
+        await dispatch(getUserPreferences());
         navigate("/mode/input-mode", { replace: true });
       } else {
         openNotification(

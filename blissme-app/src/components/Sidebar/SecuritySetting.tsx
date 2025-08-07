@@ -11,7 +11,7 @@ const SecuritySetting = () => {
   const [email, setEmail] = useState(getLocalStoragedata("user"));
   const webcamRef = useRef<Webcam | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isWebcamOn, setIsWebcamOn] = useState(false); // initially false
+  const [isWebcamOn, setIsWebcamOn] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
   const { openNotification } = useNotification();

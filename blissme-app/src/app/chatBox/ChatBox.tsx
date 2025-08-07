@@ -32,7 +32,7 @@ const ChatBox = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const { selectedCharacter, nickname } = useCharacterContext();
+  const { selectedCharacter,nickname ,fetchCharacters } = useCharacterContext();
 console.log(selectedCharacter)
   useEffect(() => {
     (async () => {
@@ -44,6 +44,9 @@ console.log(selectedCharacter)
     })();
   }, []);
 
+useEffect(() => {
+  fetchCharacters(); 
+}, []);
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 

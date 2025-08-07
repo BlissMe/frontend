@@ -30,6 +30,8 @@ const ProfileSetting = () => {
   const selectedCharacterId = Number(
     getLocalStoragedata("selectedCharacterId")
   );
+  const isFaceSign = getLocalStoragedata("isFaceSign") === "true";
+
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -165,7 +167,7 @@ const ProfileSetting = () => {
         }
       }
 
-      if (newEmail !== email) {
+      if (!isFaceSign && newEmail !== email) {
         const response = await updateEmailService({ newEmail }, token);
         if (response.message === "Email updated successfully") {
           setLocalStorageData("user", newEmail);
@@ -200,14 +202,14 @@ const ProfileSetting = () => {
   useEffect(() => {
     const values = form.getFieldsValue();
     const isNicknameChanged = values.nickname !== nickname;
-    const isEmailChanged = values.email !== email;
+    const isEmailChanged = isFaceSign ? false : values.email !== email;
     const isCharacterNameChanged = values.name !== originalCharacterName;
     const isImageChanged = !!file;
 
     const characterChanged = isCharacterNameChanged && isImageChanged;
 
     setIsFormChanged(isNicknameChanged || isEmailChanged || characterChanged);
-  }, [file, form, nickname, email, originalCharacterName]);
+  }, [file, form, nickname, email, originalCharacterName, isFaceSign]);
 
   useEffect(() => {
     return () => {
@@ -232,7 +234,7 @@ const ProfileSetting = () => {
         }}
         onValuesChange={(_, values) => {
           const isNicknameChanged = values.nickname !== nickname;
-          const isEmailChanged = values.email !== email;
+          const isEmailChanged = isFaceSign ? false : values.email !== email;
           const isCharacterNameChanged = values.name !== originalCharacterName;
           const isImageChanged = !!file;
 
@@ -300,16 +302,18 @@ const ProfileSetting = () => {
           <Input className="h-10" />
         </Form.Item>
 
-        <Form.Item
-          name="email"
-          label={<span className="font-medium text-gray-700">Email</span>}
-          rules={[
-            { required: true, message: "Please enter your email" },
-            { type: "email", message: "Please enter a valid email" },
-          ]}
-        >
-          <Input className="h-10" />
-        </Form.Item>
+        {!isFaceSign && (
+          <Form.Item
+            name="email"
+            label={<span className="font-medium text-gray-700">Email</span>}
+            rules={[
+              { required: true, message: "Please enter your email" },
+              { type: "email", message: "Please enter a valid email" },
+            ]}
+          >
+            <Input className="h-10" />
+          </Form.Item>
+        )}
 
         <Button
           type="primary"

@@ -1,4 +1,4 @@
-name: Deploy Frontend to AWS EC2
+name: Deploy Blissme Frontend
 
 on:
   push:
@@ -13,13 +13,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set working directory to blissme-app
+      working-directory: ./blissme-app
+      run: echo "Changed to blissme-app"
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
     - name: Build Docker image
+      working-directory: ./blissme-app
       run: docker build -t frontend-app .
 
     - name: Save Docker image to file
+      working-directory: ./blissme-app
       run: docker save frontend-app -o frontend-app.tar
 
     - name: Copy image to EC2
@@ -28,10 +34,10 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "frontend-app.tar"
+        source: "blissme-app/frontend-app.tar"
         target: "/home/ubuntu"
 
-    - name: SSH and deploy
+    - name: SSH and run Docker on EC2
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.EC2_HOST }}

@@ -1,20 +1,42 @@
 import React, { createContext, useState, ReactNode, useEffect } from "react";
 import { ConfigProvider } from "antd";
-import { getLocalStoragedata, setLocalStorageData } from "../../helpers/Storage";
+import {
+  getLocalStoragedata,
+  setLocalStorageData,
+} from "../../helpers/Storage";
+import { getCurrentTime } from "../../helpers/Time";
 
-// Define the shape of the AuthContext
+export interface Message {
+  sender: string;
+  text: string;
+  time: string;
+}
 interface AuthContextType {
   token: string | null;
   setToken: (token: string | null) => void;
+  sessionID: string;
+  setSessionID: (id: string) => void;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  chatHistory: Message[];
+  setChatHistory: React.Dispatch<React.SetStateAction<Message[]>>;
+  isSessionEnded: boolean;
+  setIsSessionEnded: (ended: boolean) => void;
 }
 
-// Create the context with a default value (will be overridden by the provider)
 export const AuthContext = createContext<AuthContextType>({
   token: null,
   setToken: () => {},
+  sessionID: "",
+  setSessionID: () => {},
+  messages: [],
+  setMessages: () => {},
+  chatHistory: [],
+  setChatHistory: () => {},
+  isSessionEnded: false,
+  setIsSessionEnded: () => {},
 });
 
-// Define the props for the provider
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -23,9 +45,19 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
   const urlParams = new URLSearchParams(window.location.search);
   const tokenFromURL = urlParams.get("token");
   const storedToken = getLocalStoragedata("token");
-
   const initialToken = tokenFromURL || storedToken;
+
   const [token, setToken] = useState<string | null>(initialToken);
+  const [sessionID, setSessionID] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      sender: "popo",
+      text: "Hi there. How are you feeling today?",
+      time: getCurrentTime(),
+    },
+  ]);
+  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const [isSessionEnded, setIsSessionEnded] = useState(false);
 
   useEffect(() => {
     if (tokenFromURL) {
@@ -36,7 +68,20 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
   }, [tokenFromURL]);
 
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        setToken,
+        sessionID,
+        setSessionID,
+        messages,
+        setMessages,
+        chatHistory,
+        setChatHistory,
+        isSessionEnded,
+        setIsSessionEnded,
+      }}
+    >
       <ConfigProvider
         theme={{
           components: {
@@ -54,4 +99,3 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
-

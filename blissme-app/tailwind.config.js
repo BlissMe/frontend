@@ -5,14 +5,15 @@ export default {
     extend: {
       fontFamily: {
         Roboto: ["Roboto", "sans-serif"],
+        merienda: ['Merienda', 'cursive'],
       },
       colors: {
         textColorOne: "#5F5757",
         textColorTwo: "#1713FF",
         buttonColor: "#1B5E3B",
         bgColorOne: "#A8D5BABD",
-        inputColorOne: "#F2C1B6",
-        inputColorTwo: "#47A37E",
+        inputColorOne: "#2ecc71",
+        inputColorTwo: "#81c784",
         inputColorThree: "#DCF2DE",
         iconColor: "#1B5E3A"
       },
@@ -69,7 +70,8 @@ export default {
       },
       animation: {
         wiggle: 'wiggle 0.5s ease-in-out infinite',
-      }
+      },
+
 
     },
     plugins: [],

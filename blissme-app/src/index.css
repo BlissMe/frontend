@@ -22,34 +22,34 @@
   border-radius: 30px;
 }
 
-.custom-label .ant-form-item-label > label {
+.custom-label .ant-form-item-label>label {
   @apply text-base font-normal text-black px-2;
 }
 
 .google_btn {
-    width: 230px;
-    height: 40px;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-    background-color: white;
-    box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
-    font-size: 16px;
-    font-weight: 500;
-    margin: 0 0 20px 0;
-    color: #2c444e;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  width: 230px;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: white;
+  box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 20px 0;
+  color: #2c444e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .text {
-    font-size: 14px;
-    color: #2c444e;
-    margin: 5px 0;
-    padding: 0;
+  font-size: 14px;
+  color: #2c444e;
+  margin: 5px 0;
+  padding: 0;
 }
 
 body {
@@ -60,9 +60,11 @@ body {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -72,15 +74,18 @@ body {
   background-size: 200% 200%;
   animation: waveBackground 12s ease-in-out infinite;
 }
+
 /* Custom spinner style */
 .custom-spinner {
   border: 3px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #1890ff; /* Ant Design blue */
+  border-left-color: #1890ff;
+  /* Ant Design blue */
   border-radius: 50%;
   width: 20px;
   height: 20px;
   animation: spin 1s linear infinite;
-  margin: auto; /* center horizontally */
+  margin: auto;
+  /* center horizontally */
 }
 
 @keyframes spin {
@@ -118,10 +123,56 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scaleY(0.3);
   }
+
   50% {
     transform: scaleY(1);
   }
+}
+
+.ant-notification {
+  z-index: 9999 !important;
+}
+.ant-notification-notice-message {
+  display: block !important;
+  color: #000 !important;
+  font-weight: bold;
+}
+canvas.animated-background-canvas {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  z-index: -10 !important;
+  pointer-events: none;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Merienda:wght@400;700&display=swap');
+
+.merienda {
+  font-family: 'Merienda', cursive;
+  font-weight: 400;
+  /* or 700 if you want bold */
+}
+
+.ant-input-affix-wrapper,
+.ant-input-password {
+  border-radius: 12px !important;
+  /* or 0px to remove rounding */
+}
+
+.ant-input {
+  border-radius: 2px !important;
+}
+
+.ant-form-item {
+  margin-bottom: 12px;
+  /* default is 24px; reduce as needed */
+}
+
+.Modal-root {
+  z-index: 9999 !important;
 }

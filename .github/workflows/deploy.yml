@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - supuni-dev
 
 jobs:
   deploy:
@@ -29,13 +30,15 @@ jobs:
       run: docker save frontend-app -o frontend-app.tar
 
     - name: Copy image to EC2
+      working-directory: ./blissme-app  # <-- Moved here
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "blissme-app/frontend-app.tar"
+        source: "frontend-app.tar"
         target: "/home/ubuntu"
+
 
     - name: SSH and run Docker on EC2
       uses: appleboy/ssh-action@v1.0.0

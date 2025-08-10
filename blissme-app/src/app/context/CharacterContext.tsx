@@ -1,13 +1,8 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 interface Character {
   _id: string;
@@ -23,6 +18,8 @@ interface CharacterContextType {
   setSelectedCharacterId: (id: number | null) => void;
   selectedCharacter: Character | undefined;
   nickname: string | undefined;
+  selectId: number | null;
+  fetchCharacters: () => Promise<void>;
 }
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -40,44 +37,33 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const url = process.env.REACT_APP_API_URL;
   const nickname = useSelector((state: RootState) => state.user.nickname);
-  const selectId = useSelector(
-    (state: RootState) => state.user.virtualCharacter
+  const selectId = Number(
+    useSelector((state: RootState) => state.user.virtualCharacter)
   );
 
-  useEffect(() => {
-    const fetchCharacters = async () => {
-      try {
-        const response = await axios.get<Character[]>(`${url}/`);
-        console.log("Characters fetched:", response.data);
-        setCharacters(response.data);
-      } catch (error: any) {
-        console.error("Error fetching characters:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCharacters = async () => {
+    const localToken = getLocalStoragedata("token");
+    if (!localToken) return;
 
+    try {
+      const response = await axios.get<Character[]>(`${url}/`, {
+        headers: { Authorization: `Bearer ${localToken}` },
+      });
+      setCharacters(response.data);
+    } catch (error: any) {
+      console.error("Error fetching characters:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchCharacters();
   }, [url]);
 
-  const selectedCharacter = useMemo(() => {
-    if (!characters.length || selectId == null) {
-      console.warn("Characters not loaded or selectId is null");
-      return undefined;
-    }
-
-    console.log("All characters:", characters);
-    console.log("Redux selectId:", selectId);
-
-    const result = characters.find(
-      (char) => Number(char.characterId) === Number(selectId)
-    );
-
-    console.log("Selected character result:", result);
-    return result;
-  }, [characters, selectId]);
-
-  if (loading) return null; // Or you can return a spinner
+  const selectedCharacter = characters.find(
+    (char) => char.characterId === selectId
+  );
 
   return (
     <CharacterContext.Provider
@@ -87,6 +73,8 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
         setSelectedCharacterId,
         selectedCharacter,
         nickname,
+        selectId,
+        fetchCharacters,
       }}
     >
       {children}

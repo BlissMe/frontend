@@ -35,3 +35,5 @@ crash.log
 *.backup
 *.log
 .env
+src/app/ExtraCodes/
+

@@ -36,14 +36,11 @@ const dispatch = useDispatch<AppDispatch>();
       if (response.message === "Login successful") {
         openNotification("success", "Login Successful", "Welcome back!");
 
-        // Set token in memory and storage
         setToken(response.token);
         setLocalStorageData("token", response.token);
 
-        // ✅ Fetch user preferences
         await dispatch(getUserPreferences());
 
-        // ✅ Navigate after preferences are loaded
         navigate("/mode/input-mode", { replace: true });
       } else {
         openNotification(

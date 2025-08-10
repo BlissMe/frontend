@@ -9,6 +9,7 @@ import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
 import { RootState } from "../../redux/store";
 import { LayeredBackground } from "animated-backgrounds";
 import { useNotification } from "../context/notificationContext";
+import { setLocalStorageData } from "../../helpers/Storage";
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -60,6 +61,7 @@ const VirtualCharacter = () => {
       try {
         const response = await axios.get<Character[]>(`${url}/`);
         console.log("Characters fetched:", response.data);
+        setLocalStorageData("selectedCharacterId",selectedCharacterId)
         setCharacters(response.data);
       } catch (error: any) {
         console.error("Error fetching characters:", error.message);

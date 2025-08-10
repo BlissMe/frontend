@@ -3,7 +3,7 @@ name: Deploy Frontend to AWS EC2
 on:
   push:
     branches:
-      - supuni-dev
+      - main
 
 jobs:
   deploy:

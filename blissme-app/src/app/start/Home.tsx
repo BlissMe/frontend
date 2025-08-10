@@ -96,7 +96,7 @@ const Home = () => {
 
                     <div className="hidden md:flex space-x-6">
                         <a href="#about" className="text-gray-700 hover:text-green-700 font-medium">
-                            About
+                           {/*About  */} 
                         </a>
                     </div>
 

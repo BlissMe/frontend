@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Divider, Typography, Modal } from "antd";
+import { Button, Divider, Typography, Modal, Tooltip } from "antd";
 import { assets } from "../../assets/assets";
 import ReactBarsLoader from "../../components/loader/ReactBarLoader";
 import { getCurrentTime } from "../../helpers/Time";
@@ -12,11 +12,13 @@ import {
 import { savePHQ9Answer } from "../../services/Phq9Service";
 import { useCharacterContext } from "../context/CharacterContext";
 import {
+  AudioMutedOutlined,
   AudioOutlined,
   LoadingOutlined,
   StopOutlined,
 } from "@ant-design/icons";
 import Avatar from "../../components/profile/Avatar";
+import { useNotification } from "../context/notificationContext";
 
 const { Text } = Typography;
 
@@ -60,6 +62,10 @@ const VoiceChatBox: React.FC = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, nickname } = useCharacterContext();
+  const [showEmotionModal, setShowEmotionModal] = useState(false);
+  const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
+  const isCancelledRef = useRef(false);
+  const { openNotification } = useNotification();
 
   const phqOptions = [
     "Not at all",
@@ -86,6 +92,7 @@ const VoiceChatBox: React.FC = () => {
   }, []);
 
   const handleStartRecording = async () => {
+    isCancelledRef.current = false; // reset cancellation flag
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -97,7 +104,10 @@ const VoiceChatBox: React.FC = () => {
         : "";
 
       if (!mimeType) {
-        alert("No supported MIME type found for MediaRecorder.");
+        openNotification(
+          "error",
+          "No supported MIME type found for MediaRecorder."
+        );
         return;
       }
 
@@ -109,11 +119,18 @@ const VoiceChatBox: React.FC = () => {
           chunks.current.push(e.data);
         }
       };
-
       recorder.onstop = async () => {
+        if (isCancelledRef.current) {
+          // If cancelled, just reset and do nothing
+          isCancelledRef.current = false;
+          return;
+        }
         const blob = new Blob(chunks.current, { type: "audio/webm" });
         if (blob.size < 1000) {
-          alert("Recording is too short or empty. Please try again.");
+          openNotification(
+            "error",
+            "Recording is too short or empty. Please try again."
+          );
           return;
         }
         await handleSendAudio(blob);
@@ -123,7 +140,7 @@ const VoiceChatBox: React.FC = () => {
       setMediaRecorder(recorder);
       setRecording(true);
     } catch (err) {
-      alert("Microphone access denied or error occurred.");
+      openNotification("error", "Microphone access denied or error occurred.");
       console.error("Mic error:", err);
     }
   };
@@ -169,7 +186,7 @@ const VoiceChatBox: React.FC = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        alert("Server error: " + errorText);
+        openNotification("error", errorText || "Server error");
         return;
       }
 
@@ -216,10 +233,19 @@ const VoiceChatBox: React.FC = () => {
       const audio = new Audio(`http://localhost:8000${result.audio_url}`);
       audio.play();
 
+      // Handle emotion state
+      if (result.emotion_history && Array.isArray(result.emotion_history)) {
+        setEmotionHistory(result.emotion_history);
+        if (result.emotion_history.length >= 3) {
+          setOverallEmotion(result.overall_emotion || null);
+          setShowEmotionModal(true);
+        }
+      }
+
       setIsBotTyping(false);
       setIsWaitingForBotResponse(false);
     } catch (err) {
-      alert("Failed to send audio. Please try again.");
+      openNotification("error", "Failed to send audio. Please try again.");
       console.error("Upload error:", err);
       setIsUploading(false);
       setIsBotTyping(false);
@@ -278,7 +304,7 @@ const VoiceChatBox: React.FC = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        alert("Server error: " + errorText);
+        openNotification("error", errorText || "Server error: ");
         setIsBotTyping(false);
         return;
       }
@@ -315,7 +341,10 @@ const VoiceChatBox: React.FC = () => {
         await audio.play();
       }
     } catch (err) {
-      alert("Failed to process PHQ-9 answer. Please try again.");
+      openNotification(
+        "error",
+        "Failed to process PHQ-9 answer. Please try again."
+      );
       console.error("PHQ-9 answer error:", err);
     }
 
@@ -415,39 +444,95 @@ const VoiceChatBox: React.FC = () => {
         <div ref={messageEndRef} />
       </div>
 
-      <div className="flex items-center justify-center p-4 gap-4">
+      <div className="w-full p-6 flex justify-center gap-6">
         {!recording && !isWaitingForBotResponse && (
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<AudioOutlined />}
-            onClick={handleStartRecording}
-            className="bg-green-500 hover:bg-green-600 text-white"
-          />
+          <Tooltip title="Start recording (Mic off)">
+            <Button
+              type="primary"
+              shape="circle"
+              size="large"
+              onClick={handleStartRecording}
+              className="bg-green-600 hover:bg-green-700 text-white"
+              aria-label="Turn microphone ON"
+              style={{ width: 70, height: 70, fontSize: 32 }}
+            >
+              <AudioMutedOutlined />
+            </Button>
+          </Tooltip>
         )}
 
-        {recording && (
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<StopOutlined />}
-            onClick={handleStopRecording}
-            className="bg-red-500 hover:bg-red-600 text-white"
-          />
+        {recording && !isWaitingForBotResponse && (
+          <>
+            <Tooltip title="Stop and send (Mic on)">
+              <Button
+                type="primary"
+                shape="circle"
+                size="large"
+                onClick={() => {
+                  handleStopRecording();
+                  setRecording(false);
+                  setIsWaitingForBotResponse(true);
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white"
+                aria-label="Stop microphone and send"
+                style={{ width: 70, height: 70, fontSize: 32 }}
+              >
+                <AudioOutlined />
+              </Button>
+            </Tooltip>
+
+            <Tooltip title="Cancel recording">
+              <Button
+                danger
+                shape="circle"
+                size="large"
+                onClick={() => {
+                  isCancelledRef.current = true;
+                  if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                  }
+                  chunks.current = [];
+                  setRecording(false);
+                  setIsWaitingForBotResponse(false);
+                  streamRef.current
+                    ?.getTracks()
+                    .forEach((track) => track.stop());
+                }}
+                aria-label="Cancel recording"
+                style={{ width: 70, height: 70, fontSize: 28 }}
+              >
+                ✕
+              </Button>
+            </Tooltip>
+          </>
         )}
 
         {isWaitingForBotResponse && (
-          <Button
-            shape="circle"
-            size="large"
-            icon={<LoadingOutlined spin />}
-            disabled
-            className="bg-gray-400 text-white"
-          />
+          <Tooltip title="Processing">
+            <Button
+              shape="circle"
+              size="large"
+              icon={<LoadingOutlined spin style={{ fontSize: 32 }} />}
+              disabled
+              className="bg-gray-400 text-white"
+              aria-label="Processing"
+              style={{ width: 70, height: 70 }}
+            />
+          </Tooltip>
         )}
       </div>
+
+      {/* Emotion Summary Modal */}
+      <Modal
+        title="User Emotion Summary"
+        open={showEmotionModal}
+        onOk={() => setShowEmotionModal(false)}
+        onCancel={() => setShowEmotionModal(false)}
+      >
+        <p>
+          <strong>Overall Emotion:</strong> {overallEmotion || "N/A"}
+        </p>
+      </Modal>
     </div>
   );
 };

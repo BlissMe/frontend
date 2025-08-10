@@ -7,6 +7,7 @@ const ModelLayout = () => {
     <div className="relative w-full h-screen overflow-hidden">
       {/* <LiveLoader /> */}
       <Layout>
+
         <Outlet />
       </Layout>
     </div>

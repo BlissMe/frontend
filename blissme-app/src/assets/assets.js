@@ -8,7 +8,7 @@ import avatar1 from './avatars/avatar1.jpeg'
 import avatar2 from './avatars/avatar2.jpg'
 import avatar3 from './avatars/avatar3.jpeg'
 import i3 from './avatars/i3.png'
-
+import face_recognition from './images/facial-recognition.png'
 
 export const assets = {
     icon1,
@@ -20,5 +20,6 @@ export const assets = {
     avatar1,
     avatar2,
     avatar3,
-    i3
+    i3,
+    face_recognition
 }

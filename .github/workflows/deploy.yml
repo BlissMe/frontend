@@ -40,6 +40,7 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          cd /home/ubuntu
           docker load -i frontend-app.tar
           docker stop frontend-app || true
           docker rm frontend-app || true

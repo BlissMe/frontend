@@ -30,6 +30,7 @@ jobs:
       run: docker save frontend-app -o frontend-app.tar
 
     - name: Copy image to EC2
+      working-directory: ./blissme-app  # <-- Moved here
       uses: appleboy/scp-action@v0.1.4
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -37,7 +38,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         source: "frontend-app.tar"
         target: "/home/ubuntu"
-      working-directory: ./blissme-app
+
 
     - name: SSH and run Docker on EC2
       uses: appleboy/ssh-action@v1.0.0

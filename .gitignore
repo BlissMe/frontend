@@ -1,0 +1,17 @@
+# Node modules
+blissme-app/node_modules/
+
+# Build output
+blissme-app/build/
+
+# Environment and secrets
+blissme-app/.env
+blissme-app/terraform/*.pem
+blissme-app/terraform/*.key
+blissme-app/terraform/*.tfstate*
+blissme-app/terraform/.terraform/
+blissme-app/terraform/.terraform.lock.hcl
+
+# Misc
+*.log
+.DS_Store

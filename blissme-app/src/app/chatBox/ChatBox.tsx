@@ -10,6 +10,8 @@ import {
   saveMessage,
   fetchAllSummaries,
 } from "../../services/ChatMessageService";
+import { getClassifierResult ,ClassifierResult } from "../../services/DetectionService";
+import {saveClassifierToServer  } from "../../services/ClassifierResults";
 import { savePHQ9Answer } from "../../services/Phq9Service";
 import Avatar from "../../components/profile/Avatar";
 import { useCharacterContext } from "../context/CharacterContext";
@@ -24,6 +26,8 @@ const ChatBox = () => {
     useContext(AuthContext);
 
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
+  const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
+  const [detecting, setDetecting] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastPhq9, setLastPhq9] = useState<{
@@ -33,7 +37,8 @@ const ChatBox = () => {
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
   const { selectedCharacter,nickname ,fetchCharacters } = useCharacterContext();
-console.log(selectedCharacter)
+  console.log(selectedCharacter)
+
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
@@ -43,10 +48,11 @@ console.log(selectedCharacter)
       setSessionSummaries(allSummaries);
     })();
   }, []);
+  console.log("sessionSummaries:", sessionSummaries);
+  useEffect(() => {
+    fetchCharacters(); 
+  }, []);
 
-useEffect(() => {
-  fetchCharacters(); 
-}, []);
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
@@ -189,6 +195,42 @@ useEffect(() => {
     setLoading(false);
   };
 
+async function ClassifierResult() {
+  if (!sessionID) return; // session not ready yet
+  setDetecting(true);
+  try {
+    const updatedHistory = await fetchChatHistory(sessionID);
+    const formattedHistory: string[] = Array.isArray(updatedHistory)
+      ? updatedHistory.map((msg: any) =>
+          `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
+      : [];
+
+    const historyStr = formattedHistory.join("\n").trim();
+    if (!historyStr) return; // nothing to classify yet
+
+    const latestSummary: string | null =
+      sessionSummaries && sessionSummaries.length
+        ? sessionSummaries[sessionSummaries.length - 1]
+        : null;
+
+const res = await getClassifierResult(historyStr, sessionSummaries ?? []); 
+    setClassifier(res);
+    
+    console.log("Classifier:", res);
+    try {
+      await saveClassifierToServer(Number(sessionID), res);
+      console.log("Classifier result saved.");
+    } catch (err) {
+      console.error("Failed to persist classifier result:", err);
+    }
+  } catch (e) {
+    console.error("getClassifierResult failed:", e);
+  } finally {
+    setDetecting(false);
+  }
+}
+
   const phqOptions = [
     "Not at all",
     "Several days",
@@ -205,7 +247,16 @@ useEffect(() => {
           height={120}
         />
       </div>
-
+      <div className="px-4 -mt-2 mb-2 flex justify-center">
+        <Button
+          type="primary"
+          onClick={() => void ClassifierResult()} 
+          loading={detecting}
+          disabled={!sessionID}
+        >
+          Level Detection
+        </Button>
+      </div>
       <div className="flex-1 overflow-y-auto px-4 space-y-6">
         {messages.map((msg, index) => (
           <div

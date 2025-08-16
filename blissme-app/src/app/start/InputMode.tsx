@@ -87,7 +87,7 @@ const InputMode = () => {
     if (selectedMode === "Voice") {
       navigate("/chat/voice", { replace: true });
     } else if (selectedMode === "Text") {
-      navigate("/mode/mood");
+      navigate("/chat/text", { replace: true });
     }
   };
 

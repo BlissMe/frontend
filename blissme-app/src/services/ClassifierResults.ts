@@ -13,7 +13,7 @@ export async function saveClassifierToServer(
     }
 ) {
     const token = getLocalStoragedata("token");
-    const res = await fetch("http://localhost:8080/api/classifier/save", {
+    const res = await fetch("http://localhost:8080/classifier/save", {
 
 
         method: "POST",

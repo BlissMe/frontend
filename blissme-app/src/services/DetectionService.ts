@@ -1,7 +1,9 @@
 // services/DetectionService.ts
+import { getLocalStoragedata } from "../helpers/Storage";
 const metadataServiceURL = "http://localhost:8000/";
 export type EmotionLabel = "happy" | "neutral" | "sad" | "angry" | "fearful";
 export type DepressionDetectedLabel = "Depression Signs Detected" | "No Depression Signs Detected";
+
 
 export interface ClassifierResult {
     depression_label: DepressionDetectedLabel;
@@ -25,4 +27,15 @@ export async function getClassifierResult(
         throw new Error(err.detail || `Detection failed with ${res.status}`);
     }
     return res.json();
+}
+
+
+const API_BASE = "http://localhost:8080";
+
+export async function getDepressionLevel() {
+    const token = getLocalStoragedata("token");
+    const res = await fetch(`${API_BASE}/levelDetection/depression-index`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return await res.json();
 }

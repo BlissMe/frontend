@@ -85,7 +85,7 @@ const InputMode = () => {
     openNotification("success", "Input mode selected successfully!");
 
     if (selectedMode === "Voice") {
-      navigate("/chat-new/text", { replace: true });
+      navigate("/chat-new/voice", { replace: true });
     } else if (selectedMode === "Text") {
       navigate("/chat-new/text", { replace: true });
     }

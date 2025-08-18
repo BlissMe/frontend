@@ -49,7 +49,9 @@ const Routerset = () => {
             <Route path="nick-name" element={<Nickname />} />
             <Route path="virtual-character" element={<VirtualCharacter />} />
             <Route path="input-mode" element={<InputMode />} />
-            {/* <Route path="mood" element={<Mood />} /> */}
+
+            {/*<Route path="mood" element={<Mood />} />*/}
+
           </Route>
           <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />

@@ -314,7 +314,7 @@ const ChatInterface = () => {
                                 {/* Message bubble */}
                                 <div className="relative max-w-xs">
                                     {msg.sender === "you" ? (
-                                        <div className="relative px-5 py-3 bg-gradient-to-br from-red-100 to-red-300 rounded-[40px] shadow text-white text-sm leading-relaxed">
+                                        <div className="relative px-5 py-3 bg-gradient-to-br from-red-100 to-red-300 rounded-[40px] shadow text-gray-800 text-sm leading-relaxed">
                                             {/* Cloud tail for user (right side) */}
                                             <div className="absolute -right-3 bottom-1 w-4 h-4 bg-red-200 rounded-full"></div>
                                             <div className="absolute -right-1.5 bottom-3 w-3 h-3 bg-red-300 rounded-full"></div>

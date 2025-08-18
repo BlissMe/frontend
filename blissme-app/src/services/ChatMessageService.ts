@@ -1,4 +1,4 @@
-// 📁 src/services/ChatMessageService.ts
+//  src/services/ChatMessageService.ts
 
 import { getLocalStoragedata } from "../helpers/Storage";
 
@@ -85,7 +85,7 @@ export async function fetchAllSummaries(): Promise<string[]> {
                 Authorization: `Bearer ${token}`
             }
         });
-
+        console.log("Fetched summaries:", response);
         const data = await response.json();
         return data.summaries || [];
     } catch (error) {

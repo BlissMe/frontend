@@ -443,8 +443,12 @@ const ViceChatInterface = () => {
 
                     {isUploading && (
                         <div className="flex justify-end items-center gap-2">
-                            <Avatar username={nickname ?? "User"} />
                             <ReactBarsLoader />
+                            <img
+                                src={user}
+                                alt="User Avatar"
+                                className="w-10 h-10 rounded-full object-cover"
+                            />
                         </div>
                     )}
                     {isBotTyping && (

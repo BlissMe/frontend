@@ -36,10 +36,6 @@ const Routerset = () => {
       <Route path="/login" element={<SignIn />} /> */}
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="chat-new/text" element={<Chat />} />
-      <Route path="chat-new/voice" element={<Chat />} />
-
-
 
       <Route path="/register" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />
@@ -52,7 +48,7 @@ const Routerset = () => {
             <Route path="nick-name" element={<Nickname />} />
             <Route path="virtual-character" element={<VirtualCharacter />} />
             <Route path="input-mode" element={<InputMode />} />
-            <Route path="mood" element={<Mood />} />
+            {/* <Route path="mood" element={<Mood />} /> */}
           </Route>
           <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
@@ -62,7 +58,9 @@ const Routerset = () => {
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} /> */}
           </Route>
-
+          <Route path="chat-new/text" element={<Chat />} />
+          <Route path="chat-new/voice" element={<Chat />} />
+          
           <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />

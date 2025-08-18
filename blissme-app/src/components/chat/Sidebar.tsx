@@ -47,6 +47,7 @@ const Sidebar = () => {
         setMessages([]);
         setChatHistory([]);
         setIsSessionEnded(true);
+        localStorage.clear();
 
         // Redirect to login or home
         navigate("/login");

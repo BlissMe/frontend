@@ -208,7 +208,7 @@ const ChatInterface = () => {
             </div>
 
             {/* Chat Box */}
-            <div className="relative z-10 w-2/3 h-[90%] bg-green-50 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+            <div className="relative z-10 w-2/3 h-[90%] bg-green-100 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
                 {/* Chat Area */}
                 <div className="flex-1 overflow-y-auto px-4 space-y-6">
                     {messages.map((msg, index) => (

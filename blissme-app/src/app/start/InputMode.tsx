@@ -98,7 +98,7 @@ const InputMode = () => {
       </div>
       <div className="absolute inset-0 z-0 bg-cover bg-center opacity-20 bg-[#BDF2D0]"></div>
 
-      <div className="z-10 bg-[#BDF2D0] bg-opacity-10 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20 relative">
+      <div className="z-10 bg-[#BDF2D0] bg-opacity-20 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20 relative">
         <div className="flex flex-col items-center mb-0">
           <img
             src={logo}
@@ -130,11 +130,10 @@ const InputMode = () => {
                     key={mode}
                     onClick={() => setSelectedMode(mode)}
                     className={`flex flex-col items-center justify-center w-20 h-10 bg-white bg-opacity-50 rounded-lg p-2 shadow-md transition-transform cursor-pointer hover:scale-105
-        ${
-          selectedMode === mode
-            ? "border-2 border-[#1B5E3A]"
-            : "border border-transparent"
-        }
+        ${selectedMode === mode
+                        ? "border-2 border-[#1B5E3A]"
+                        : "border border-transparent"
+                      }
       `}
                   >
                     <span className="text-sm font-medium text-gray-700">

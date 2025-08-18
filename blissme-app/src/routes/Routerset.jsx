@@ -22,6 +22,8 @@ import ProfileSetting from "../components/Sidebar/ProfileSetting";
 import AccountSetting from "../components/Sidebar/AccountSetting";
 import SecuritySetting from "../components/Sidebar/SecuritySetting";
 import FaceSignin from "../app/signIn/FaceSignIn";
+import Chat from "../app/chatBox/Chat";
+import SettingsLayout from "../app/layouts/SettingsLayout";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -34,6 +36,10 @@ const Routerset = () => {
       <Route path="/login" element={<SignIn />} /> */}
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="chat-new/text" element={<Chat />} />
+      <Route path="chat-new/voice" element={<Chat />} />
+
+
 
       <Route path="/register" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />
@@ -48,10 +54,16 @@ const Routerset = () => {
             <Route path="input-mode" element={<InputMode />} />
             <Route path="mood" element={<Mood />} />
           </Route>
-          <Route path="/chat" element={<MainLayout />}>
+          <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
             <Route path="setting" element={<Setting />} />
+            {/* <Route path="setting/profile" element={<ProfileSetting />} />
+            <Route path="setting/account" element={<AccountSetting />} />
+            <Route path="setting/security" element={<SecuritySetting />} /> */}
+          </Route>
+
+          <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} />

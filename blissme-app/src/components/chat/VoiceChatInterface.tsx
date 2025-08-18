@@ -495,9 +495,9 @@ const ViceChatInterface = () => {
                                 shape="circle"
                                 size="large"
                                 onClick={handleStartRecording}
-                                className="bg-green-600 hover:bg-green-700 text-white"
+                                className="bg-green-400 hover:bg-green-600 text-white"
                                 aria-label="Turn microphone ON"
-                                style={{ width: 70, height: 70, fontSize: 32 }}
+                                style={{ width: 50, height: 50, fontSize: 24 }}
                             >
                                 <AudioMutedOutlined />
                             </Button>
@@ -518,7 +518,7 @@ const ViceChatInterface = () => {
                                     }}
                                     className="bg-red-600 hover:bg-red-700 text-white"
                                     aria-label="Stop microphone and send"
-                                    style={{ width: 70, height: 70, fontSize: 32 }}
+                                    style={{ width: 50, height: 50, fontSize: 24 }}
                                 >
                                     <AudioOutlined />
                                 </Button>
@@ -542,7 +542,7 @@ const ViceChatInterface = () => {
                                             .forEach((track) => track.stop());
                                     }}
                                     aria-label="Cancel recording"
-                                    style={{ width: 70, height: 70, fontSize: 28 }}
+                                    style={{ width: 50, height: 50, fontSize: 24 }}
                                 >
                                     ✕
                                 </Button>
@@ -555,18 +555,18 @@ const ViceChatInterface = () => {
                             <Button
                                 shape="circle"
                                 size="large"
-                                icon={<LoadingOutlined spin style={{ fontSize: 32 }} />}
+                                icon={<LoadingOutlined spin style={{ fontSize: 24 }} />}
                                 disabled
                                 className="bg-gray-400 text-white"
                                 aria-label="Processing"
-                                style={{ width: 70, height: 70 }}
+                                style={{ width: 50, height: 50 }}
                             />
                         </Tooltip>
                     )}
                 </div>
 
                 {/* Emotion Summary Modal */}
-                <Modal
+                {/* <Modal
                     title="User Emotion Summary"
                     open={showEmotionModal}
                     onOk={() => setShowEmotionModal(false)}
@@ -575,7 +575,7 @@ const ViceChatInterface = () => {
                     <p>
                         <strong>Overall Emotion:</strong> {overallEmotion || "N/A"}
                     </p>
-                </Modal>
+                </Modal> */}
             </div>
         </div>
     );

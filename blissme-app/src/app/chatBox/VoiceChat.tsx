@@ -5,6 +5,7 @@ import bg from "../../assets/images/chatbg.png"
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { getLocalStoragedata } from "../../helpers/Storage";
+import VoiceChatInterface from "../../components/chat/VoiceChatInterface";
 
 const VoiceChat = () => {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ const VoiceChat = () => {
             </div>
 
             {/* Chat Interface fills remaining space */}
-            <ChatInterface />
+            <VoiceChatInterface />
         </div>
     );
 };

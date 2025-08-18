@@ -37,6 +37,9 @@ const Routerset = () => {
       <Route path="/forgot-password" element={<SendEmail />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="chat-new/text" element={<Chat />} />
+      <Route path="chat-new/voice" element={<Chat />} />
+
+
 
       <Route path="/register" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />

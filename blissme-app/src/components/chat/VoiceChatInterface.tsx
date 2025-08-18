@@ -25,7 +25,6 @@ import user from "../../assets/images/user.png";
 
 const { Text } = Typography;
 
-
 interface Message {
     text: string;
     sender: "you" | "bot";
@@ -40,7 +39,6 @@ interface ApiResult {
     emotion_history?: string[];
     overall_emotion?: string;
 }
-
 
 const ViceChatInterface = () => {
     const [recording, setRecording] = useState(false);
@@ -93,6 +91,25 @@ const ViceChatInterface = () => {
             setSessionID(session);
             const allSummaries = await fetchAllSummaries();
             setSessionSummaries(allSummaries);
+
+            const res = await fetch("http://localhost:8000/greeting");
+            if (res.ok) {
+                const greeting = await res.json();
+
+                const botMessage: Message = {
+                    text: greeting.bot_response,
+                    sender: "bot",
+                    time: getCurrentTime(),
+                };
+
+                setMessages([botMessage]); // first message
+                await saveMessage(botMessage.text, session, "bot");
+
+                if (greeting.audio_url) {
+                    const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
+                    audio.play();
+                }
+            }
         })();
     }, []);
 
@@ -370,7 +387,6 @@ const ViceChatInterface = () => {
 
             {/* Chat Box */}
             <div className="relative z-10 w-2/3 h-[90%] bg-green-100 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
-
                 <div
                     className="flex-1 overflow-y-auto px-4 space-y-6"
                     id="message-container"
@@ -381,13 +397,17 @@ const ViceChatInterface = () => {
                             className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
                                 }`}
                         >
-                            <div className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"}`}>
+                            <div
+                                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                                    }`}
+                            >
                                 {msg.sender === "you" ? (
                                     <img
                                         src={user}
                                         alt="User Avatar"
                                         className="w-10 h-10 rounded-full object-cover"
-                                    />) : (
+                                    />
+                                ) : (
                                     <img
                                         src={selectedCharacter?.imageUrl}
                                         alt="bot"

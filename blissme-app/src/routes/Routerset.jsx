@@ -60,6 +60,7 @@ const Routerset = () => {
           </Route>
           <Route path="chat-new/text" element={<Chat />} />
           <Route path="chat-new/voice" element={<Chat />} />
+          
           <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />

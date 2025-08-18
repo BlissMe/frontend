@@ -1,3 +1,4 @@
+import bearnew from "../../assets/images/bearnew.png";
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Divider, Typography, Modal, Tooltip } from "antd";
 import { assets } from "../../assets/assets";
@@ -10,7 +11,7 @@ import {
   fetchAllSummaries,
 } from "../../services/ChatMessageService";
 import { savePHQ9Answer } from "../../services/Phq9Service";
-import { useCharacterContext } from "../context/CharacterContext";
+import { useCharacterContext } from "../../app/context/CharacterContext";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -18,9 +19,9 @@ import {
   StopOutlined,
 } from "@ant-design/icons";
 import Avatar from "../../components/profile/Avatar";
-import { useNotification } from "../context/notificationContext";
-import { getClassifierResult ,ClassifierResult,getDepressionLevel  } from "../../services/DetectionService";
-import {saveClassifierToServer  } from "../../services/ClassifierResults";
+import { useNotification } from "../../app/context/notificationContext";
+
+import user from "../../assets/images/user.png";
 
 const { Text } = Typography;
 
@@ -39,7 +40,7 @@ interface ApiResult {
   overall_emotion?: string;
 }
 
-const VoiceChatBox: React.FC = () => {
+const ViceChatInterface = () => {
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -67,9 +68,6 @@ const VoiceChatBox: React.FC = () => {
   const [showEmotionModal, setShowEmotionModal] = useState(false);
   const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
   const isCancelledRef = useRef(false);
-  const [levelResult, setLevelResult] = useState<any>(null);
-  const [detecting, setDetecting] = useState(false);
-  const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
 
   const phqOptions = [
@@ -87,34 +85,33 @@ const VoiceChatBox: React.FC = () => {
     scrollToBottom();
   }, [messages, isBotTyping]);
 
- useEffect(() => {
-  (async () => {
-    const session = await createNewSession();
-    setSessionID(session);
-    const allSummaries = await fetchAllSummaries();
-    setSessionSummaries(allSummaries);
+  useEffect(() => {
+    (async () => {
+      const session = await createNewSession();
+      setSessionID(session);
+      const allSummaries = await fetchAllSummaries();
+      setSessionSummaries(allSummaries);
 
-    const res = await fetch("http://localhost:8000/greeting");
-    if (res.ok) {
-      const greeting = await res.json();
+      const res = await fetch("http://localhost:8000/greeting");
+      if (res.ok) {
+        const greeting = await res.json();
 
-      const botMessage: Message = {
-        text: greeting.bot_response,
-        sender: "bot",
-        time: getCurrentTime(),
-      };
+        const botMessage: Message = {
+          text: greeting.bot_response,
+          sender: "bot",
+          time: getCurrentTime(),
+        };
 
-      setMessages([botMessage]); // first message
-      await saveMessage(botMessage.text, session, "bot");
+        setMessages([botMessage]); // first message
+        await saveMessage(botMessage.text, session, "bot");
 
-      if (greeting.audio_url) {
-        const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
-        audio.play();
+        if (greeting.audio_url) {
+          const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
+          audio.play();
+        }
       }
-    }
-  })();
-}, []);
-
+    })();
+  }, []);
 
   const handleStartRecording = async () => {
     isCancelledRef.current = false; // reset cancellation flag
@@ -376,249 +373,211 @@ const VoiceChatBox: React.FC = () => {
     setIsBotTyping(false);
     setIsWaitingForBotResponse(false);
   };
-async function ClassifierResult() {
-  if (!sessionID) return; // session not ready yet
-  setDetecting(true);
-  try {
-    const updatedHistory = await fetchChatHistory(sessionID);
-    const formattedHistory: string[] = Array.isArray(updatedHistory)
-      ? updatedHistory.map((msg: any) =>
-          `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
-      : [];
 
-    const historyStr = formattedHistory.join("\n").trim();
-    if (!historyStr) return; // nothing to classify yet
-
-    const latestSummary: string | null =
-      sessionSummaries && sessionSummaries.length
-        ? sessionSummaries[sessionSummaries.length - 1]
-        : null;
-
-const res = await getClassifierResult(historyStr, sessionSummaries ?? []); 
-    setClassifier(res);
-    
-    console.log("Classifier:", res);
-    try {
-      await saveClassifierToServer(Number(sessionID), res);
-      console.log("Classifier result saved.");
-    } catch (err) {
-      console.error("Failed to persist classifier result:", err);
-    }
-  } catch (e) {
-    console.error("getClassifierResult failed:", e);
-  } finally {
-    setDetecting(false);
-  }
-}
-
-async function runLevelDetection() {
-  try {
-    
-    await ClassifierResult();
-
-  
-    const resp = await getDepressionLevel();
-    if (!resp?.success) throw new Error("level API failed");
-    console.log("Depression Level Response:", resp);
-    setLevelResult(resp.data);
-
-  } catch (e) {
-    console.error(e);
-  }
-}
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex items-center justify-center py-4">
+    <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">
+      {/* Bear Image */}
+      <div className="absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
         <img
-          src={selectedCharacter?.imageUrl}
-          alt="bot"
-          width={120}
-          height={120}
-        />{" "}
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
-  <div className="px-4 -mt-2 mb-2 flex justify-center">
-        <Button
-          type="primary"
-          onClick={() => void runLevelDetection()} 
-          loading={detecting}
-          disabled={!sessionID}
+
+      {/* Chat Box */}
+      <div className="relative z-10 w-2/3 h-[90%] bg-green-100 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+        <div
+          className="flex-1 overflow-y-auto px-4 space-y-6"
+          id="message-container"
         >
-          Level Detection
-        </Button>
-      </div>
-      <div
-        className="flex-1 overflow-y-auto px-4 space-y-6"
-        id="message-container"
-      >
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex flex-col ${
-              msg.sender === "you" ? "items-end" : "items-start"
-            }`}
-          >
-            <div className="flex gap-2">
-              {msg.sender === "you" ? (
-                <Avatar username={nickname ?? "User"} />
-              ) : (
-                <img
-                  src={selectedCharacter?.imageUrl}
-                  alt="bot"
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              )}
-              <div
-                className={`p-3 rounded-lg max-w-xs ${
-                  msg.sender === "you" ? "bg-inputColorTwo" : "bg-inputColorOne"
-                }`}
-              >
-                <Text className="text-sm">{msg.text}</Text>
-              </div>
-            </div>
-            <Text
-              className={`text-xs text-gray-500 mt-1 ${
-                msg.sender === "you" ? "" : "ml-10"
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`flex flex-col ${
+                msg.sender === "you" ? "items-end" : "items-start"
               }`}
             >
-              {msg.time}
-            </Text>
-
-            {isPhq9 &&
-              lastPhq9 &&
-              msg.sender === "bot" &&
-              index === messages.length - 1 && (
-                <div className="flex flex-wrap gap-2 mt-2 ml-10">
-                  {phqOptions.map((option) => (
-                    <Button
-                      key={option}
-                      size="small"
-                      onClick={() => handlePhqAnswer(option)}
-                      className="bg-blue-100 hover:bg-blue-200 border-blue-300"
-                    >
-                      {option}
-                    </Button>
-                  ))}
+              <div
+                className={`flex gap-2 items-center ${
+                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                }`}
+              >
+                {msg.sender === "you" ? (
+                  <img
+                    src={user}
+                    alt="User Avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={selectedCharacter?.imageUrl}
+                    alt="bot"
+                    width={40}
+                    height={40}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                )}
+                <div className="relative max-w-xs">
+                  {msg.sender === "you" ? (
+                    <div className="relative px-5 py-3 bg-gradient-to-br from-red-100 to-red-300 rounded-[40px] shadow text-white text-sm leading-relaxed">
+                      {/* Cloud tail for user (right side) */}
+                      <div className="absolute -right-3 bottom-1 w-4 h-4 bg-red-200 rounded-full"></div>
+                      <div className="absolute -right-1.5 bottom-3 w-3 h-3 bg-red-300 rounded-full"></div>
+                      {msg.text}
+                    </div>
+                  ) : (
+                    <div className="relative px-5 py-3 bg-gradient-to-br from-green-200 to-green-400 rounded-[40px] shadow text-gray-800 text-sm leading-relaxed">
+                      {/* Cloud tail for bot (left side) */}
+                      <div className="absolute -left-3 bottom-1 w-4 h-4 bg-green-300 rounded-full"></div>
+                      <div className="absolute -left-1.5 bottom-3 w-3 h-3 bg-green-400 rounded-full"></div>
+                      {msg.text}
+                    </div>
+                  )}
                 </div>
-              )}
-          </div>
-        ))}
+              </div>
+              <Text
+                className={`text-xs text-gray-500 mt-1 ${
+                  msg.sender === "you" ? "" : "ml-10"
+                }`}
+              >
+                {msg.time}
+              </Text>
 
-        {isUploading && (
-          <div className="flex justify-end items-center gap-2">
-            <Avatar username={nickname ?? "User"} />
-            <ReactBarsLoader />
-          </div>
-        )}
-        {isBotTyping && (
-          <div className="flex justify-start items-center gap-2">
-            <img
-              src={selectedCharacter?.imageUrl}
-              alt="bot"
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-full object-cover"
-            />
+              {isPhq9 &&
+                lastPhq9 &&
+                msg.sender === "bot" &&
+                index === messages.length - 1 && (
+                  <div className="flex flex-wrap gap-2 mt-2 ml-10">
+                    {phqOptions.map((option) => (
+                      <Button
+                        key={option}
+                        size="small"
+                        onClick={() => handlePhqAnswer(option)}
+                        className="bg-blue-100 hover:bg-blue-200 border-blue-300"
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+            </div>
+          ))}
 
-            <ReactBarsLoader />
-          </div>
-        )}
-        <div ref={messageEndRef} />
-      </div>
+          {isUploading && (
+            <div className="flex justify-end items-center gap-2">
+              <Avatar username={nickname ?? "User"} />
+              <ReactBarsLoader />
+            </div>
+          )}
+          {isBotTyping && (
+            <div className="flex justify-start items-center gap-2">
+              <img
+                src={selectedCharacter?.imageUrl}
+                alt="bot"
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full object-cover"
+              />
 
-      <div className="w-full p-6 flex justify-center gap-6">
-        {!recording && !isWaitingForBotResponse && (
-          <Tooltip title="Start recording (Mic off)">
-            <Button
-              type="primary"
-              shape="circle"
-              size="large"
-              onClick={handleStartRecording}
-              className="bg-green-600 hover:bg-green-700 text-white"
-              aria-label="Turn microphone ON"
-              style={{ width: 70, height: 70, fontSize: 32 }}
-            >
-              <AudioMutedOutlined />
-            </Button>
-          </Tooltip>
-        )}
+              <ReactBarsLoader />
+            </div>
+          )}
+          <div ref={messageEndRef} />
+        </div>
 
-        {recording && !isWaitingForBotResponse && (
-          <>
-            <Tooltip title="Stop and send (Mic on)">
+        <div className="w-full p-6 flex justify-center gap-6">
+          {!recording && !isWaitingForBotResponse && (
+            <Tooltip title="Start recording (Mic off)">
               <Button
                 type="primary"
                 shape="circle"
                 size="large"
-                onClick={() => {
-                  handleStopRecording();
-                  setRecording(false);
-                  setIsWaitingForBotResponse(true);
-                }}
-                className="bg-red-600 hover:bg-red-700 text-white"
-                aria-label="Stop microphone and send"
+                onClick={handleStartRecording}
+                className="bg-green-600 hover:bg-green-700 text-white"
+                aria-label="Turn microphone ON"
                 style={{ width: 70, height: 70, fontSize: 32 }}
               >
-                <AudioOutlined />
+                <AudioMutedOutlined />
               </Button>
             </Tooltip>
+          )}
 
-            <Tooltip title="Cancel recording">
+          {recording && !isWaitingForBotResponse && (
+            <>
+              <Tooltip title="Stop and send (Mic on)">
+                <Button
+                  type="primary"
+                  shape="circle"
+                  size="large"
+                  onClick={() => {
+                    handleStopRecording();
+                    setRecording(false);
+                    setIsWaitingForBotResponse(true);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  aria-label="Stop microphone and send"
+                  style={{ width: 70, height: 70, fontSize: 32 }}
+                >
+                  <AudioOutlined />
+                </Button>
+              </Tooltip>
+
+              <Tooltip title="Cancel recording">
+                <Button
+                  danger
+                  shape="circle"
+                  size="large"
+                  onClick={() => {
+                    isCancelledRef.current = true;
+                    if (mediaRecorder && mediaRecorder.state === "recording") {
+                      mediaRecorder.stop();
+                    }
+                    chunks.current = [];
+                    setRecording(false);
+                    setIsWaitingForBotResponse(false);
+                    streamRef.current
+                      ?.getTracks()
+                      .forEach((track) => track.stop());
+                  }}
+                  aria-label="Cancel recording"
+                  style={{ width: 70, height: 70, fontSize: 28 }}
+                >
+                  ✕
+                </Button>
+              </Tooltip>
+            </>
+          )}
+
+          {isWaitingForBotResponse && (
+            <Tooltip title="Processing">
               <Button
-                danger
                 shape="circle"
                 size="large"
-                onClick={() => {
-                  isCancelledRef.current = true;
-                  if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                  }
-                  chunks.current = [];
-                  setRecording(false);
-                  setIsWaitingForBotResponse(false);
-                  streamRef.current
-                    ?.getTracks()
-                    .forEach((track) => track.stop());
-                }}
-                aria-label="Cancel recording"
-                style={{ width: 70, height: 70, fontSize: 28 }}
-              >
-                ✕
-              </Button>
+                icon={<LoadingOutlined spin style={{ fontSize: 32 }} />}
+                disabled
+                className="bg-gray-400 text-white"
+                aria-label="Processing"
+                style={{ width: 70, height: 70 }}
+              />
             </Tooltip>
-          </>
-        )}
+          )}
+        </div>
 
-        {isWaitingForBotResponse && (
-          <Tooltip title="Processing">
-            <Button
-              shape="circle"
-              size="large"
-              icon={<LoadingOutlined spin style={{ fontSize: 32 }} />}
-              disabled
-              className="bg-gray-400 text-white"
-              aria-label="Processing"
-              style={{ width: 70, height: 70 }}
-            />
-          </Tooltip>
-        )}
+        {/* Emotion Summary Modal */}
+        <Modal
+          title="User Emotion Summary"
+          open={showEmotionModal}
+          onOk={() => setShowEmotionModal(false)}
+          onCancel={() => setShowEmotionModal(false)}
+        >
+          <p>
+            <strong>Overall Emotion:</strong> {overallEmotion || "N/A"}
+          </p>
+        </Modal>
       </div>
-
-      {/* Emotion Summary Modal */}
-      <Modal
-        title="User Emotion Summary"
-        open={showEmotionModal}
-        onOk={() => setShowEmotionModal(false)}
-        onCancel={() => setShowEmotionModal(false)}
-      >
-        <p>
-          <strong>Overall Emotion:</strong> {overallEmotion || "N/A"}
-        </p>
-      </Modal>
     </div>
   );
 };
 
-export default VoiceChatBox;
+export default ViceChatInterface;

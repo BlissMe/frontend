@@ -4,6 +4,7 @@ import home2 from '../../assets/images/home2.png';
 import home3 from '../../assets/images/home3.png';
 import logo from '../../assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { getLocalStoragedata } from '../../helpers/Storage';
 
 const images = [home, home2, home3];
 
@@ -22,6 +23,21 @@ const Home = () => {
     const handleLogin = () => navigate('/sign-in');
     const handleLogoClick = () => navigate('/home');
 
+    const storedUser = JSON.parse(getLocalStoragedata("reduxState") || "{}");
+    const selectedMode = storedUser?.user?.inputMode;
+    console.log(selectedMode);
+
+    const handleStartChat = () => {
+        if (selectedMode === 'Text') {
+            navigate('/chat-new/text');
+        } else if (selectedMode === 'Voice') {
+            navigate('/chat-new/voice');
+        } else {
+            navigate('/sign-in');
+        }
+    };
+
+
     return (
         <div className="relative min-h-screen overflow-hidden">
             {/* Hero Section */}
@@ -37,9 +53,13 @@ const Home = () => {
                     </p>
 
                     <div className='flex flex-row justify-start gap-4 mt-6'>
-                        <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        <button
+                            onClick={handleStartChat}
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        >
                             Start Chat
                         </button>
+
                         <button onClick={handleLogin}
                             className="border border-green-600 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition bg-white">
                             Sign In
@@ -96,7 +116,7 @@ const Home = () => {
 
                     <div className="hidden md:flex space-x-6">
                         <a href="#about" className="text-gray-700 hover:text-green-700 font-medium">
-                           {/*About  */} 
+                            {/*About  */}
                         </a>
                     </div>
 
@@ -113,9 +133,13 @@ const Home = () => {
                         >
                             Sign Up
                         </button>
-                        <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        <button
+                            onClick={handleStartChat}
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        >
                             Start Chat
                         </button>
+
                     </div>
                 </nav>
             </div>

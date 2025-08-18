@@ -4,10 +4,13 @@ import Sidebar from "../../components/chat/Sidebar";
 import bg from "../../assets/images/chatbg.png"
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 const VoiceChat = () => {
     const navigate = useNavigate();
     const handleLogoClick = () => navigate('/home');
+    const storedUser = JSON.parse(getLocalStoragedata("reduxState") || "{}");
+    const selectedMode = storedUser?.user?.inputMode;
 
     return (
         <div

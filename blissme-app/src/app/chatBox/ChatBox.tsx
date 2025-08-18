@@ -32,8 +32,8 @@ const ChatBox = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const { selectedCharacter,nickname ,fetchCharacters } = useCharacterContext();
-console.log(selectedCharacter)
+  const { selectedCharacter, nickname, fetchCharacters } = useCharacterContext();
+  console.log(selectedCharacter)
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
@@ -44,9 +44,9 @@ console.log(selectedCharacter)
     })();
   }, []);
 
-useEffect(() => {
-  fetchCharacters(); 
-}, []);
+  useEffect(() => {
+    fetchCharacters();
+  }, []);
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
@@ -77,10 +77,10 @@ useEffect(() => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+        sender: msg.sender === "bot" ? "popo" : "you",
+        text: msg.message,
+        time: getCurrentTime(),
+      }))
       : [];
 
     const context = formattedHistory
@@ -146,10 +146,10 @@ useEffect(() => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+        sender: msg.sender === "bot" ? "popo" : "you",
+        text: msg.message,
+        time: getCurrentTime(),
+      }))
       : [];
 
     const context = formattedHistory
@@ -195,6 +195,7 @@ useEffect(() => {
     "More than half the days",
     "Nearly every day",
   ];
+
   return (
     <div className="flex flex-col h-screen">
       <div className="flex items-center justify-center py-4">
@@ -210,9 +211,8 @@ useEffect(() => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col ${
-              msg.sender === "you" ? "items-end" : "items-start"
-            }`}
+            className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
+              }`}
           >
             <div className="flex gap-2 items-center">
               {msg.sender === "you" ? (
@@ -228,25 +228,23 @@ useEffect(() => {
               )}
 
               {loading &&
-              msg.sender === "popo" &&
-              index === messages.length - 1 ? (
+                msg.sender === "popo" &&
+                index === messages.length - 1 ? (
                 <Spin size="small" />
               ) : (
                 <div
-                  className={`p-3 rounded-lg max-w-xs ${
-                    msg.sender === "you"
+                  className={`p-3 rounded-lg max-w-xs ${msg.sender === "you"
                       ? "bg-inputColorTwo text-left"
                       : "bg-inputColorOne text-left"
-                  }`}
+                    }`}
                 >
                   <Text className="text-sm">{msg.text}</Text>
                 </div>
               )}
             </div>
             <Text
-              className={`text-xs text-gray-500 mt-1 ${
-                msg.sender === "you" ? "" : "ml-12"
-              }`}
+              className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-12"
+                }`}
             >
               {msg.time}
             </Text>

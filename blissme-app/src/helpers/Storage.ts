@@ -1,11 +1,11 @@
-// import { decrypt, encrypt } from "./encryptionHelper";
+import { decrypt, encrypt } from "./EntryptionHelper";
 
 export function setLocalStorageData(key: string, data: any): void {
-  // let encryptData = encrypt(data);
-  localStorage.setItem(key, data);
+  const encryptData = encrypt(data);
+  localStorage.setItem(key, encryptData);
 }
 
 export function getLocalStoragedata(key: string): string | null {
   const data = localStorage.getItem(key);
-  return data !== null ? data : null;
+  return data !== null ? decrypt<string>(data) : null;
 }

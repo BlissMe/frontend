@@ -40,10 +40,8 @@ const dispatch = useDispatch<AppDispatch>();
         setToken(response.token);
         setLocalStorageData("token", response.token);
 
-        // ✅ Fetch user preferences
         await dispatch(getUserPreferences());
 
-        // ✅ Navigate after preferences are loaded
         navigate("/mode/input-mode", { replace: true });
       } else {
         openNotification(

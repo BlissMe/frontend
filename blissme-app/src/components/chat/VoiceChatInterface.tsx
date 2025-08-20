@@ -22,6 +22,10 @@ import Avatar from "../../components/profile/Avatar";
 import { useNotification } from "../../app/context/notificationContext";
 
 import user from "../../assets/images/user.png";
+import {
+  getLocalStoragedata,
+  setLocalStorageData,
+} from "../../helpers/Storage";
 
 const { Text } = Typography;
 
@@ -91,26 +95,23 @@ const ViceChatInterface = () => {
       setSessionID(session);
       const allSummaries = await fetchAllSummaries();
       setSessionSummaries(allSummaries);
-
-      const res = await fetch("http://localhost:8000/greeting");
-      if (res.ok) {
-        const greeting = await res.json();
-
-        const botMessage: Message = {
-          text: greeting.bot_response,
-          sender: "bot",
-          time: getCurrentTime(),
-        };
-
-        setMessages([botMessage]); // first message
-        await saveMessage(botMessage.text, session, "bot");
-
-        if (greeting.audio_url) {
-          const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
-          audio.play();
-        }
-      }
     })();
+  }, []);
+  useEffect(() => {
+    const hasPlayed = getLocalStoragedata("greetingPlayed");
+    if (!hasPlayed) {
+      const initialMessage: Message = {
+        text: "Hi there, I’m your assistant. How are you feeling today?",
+        sender: "bot",
+        time: getCurrentTime(),
+      };
+      setMessages([initialMessage]);
+
+      const audio = new Audio("/greeting.mp3");
+      audio.play();
+
+      setLocalStorageData("greetingPlayed", "true");
+    }
   }, []);
 
   const handleStartRecording = async () => {

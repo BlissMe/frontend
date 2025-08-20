@@ -24,6 +24,7 @@ import SecuritySetting from "../components/Sidebar/SecuritySetting";
 import FaceSignin from "../app/signIn/FaceSignIn";
 import Chat from "../app/chatBox/Chat";
 import SettingsLayout from "../app/layouts/SettingsLayout";
+import VoiceChat from "../app/chatBox/VoiceChat";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -61,8 +62,8 @@ const Routerset = () => {
             <Route path="setting/security" element={<SecuritySetting />} /> */}
           </Route>
           <Route path="chat-new/text" element={<Chat />} />
-          <Route path="chat-new/voice" element={<Chat />} />
-          
+          <Route path="chat-new/voice" element={<VoiceChat />} />
+
           <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />

@@ -19,6 +19,7 @@ import "../../index.css";
 import MessageBubble from "../../components/Background/MessageBubble";
 import bg6 from "../../assets/images/b6.jpeg";
 import { useNotification } from "../context/notificationContext";
+import logo from "../../assets/images/logo.png";
 
 const { Text } = Typography;
 
@@ -39,6 +40,9 @@ const Register = () => {
       form.setFieldsValue({ scrolledToBottom: true });
     }
   };
+
+  const handleLogoClick = () => navigate('/home');
+
 
   interface RegisterFormValues {
     email: string;
@@ -107,7 +111,17 @@ const Register = () => {
       className="relative z-0 min-h-screen w-full overflow-hidden bg-cover bg-center"
       style={{ backgroundImage: `url(${bg6})` }}
     >
-      <div className="min-h-screen w-full flex items-center justify-center relative z-10">
+      <div className="fixed top-4 left-4 z-20">
+        <img
+          onClick={handleLogoClick}
+          src={logo}
+          alt="Logo"
+          className="h-10 w-auto cursor-pointer"
+        />
+      </div>
+
+
+      <div className="fixed inset-0 z-10 flex items-center justify-center">
         <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
           <MessageBubble />
 
@@ -219,7 +233,7 @@ const Register = () => {
             </Form>
 
             <Form>
-              <div className="flex justify-center mb-2">
+              {/* <div className="flex justify-center mb-2">
                 <Text className="text-center text-black text-sm">or</Text>
               </div>
               <Form.Item>
@@ -237,7 +251,7 @@ const Register = () => {
                     Sign up with Google
                   </Button>
                 </div>
-              </Form.Item>
+              </Form.Item> */}
 
               <Text className="block text-center text-sm md:text-base text-textColorOne">
                 Already have an account?{" "}
@@ -255,112 +269,112 @@ const Register = () => {
 
       {/* Terms Modal */}
       <Modal
-  title="Terms & Conditions and Privacy Policy"
-  visible={modalVisible}
-  onCancel={() => setModalVisible(false)}
-  onOk={() => setModalVisible(false)}
-  okButtonProps={{ disabled: !scrolledToBottom }}
-  bodyStyle={{ padding: 0 }} // remove default padding
->
-  <div
-    ref={contentRef}
-    onScroll={handleScroll}
-    className="
+        title="Terms & Conditions and Privacy Policy"
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        onOk={() => setModalVisible(false)}
+        okButtonProps={{ disabled: !scrolledToBottom }}
+        bodyStyle={{ padding: 0 }} // remove default padding
+      >
+        <div
+          ref={contentRef}
+          onScroll={handleScroll}
+          className="
       max-h-[360px] overflow-y-auto px-8 py-6 border-t-4 border-[#3FBFA8]
       bg-gray-50 font-roboto text-sm leading-relaxed text-gray-800 select-text
       "
-  >
-    <h2 className="text-[#2CA58D] mb-4 font-extrabold text-xl">
-      Consent and Privacy Policy
-    </h2>
-    <p className="mb-5">
-      Welcome to <strong>Bliss Me</strong>. Please read this carefully before using our services. By clicking “I Agree”, you consent to the following:
-    </p>
-    <ol className="list-decimal list-inside mb-5 space-y-5">
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          Purpose of the Application
-        </strong>
-        <p>Bliss Me uses Artificial Intelligence to detect depression severity through your text and voice inputs.</p>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>For mild to moderate depression, the app provides non-clinical therapeutic support such as Cognitive Behavioral Therapy (CBT)-based exercises and mindfulness techniques.</li>
-          <li>For severe depression, the app will not provide therapy. Instead, you will be given options to contact a mental health consultant or emergency services for professional assistance.</li>
-        </ul>
-      </li>
+        >
+          <h2 className="text-[#2CA58D] mb-4 font-extrabold text-xl">
+            Consent and Privacy Policy
+          </h2>
+          <p className="mb-5">
+            Welcome to <strong>Bliss Me</strong>. Please read this carefully before using our services. By clicking “I Agree”, you consent to the following:
+          </p>
+          <ol className="list-decimal list-inside mb-5 space-y-5">
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                Purpose of the Application
+              </strong>
+              <p>Bliss Me uses Artificial Intelligence to detect depression severity through your text and voice inputs.</p>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>For mild to moderate depression, the app provides non-clinical therapeutic support such as Cognitive Behavioral Therapy (CBT)-based exercises and mindfulness techniques.</li>
+                <li>For severe depression, the app will not provide therapy. Instead, you will be given options to contact a mental health consultant or emergency services for professional assistance.</li>
+              </ul>
+            </li>
 
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          Information We Collect
-        </strong>
-        <p>To assess your emotional state and depression level, we collect:</p>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>Text and voice inputs</li>
-          <li>Responses to the Patient Health Questionnaire-9 (PHQ-9)</li>
-          <li>Your interaction history within the app</li>
-        </ul>
-      </li>
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                Information We Collect
+              </strong>
+              <p>To assess your emotional state and depression level, we collect:</p>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>Text and voice inputs</li>
+                <li>Responses to the Patient Health Questionnaire-9 (PHQ-9)</li>
+                <li>Your interaction history within the app</li>
+              </ul>
+            </li>
 
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          How We Use Your Data
-        </strong>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>To detect depression levels and provide personalized support (for mild to moderate cases)</li>
-          <li>To recommend professional consultation in severe cases</li>
-          <li>To improve our AI model using anonymized data only</li>
-        </ul>
-      </li>
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                How We Use Your Data
+              </strong>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>To detect depression levels and provide personalized support (for mild to moderate cases)</li>
+                <li>To recommend professional consultation in severe cases</li>
+                <li>To improve our AI model using anonymized data only</li>
+              </ul>
+            </li>
 
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          Data Privacy and Security
-        </strong>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>Your identity and personal information will never be shared with third parties.</li>
-          <li>All interaction data is securely stored and encrypted.</li>
-          <li>We comply with data protection laws to keep your information safe.</li>
-        </ul>
-      </li>
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                Data Privacy and Security
+              </strong>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>Your identity and personal information will never be shared with third parties.</li>
+                <li>All interaction data is securely stored and encrypted.</li>
+                <li>We comply with data protection laws to keep your information safe.</li>
+              </ul>
+            </li>
 
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          Emergency and Severe Case Protocol
-        </strong>
-        <p>If a severe depression level or self-harm risk is detected:</p>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>The app will not attempt therapy</li>
-          <li>You will be given immediate options to contact a licensed consultant or emergency helpline for professional help</li>
-        </ul>
-      </li>
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                Emergency and Severe Case Protocol
+              </strong>
+              <p>If a severe depression level or self-harm risk is detected:</p>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>The app will not attempt therapy</li>
+                <li>You will be given immediate options to contact a licensed consultant or emergency helpline for professional help</li>
+              </ul>
+            </li>
 
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          Your Rights
-        </strong>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>You may request deletion of your data at any time</li>
-          <li>You may withdraw consent and stop using the app anytime</li>
-          <li>You may review how your data is processed and stored</li>
-        </ul>
-      </li>
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                Your Rights
+              </strong>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>You may request deletion of your data at any time</li>
+                <li>You may withdraw consent and stop using the app anytime</li>
+                <li>You may review how your data is processed and stored</li>
+              </ul>
+            </li>
 
-      <li>
-        <strong className="text-[#207F6A] text-lg font-semibold">
-          Consent
-        </strong>
-        <p>By clicking “I Agree”, you confirm that:</p>
-        <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-          <li>You understand Bliss Me provides non-clinical support only</li>
-          <li>You voluntarily provide your data for depression detection and guidance</li>
-          <li>You are at least 18 years old or using the app with parental/guardian consent</li>
-        </ul>
-      </li>
-    </ol>
-    <p className="italic text-gray-600 text-center mt-3">
-      Scroll to the bottom to enable acceptance.
-    </p>
-  </div>
-</Modal>
+            <li>
+              <strong className="text-[#207F6A] text-lg font-semibold">
+                Consent
+              </strong>
+              <p>By clicking “I Agree”, you confirm that:</p>
+              <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
+                <li>You understand Bliss Me provides non-clinical support only</li>
+                <li>You voluntarily provide your data for depression detection and guidance</li>
+                <li>You are at least 18 years old or using the app with parental/guardian consent</li>
+              </ul>
+            </li>
+          </ol>
+          <p className="italic text-gray-600 text-center mt-3">
+            Scroll to the bottom to enable acceptance.
+          </p>
+        </div>
+      </Modal>
 
     </div>
   );

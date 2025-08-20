@@ -10,20 +10,34 @@ import {
   saveMessage,
   fetchAllSummaries,
 } from "../../services/ChatMessageService";
+import { getClassifierResult ,ClassifierResult,getDepressionLevel  } from "../../services/DetectionService";
+import {saveClassifierToServer  } from "../../services/ClassifierResults";
 import { savePHQ9Answer } from "../../services/Phq9Service";
 import Avatar from "../../components/profile/Avatar";
 import { useCharacterContext } from "../context/CharacterContext";
 import { AuthContext } from "../context/AuthContext";
 import { Message } from "../context/AuthContext";
 import Nickname from "../start/Nickname";
+import { Modal, Tag, Progress, Descriptions } from "antd";
 
 const { Text } = Typography;
+const levelColor = (lvl?: string) => {
+  switch ((lvl || "").toLowerCase()) {
+    case "minimal":  return "green";
+    case "moderate": return "gold";
+    case "severe":   return "red";
+    default:         return "default";
+  }
+};
+
 
 const ChatBox = () => {
   const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
     useContext(AuthContext);
 
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
+  const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
+  const [detecting, setDetecting] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastPhq9, setLastPhq9] = useState<{
@@ -32,8 +46,11 @@ const ChatBox = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const { selectedCharacter, nickname, fetchCharacters } = useCharacterContext();
+  const { selectedCharacter,nickname ,fetchCharacters } = useCharacterContext();
   console.log(selectedCharacter)
+  const [levelResult, setLevelResult] = useState<any>(null);
+  const [levelOpen, setLevelOpen] = useState(false); 
+
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
@@ -43,6 +60,11 @@ const ChatBox = () => {
       setSessionSummaries(allSummaries);
     })();
   }, []);
+  console.log("sessionSummaries:", sessionSummaries);
+  useEffect(() => {
+    fetchCharacters(); 
+  }, []);
+
 
   useEffect(() => {
     fetchCharacters();
@@ -189,6 +211,58 @@ const ChatBox = () => {
     setLoading(false);
   };
 
+async function ClassifierResult() {
+  if (!sessionID) return; // session not ready yet
+  setDetecting(true);
+  try {
+    const updatedHistory = await fetchChatHistory(sessionID);
+    const formattedHistory: string[] = Array.isArray(updatedHistory)
+      ? updatedHistory.map((msg: any) =>
+          `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
+      : [];
+
+    const historyStr = formattedHistory.join("\n").trim();
+    if (!historyStr) return; // nothing to classify yet
+
+    const latestSummary: string | null =
+      sessionSummaries && sessionSummaries.length
+        ? sessionSummaries[sessionSummaries.length - 1]
+        : null;
+
+const res = await getClassifierResult(historyStr, sessionSummaries ?? []); 
+    setClassifier(res);
+    
+    console.log("Classifier:", res);
+    try {
+      await saveClassifierToServer(Number(sessionID), res);
+      console.log("Classifier result saved.");
+    } catch (err) {
+      console.error("Failed to persist classifier result:", err);
+    }
+  } catch (e) {
+    console.error("getClassifierResult failed:", e);
+  } finally {
+    setDetecting(false);
+  }
+}
+
+async function runLevelDetection() {
+  try {
+    // 1) run your existing LLM classifier and persist it
+    await ClassifierResult();
+
+    // 2) compute composite index by userID (backend uses token->userID)
+    const resp = await getDepressionLevel();
+    if (!resp?.success) throw new Error("level API failed");
+    console.log("Depression Level Response:", resp);
+    setLevelResult(resp.data);
+setLevelOpen(true); // open modal to show results
+  } catch (e) {
+    console.error(e);
+  }
+}
+
   const phqOptions = [
     "Not at all",
     "Several days",
@@ -206,6 +280,87 @@ const ChatBox = () => {
           height={120}
         />
       </div>
+      <div className="px-4 -mt-2 mb-2 flex justify-center">
+        <Button
+          type="primary"
+          onClick={() => void runLevelDetection()} 
+          loading={detecting}
+          disabled={!sessionID}
+        >
+          Level Detection
+        </Button>
+      </div>
+      <Modal
+  open={levelOpen}
+  onCancel={() => setLevelOpen(false)}
+  onOk={() => setLevelOpen(false)}
+  okText="OK"
+  title="Depression Level"
+  centered
+  destroyOnClose
+>
+  {!levelResult ? (
+    <div className="flex items-center justify-center py-6">
+      <Spin />
+    </div>
+  ) : (
+    <>
+      <div className="flex items-center gap-2 mb-2">
+        <Typography.Title level={4} style={{ margin: 0 }}>
+          {levelResult.level || "—"}
+        </Typography.Title>
+        <Tag color={levelColor(levelResult.level)}>{levelResult.level}</Tag>
+      </div>
+
+      {/* R as a progress bar */}
+      <div style={{ marginBottom: 12 }}>
+        <Typography.Text strong>Composite Index (R)</Typography.Text>
+        <Progress
+          percent={Math.round((Number(levelResult.R_value || 0)) * 100)}
+          status="active"
+          strokeColor={
+            levelColor(levelResult.level) === "gold" ? "#faad14"
+            : levelColor(levelResult.level) === "red" ? "#ff4d4f"
+            : "#52c41a"
+          }
+          showInfo
+        />
+        <Typography.Text type="secondary">
+          R = {Number(levelResult.R_value || 0).toFixed(4)} &nbsp;|&nbsp;
+          Cutoffs:&nbsp;
+          {/* handle either string or numeric cutoffs */}
+          {typeof levelResult.cutoffs?.minimal_max === "number"
+            ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
+            : (levelResult.cutoffs
+                ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                : "—")}
+        </Typography.Text>
+      </div>
+
+      {/* Key components */}
+      <Descriptions size="small" column={1} bordered>
+        <Descriptions.Item label="PHQ-9">
+          total: {levelResult.components?.phq9?.total ?? 0},
+          &nbsp;normalized: {(levelResult.components?.phq9?.normalized ?? 0).toFixed(4)},
+          &nbsp;answered: {levelResult.components?.phq9?.answered_count ?? 0}/9
+        </Descriptions.Item>
+        <Descriptions.Item label="Classifier">
+          label: {levelResult.components?.classifier?.label ?? "—"},
+          &nbsp;raw: {(levelResult.components?.classifier?.confidence_raw ?? levelResult.components?.classifier?.confidence ?? 0).toFixed(4)},
+          &nbsp;calibrated: {(levelResult.components?.classifier?.confidence_calibrated ?? levelResult.components?.classifier?.confidence ?? 0).toFixed(4)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Emotion">
+          {levelResult.components?.classifier?.emotion ?? "—"} (binary: {levelResult.components?.classifier?.emotion_binary ?? 0})
+        </Descriptions.Item>
+        <Descriptions.Item label="Weights">
+          PHQ9 {levelResult.weights?.phq9},&nbsp;
+          Classifier {levelResult.weights?.classifier},&nbsp;
+          Emotion {levelResult.weights?.emotion}
+        </Descriptions.Item>
+      </Descriptions>
+    </>
+  )}
+</Modal>
 
       <div className="flex-1 overflow-y-auto px-4 space-y-6">
         {messages.map((msg, index) => (
@@ -314,4 +469,5 @@ const ChatBox = () => {
     </div>
   );
 };
+
 export default ChatBox;

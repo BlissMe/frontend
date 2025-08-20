@@ -62,7 +62,7 @@ const Nickname = () => {
       </div>
 
       {/* Main content container */}
-      <div className="z-20 bg-[#BDF2D0] bg-opacity-80 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20">
+      <div className="z-20 bg-[#BDF2D0] bg-opacity-20 backdrop-blur-md rounded-2xl p-8 w-[90%] max-w-md text-center shadow-xl border border-white/20">
         <div className="flex flex-col items-center mb-0">
           <img src={logo} alt="BlissMe Logo" className="w-34 h-12" />
         </div>
@@ -82,7 +82,7 @@ const Nickname = () => {
             placeholder="Choose a nickname"
             value={nickname}
             onChange={(e) => setNicknameInput(e.target.value)}
-            className="absolute bottom-[-35%] w-[80%] rounded-lg py-2 bg-[#DCF2DE] shadow-md text-center 
+            className="absolute bottom-[-35%] w-[80%] rounded-full py-2 bg-[#DCF2DE] shadow-md text-center 
                                 border border-transparent focus:border-[#BDF2D0] hover:border-[#BDF2D0] focus:ring-0"
           />
         </div>

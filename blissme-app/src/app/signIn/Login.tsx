@@ -16,6 +16,8 @@ import { getUserPreferences } from "../../redux/actions/userActions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { assets } from "../../assets/assets";
+import logo from "../../assets/images/logo.png";
+
 const { Text } = Typography;
 
 const Login = () => {
@@ -24,6 +26,7 @@ const Login = () => {
   const { setToken } = useContext(AuthContext);
   const { openNotification } = useNotification();
   const dispatch = useDispatch<AppDispatch>();
+  const handleLogoClick = () => navigate('/home');
 
   const onFinish = async (values: any) => {
     try {
@@ -77,8 +80,16 @@ const Login = () => {
       className="relative z-0 min-h-screen w-full overflow-hidden bg-cover bg-center"
       style={{ backgroundImage: `url(${bg7})` }}
     >
-      <div className="min-h-screen w-full flex items-center justify-center  relative z-10">
-        <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
+      <div className="fixed top-4 left-4 z-20">
+        <img
+          onClick={handleLogoClick}
+          src={logo}
+          alt="Logo"
+          className="h-10 w-auto cursor-pointer"
+        />
+      </div>
+      <div className="fixed inset-0 z-10 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-1 bg-white rounded-xl shadow-lg">
           {/* Message Bubble on top */}
           <MessageBubble />
 
@@ -151,7 +162,7 @@ const Login = () => {
                 />
               </Form.Item>
 
-              <div className="flex justify-between items-center mb-8">
+              <div className="flex justify-between items-center mb-4">
                 <Form.Item name="rememberme" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
@@ -213,7 +224,7 @@ const Login = () => {
                 </div>
               </Form.Item>
 
-              <Text className="block text-center text-sm md:text-base text-textColorOne">
+              <Text className="block text-center text-sm md:text-base text-textColorOne mb-2">
                 Don’t have an account?{" "}
                 <span
                   className="text-textColorTwo cursor-pointer"

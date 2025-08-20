@@ -105,8 +105,28 @@ const ViceChatInterface = () => {
             setSessionID(session);
             const allSummaries = await fetchAllSummaries();
             setSessionSummaries(allSummaries);
+
+            const res = await fetch("http://localhost:8000/greeting");
+            if (res.ok) {
+                const greeting = await res.json();
+
+                const botMessage: Message = {
+                    text: greeting.bot_response,
+                    sender: "bot",
+                    time: getCurrentTime(),
+                };
+
+                setMessages([botMessage]); // first message
+                await saveMessage(botMessage.text, session, "bot");
+
+                if (greeting.audio_url) {
+                    const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
+                    audio.play();
+                }
+            }
         })();
     }, []);
+
 
     const handleStartRecording = async () => {
         isCancelledRef.current = false; // reset cancellation flag

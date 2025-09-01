@@ -25,6 +25,7 @@ import FaceSignin from "../app/signIn/FaceSignIn";
 import Chat from "../app/chatBox/Chat";
 import SettingsLayout from "../app/layouts/SettingsLayout";
 import VoiceChat from "../app/chatBox/VoiceChat";
+import BreathingExercise from "../app/therapy/BreathingExercise";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -51,7 +52,6 @@ const Routerset = () => {
             <Route path="input-mode" element={<InputMode />} />
 
             {/*<Route path="mood" element={<Mood />} />*/}
-
           </Route>
           <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
@@ -68,6 +68,7 @@ const Routerset = () => {
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} />
+            <Route path="therapy/breathing" element={<BreathingExercise />} />
           </Route>
         </>
       ) : (

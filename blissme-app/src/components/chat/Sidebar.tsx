@@ -68,18 +68,18 @@ const Sidebar = () => {
 
         <Link to={chatRoute}>
           <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-            <Brain className="w-6 h-6 text-emerald-600" />
+            <MessageCircle className="w-6 h-6 text-emerald-600" />
           </button>
         </Link>
 
         <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
           <Home className="w-6 h-6 text-white" />
         </button>
-
-        <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
-          <MessageCircle className="w-6 h-6 text-white" />
-        </button>
-
+        <Link to={"/chat/therapy/breathing"}>
+          <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+            <Brain className="w-6 h-6 text-white" />
+          </button>
+        </Link>
         <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
           <Calendar className="w-6 h-6 text-white" />
         </button>

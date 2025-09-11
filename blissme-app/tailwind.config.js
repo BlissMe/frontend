@@ -5,7 +5,7 @@ export default {
     extend: {
       fontFamily: {
         Roboto: ["Roboto", "sans-serif"],
-        merienda: ['Merienda', 'cursive'],
+        merienda: ["Merienda", "cursive"],
       },
       colors: {
         textColorOne: "#5F5757",
@@ -15,10 +15,20 @@ export default {
         inputColorOne: "#2ecc71",
         inputColorTwo: "#81c784",
         inputColorThree: "#DCF2DE",
-        iconColor: "#1B5E3A"
+        iconColor: "#1B5E3A",
+      },
+      primary: {
+        DEFAULT: "hsl(var(--primary))",
+        foreground: "hsl(var(--primary-foreground))",
+      },
+      background: "hsl(var(--background))",
+      foreground: "hsl(var(--foreground))",
+      card: {
+        DEFAULT: "hsl(var(--card))",
+        foreground: "hsl(var(--card-foreground))",
       },
       animation: {
-        ping_slow: 'ping 4s cubic-bezier(0, 0, 0.2, 1) infinite',
+        ping_slow: "ping 4s cubic-bezier(0, 0, 0.2, 1) infinite",
       },
       screens: {
         xsm: "360px",
@@ -63,16 +73,14 @@ export default {
       },
       keyframes: {
         wiggle: {
-          '0%, 100%': { transform: 'rotate(0deg)' },
-          '25%': { transform: 'rotate(-5deg)' },
-          '75%': { transform: 'rotate(5deg)' },
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "25%": { transform: "rotate(-5deg)" },
+          "75%": { transform: "rotate(5deg)" },
         },
       },
       animation: {
-        wiggle: 'wiggle 0.5s ease-in-out infinite',
+        wiggle: "wiggle 0.5s ease-in-out infinite",
       },
-
-
     },
     plugins: [],
   },

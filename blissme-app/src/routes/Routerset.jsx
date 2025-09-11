@@ -26,6 +26,7 @@ import Chat from "../app/chatBox/Chat";
 import SettingsLayout from "../app/layouts/SettingsLayout";
 import VoiceChat from "../app/chatBox/VoiceChat";
 import BreathingExercise from "../app/therapy/BreathingExercise";
+import { AnxietyGames } from "../app/therapy/Anxiety_Games";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -69,6 +70,7 @@ const Routerset = () => {
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} />
             <Route path="therapy/breathing" element={<BreathingExercise />} />
+            <Route path="therapy/anxiety" element={<AnxietyGames />} />
           </Route>
         </>
       ) : (

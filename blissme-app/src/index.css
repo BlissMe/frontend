@@ -178,3 +178,7 @@ canvas.animated-background-canvas {
 .Modal-root {
   z-index: 9999 !important;
 }
+
+html {
+  @apply scroll-smooth;
+}

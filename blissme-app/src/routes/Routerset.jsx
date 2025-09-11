@@ -56,7 +56,7 @@ const Routerset = () => {
           <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
-            <Route path="setting" element={<Setting />} />
+            <Route path="setting" element={<Setting />} />  
             {/* <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} /> */}

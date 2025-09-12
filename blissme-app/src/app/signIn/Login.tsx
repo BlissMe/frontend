@@ -89,7 +89,7 @@ const Login = () => {
         />
       </div>
       <div className="fixed inset-0 z-10 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-1 bg-white rounded-xl shadow-lg">
+        <div className="flex flex-col items-center gap-2 w-4/5 md:w-1/2 max-w-[500px] py-1 bg-white rounded-xl shadow-lg">
           {/* Message Bubble on top */}
           <MessageBubble />
 
@@ -111,7 +111,7 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex flex-col items-center w *:-full ">
+          <div className="flex flex-col items-center w-full px-6 md:px-12 pb-6">
             <Form
               layout="vertical"
               className="w-[380px] sm:w-[400px]"

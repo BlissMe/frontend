@@ -19,6 +19,8 @@ import {
 } from "@ant-design/icons";
 import Avatar from "../../components/profile/Avatar";
 import { useNotification } from "../context/notificationContext";
+import { getClassifierResult ,ClassifierResult,getDepressionLevel  } from "../../services/DetectionService";
+import {saveClassifierToServer  } from "../../services/ClassifierResults";
 
 const { Text } = Typography;
 
@@ -65,6 +67,9 @@ const VoiceChatBox: React.FC = () => {
   const [showEmotionModal, setShowEmotionModal] = useState(false);
   const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
   const isCancelledRef = useRef(false);
+  const [levelResult, setLevelResult] = useState<any>(null);
+  const [detecting, setDetecting] = useState(false);
+  const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
 
   const phqOptions = [
@@ -82,14 +87,34 @@ const VoiceChatBox: React.FC = () => {
     scrollToBottom();
   }, [messages, isBotTyping]);
 
-  useEffect(() => {
-    (async () => {
-      const session = await createNewSession();
-      setSessionID(session);
-      const allSummaries = await fetchAllSummaries();
-      setSessionSummaries(allSummaries);
-    })();
-  }, []);
+ useEffect(() => {
+  (async () => {
+    const session = await createNewSession();
+    setSessionID(session);
+    const allSummaries = await fetchAllSummaries();
+    setSessionSummaries(allSummaries);
+
+    const res = await fetch("http://localhost:8000/greeting");
+    if (res.ok) {
+      const greeting = await res.json();
+
+      const botMessage: Message = {
+        text: greeting.bot_response,
+        sender: "bot",
+        time: getCurrentTime(),
+      };
+
+      setMessages([botMessage]); // first message
+      await saveMessage(botMessage.text, session, "bot");
+
+      if (greeting.audio_url) {
+        const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
+        audio.play();
+      }
+    }
+  })();
+}, []);
+
 
   const handleStartRecording = async () => {
     isCancelledRef.current = false; // reset cancellation flag
@@ -351,7 +376,57 @@ const VoiceChatBox: React.FC = () => {
     setIsBotTyping(false);
     setIsWaitingForBotResponse(false);
   };
+async function ClassifierResult() {
+  if (!sessionID) return; // session not ready yet
+  setDetecting(true);
+  try {
+    const updatedHistory = await fetchChatHistory(sessionID);
+    const formattedHistory: string[] = Array.isArray(updatedHistory)
+      ? updatedHistory.map((msg: any) =>
+          `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
+      : [];
 
+    const historyStr = formattedHistory.join("\n").trim();
+    if (!historyStr) return; // nothing to classify yet
+
+    const latestSummary: string | null =
+      sessionSummaries && sessionSummaries.length
+        ? sessionSummaries[sessionSummaries.length - 1]
+        : null;
+
+const res = await getClassifierResult(historyStr, sessionSummaries ?? []); 
+    setClassifier(res);
+    
+    console.log("Classifier:", res);
+    try {
+      await saveClassifierToServer(Number(sessionID), res);
+      console.log("Classifier result saved.");
+    } catch (err) {
+      console.error("Failed to persist classifier result:", err);
+    }
+  } catch (e) {
+    console.error("getClassifierResult failed:", e);
+  } finally {
+    setDetecting(false);
+  }
+}
+
+async function runLevelDetection() {
+  try {
+    
+    await ClassifierResult();
+
+  
+    const resp = await getDepressionLevel();
+    if (!resp?.success) throw new Error("level API failed");
+    console.log("Depression Level Response:", resp);
+    setLevelResult(resp.data);
+
+  } catch (e) {
+    console.error(e);
+  }
+}
   return (
     <div className="flex flex-col h-screen">
       <div className="flex items-center justify-center py-4">
@@ -362,7 +437,16 @@ const VoiceChatBox: React.FC = () => {
           height={120}
         />{" "}
       </div>
-
+  <div className="px-4 -mt-2 mb-2 flex justify-center">
+        <Button
+          type="primary"
+          onClick={() => void runLevelDetection()} 
+          loading={detecting}
+          disabled={!sessionID}
+        >
+          Level Detection
+        </Button>
+      </div>
       <div
         className="flex-1 overflow-y-auto px-4 space-y-6"
         id="message-container"

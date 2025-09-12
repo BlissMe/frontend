@@ -22,6 +22,9 @@ import ProfileSetting from "../components/Sidebar/ProfileSetting";
 import AccountSetting from "../components/Sidebar/AccountSetting";
 import SecuritySetting from "../components/Sidebar/SecuritySetting";
 import FaceSignin from "../app/signIn/FaceSignIn";
+import Chat from "../app/chatBox/Chat";
+import SettingsLayout from "../app/layouts/SettingsLayout";
+import VoiceChat from "../app/chatBox/VoiceChat";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -46,12 +49,22 @@ const Routerset = () => {
             <Route path="nick-name" element={<Nickname />} />
             <Route path="virtual-character" element={<VirtualCharacter />} />
             <Route path="input-mode" element={<InputMode />} />
-            <Route path="mood" element={<Mood />} />
+
+            {/*<Route path="mood" element={<Mood />} />*/}
+
           </Route>
-          <Route path="/chat" element={<MainLayout />}>
+          <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
-            <Route path="setting" element={<Setting />} />
+            <Route path="setting" element={<Setting />} />  
+            {/* <Route path="setting/profile" element={<ProfileSetting />} />
+            <Route path="setting/account" element={<AccountSetting />} />
+            <Route path="setting/security" element={<SecuritySetting />} /> */}
+          </Route>
+          <Route path="chat-new/text" element={<Chat />} />
+          <Route path="chat-new/voice" element={<VoiceChat />} />
+
+          <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} />

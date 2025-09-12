@@ -97,7 +97,7 @@ body {
 /* ReactBarsLoader.css */
 .bars-loader {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   justify-content: center;
   align-items: center;
   height: 40px;
@@ -106,7 +106,7 @@ body {
 .bar {
   width: 6px;
   height: 20px;
-  background-color: #1890ff;
+  background-color: #f87171;
   animation: pulse 1s infinite ease-in-out;
 }
 
@@ -137,11 +137,13 @@ body {
 .ant-notification {
   z-index: 9999 !important;
 }
+
 .ant-notification-notice-message {
   display: block !important;
   color: #000 !important;
   font-weight: bold;
 }
+
 canvas.animated-background-canvas {
   position: fixed !important;
   top: 0;
@@ -175,4 +177,8 @@ canvas.animated-background-canvas {
 
 .Modal-root {
   z-index: 9999 !important;
+}
+
+html {
+  @apply scroll-smooth;
 }

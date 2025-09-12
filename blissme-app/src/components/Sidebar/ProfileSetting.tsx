@@ -219,10 +219,14 @@ const ProfileSetting = () => {
     };
   }, [previewUrl]);
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        Profile Settings
-      </h2>
+    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32 z-10">
+
+      <div className="w-full flex justify-center mt-4">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          Profile Settings
+        </h2>
+      </div>
+
       <Form
         form={form}
         layout="vertical"
@@ -257,7 +261,7 @@ const ProfileSetting = () => {
           }
           rules={[{ required: true, message: "Please enter character name" }]}
         >
-          <Input placeholder="Enter character name" className="h-10" />
+          <Input placeholder="Enter character name" className="h-10 rounded-lg" />
         </Form.Item>
 
         <Form.Item

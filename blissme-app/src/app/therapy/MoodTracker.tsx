@@ -131,7 +131,7 @@ const MoodTracker = () => {
         </div>
 
         {/* Trends */}
-        <div className="flex flex-col w-full gap-8 min-[780px]:flex-row">
+        <div className="flex flex-row w-full gap-8 min-[780px]:flex-row">
           <UserResultContainer records={allMoodRecords} />
           <TrendContainer userMoodRecord={allMoodRecords} />
         </div>

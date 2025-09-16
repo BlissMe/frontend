@@ -47,7 +47,6 @@ const UserResultContainer: FC<Props> = ({ records }) => {
 
     const lastFive = records.slice(-5);
 
-    // ✅ Use mood instead of humor
     const count = lastFive.reduce<Record<string, number>>((acc, { mood }) => {
       if (mood) acc[mood] = (acc[mood] || 0) + 1;
       return acc;

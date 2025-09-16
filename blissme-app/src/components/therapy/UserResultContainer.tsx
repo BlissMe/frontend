@@ -23,12 +23,6 @@ type AverageMoodType = {
   color2: string;
 };
 
-type CompleteResult = {
-  mostCommonMood: string;
-  trend: string | null;
-  trendArrow: string | null;
-};
-
 type Props = {
   records: any[];
 };
@@ -36,25 +30,28 @@ type Props = {
 const UserResultContainer: FC<Props> = ({ records }) => {
   const scale = ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"];
 
-  const result: CompleteResult = ((records) => {
-    if (!records || records.length < 1) {
+  const averageMoodResult: AverageMoodType = (() => {
+    if (!records || records.length < 5) {
       return {
-        mostCommonMood: "Keep tracking",
-        trend: "Log 5 check-ins to see your average mood.",
-        trendArrow: null,
+        text: "Keep tracking",
+        bg: "bg-blue-100",
+        emoji: null,
+        info: "Log 5 check-ins to see your average mood.",
+        arrow: null,
+        color1: "text-neutral-900",
+        color2: "text-[#21214db3]",
       };
     }
 
     const lastFive = records.slice(-5);
 
-    const count = lastFive.reduce<Record<string, number>>((acc, { mood }) => {
-      if (mood) acc[mood] = (acc[mood] || 0) + 1;
-      return acc;
-    }, {});
-    const entries = Object.entries(count);
+    const count: Record<string, number> = {};
+    lastFive.forEach(({ mood }) => {
+      if (mood) count[mood] = (count[mood] || 0) + 1;
+    });
 
     let mostCommonMood = "Neutral";
-
+    const entries = Object.entries(count);
     if (entries.length === 1) mostCommonMood = entries[0][0];
     else if (entries.length === 5) mostCommonMood = "Neutral";
     else {
@@ -62,6 +59,7 @@ const UserResultContainer: FC<Props> = ({ records }) => {
       mostCommonMood = entries[0][0];
     }
 
+    // Trend calculation
     const score = (mood: string) => scale.indexOf(mood);
     const diffs = lastFive.map((d) => score(d.mood!));
     const totalChange = diffs
@@ -73,27 +71,24 @@ const UserResultContainer: FC<Props> = ({ records }) => {
         ? "Increase from the previous 5 check-ins"
         : totalChange < 0
         ? "Decrease from the previous 5 check-ins"
-        : "same as the previous 5 check-ins";
+        : "Same as the previous 5 check-ins";
 
     const trendArrow =
-      trend === "same as the previous 5 check-ins"
+      trend === "Same as the previous 5 check-ins"
         ? sameSvg
         : trend === "Decrease from the previous 5 check-ins"
         ? fallingSvg
         : risingSvg;
 
-    return { mostCommonMood, trend, trendArrow };
-  })(records);
-
-  const averageMoodResult: AverageMoodType = (() => {
-    switch (result.mostCommonMood) {
+    // Map mood to emoji/bg/colors
+    switch (mostCommonMood) {
       case "Very Happy":
         return {
           text: "Very Happy",
           bg: "bg-[#FFC97C]",
           emoji: veryHappyWhiteEmoji,
-          info: result.trend,
-          arrow: result.trendArrow,
+          info: trend,
+          arrow: trendArrow,
           color1: "text-neutral-900",
           color2: "text-neutral-900",
         };
@@ -102,8 +97,8 @@ const UserResultContainer: FC<Props> = ({ records }) => {
           text: "Happy",
           bg: "bg-[#89E780]",
           emoji: happyWhiteEmoji,
-          info: result.trend,
-          arrow: result.trendArrow,
+          info: trend,
+          arrow: trendArrow,
           color1: "text-neutral-900",
           color2: "text-neutral-900",
         };
@@ -112,8 +107,8 @@ const UserResultContainer: FC<Props> = ({ records }) => {
           text: "Neutral",
           bg: "bg-[#89CAFF]",
           emoji: neutralWhiteEmoji,
-          info: result.trend,
-          arrow: result.trendArrow,
+          info: trend,
+          arrow: trendArrow,
           color1: "text-neutral-900",
           color2: "text-neutral-900",
         };
@@ -122,8 +117,8 @@ const UserResultContainer: FC<Props> = ({ records }) => {
           text: "Sad",
           bg: "bg-[#B8B1FF]",
           emoji: sadWhiteEmoji,
-          info: result.trend,
-          arrow: result.trendArrow,
+          info: trend,
+          arrow: trendArrow,
           color1: "text-neutral-900",
           color2: "text-neutral-900",
         };
@@ -132,27 +127,27 @@ const UserResultContainer: FC<Props> = ({ records }) => {
           text: "Very Sad",
           bg: "bg-[#FF9B99]",
           emoji: verySadWhiteEmoji,
-          info: result.trend,
-          arrow: result.trendArrow,
+          info: trend,
+          arrow: trendArrow,
           color1: "text-neutral-900",
           color2: "text-neutral-900",
         };
-      case "Keep tracking":
       default:
         return {
           text: "Keep tracking",
           bg: "bg-blue-100",
           emoji: null,
-          info: result.trend,
-          arrow: result.trendArrow,
+          info: trend,
+          arrow: trendArrow,
           color1: "text-neutral-900",
           color2: "text-[#21214db3]",
         };
     }
   })();
 
-  const sleepResult = ((records) => {
-    if (!records || records.length < 5)
+  // --- Average Sleep ---
+  const sleepResult: AverageMoodType = (() => {
+    if (!records || records.length < 5) {
       return {
         text: "Not enough data yet!",
         info: "Track 5 nights to view average sleep.",
@@ -162,14 +157,16 @@ const UserResultContainer: FC<Props> = ({ records }) => {
         color1: "text-neutral-900",
         color2: "text-[#21214db3]",
       };
+    }
 
-    const sleepParameter = {
+    const sleepParameter: Record<string, number> = {
       "0-2 hours": 1,
       "3-4 hours": 3.5,
       "5-6 hours": 5.5,
       "7-8 hours": 7.5,
       "9+ hours": 9,
     };
+
     const lastFive = records
       .slice(-5)
       .map((r) => sleepParameter[r.sleepHours as keyof typeof sleepParameter]);
@@ -187,14 +184,14 @@ const UserResultContainer: FC<Props> = ({ records }) => {
         ? "7-8 Hours"
         : "9+ Hours";
 
-    const trendValue = lastFive
-      .slice(1)
-      .reduce((acc, curr, i) => acc + (curr - lastFive[i]), 0);
-
     const sleepTrend =
-      trendValue > 0
+      lastFive
+        .slice(1)
+        .reduce((acc, curr, i) => acc + (curr - lastFive[i]), 0) > 0
         ? "Increase from the previous 5 check-ins"
-        : trendValue < 0
+        : lastFive
+            .slice(1)
+            .reduce((acc, curr, i) => acc + (curr - lastFive[i]), 0) < 0
         ? "Decrease from the previous 5 check-ins"
         : "Same as the previous 5 check-ins";
 
@@ -214,11 +211,14 @@ const UserResultContainer: FC<Props> = ({ records }) => {
       color1: "text-white",
       color2: "text-white/70",
     };
-  })(records);
+  })();
 
   return (
     <section className="py-5 px-4 md:px-6 md:py-6 gap-6 flex flex-col bg-white w-full border border-blue-100 rounded-2xl min-[780px]:max-w-[370px] min-[1170px]:min-w-[305px]">
-      <ResultCard averageResult={averageMoodResult} information="Average Mood" />
+      <ResultCard
+        averageResult={averageMoodResult}
+        information="Average Mood"
+      />
       <ResultCard averageResult={sleepResult} information="Average Sleep" />
     </section>
   );

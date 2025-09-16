@@ -14,7 +14,6 @@ import {
   fetchTodayMood,
   fetchAllMoods,
 } from "../../services/MoodTracker";
-import { Spin } from "antd";
 
 const MoodTracker = () => {
   const logIsVisible = useVisibleStore((state) => state.logIsVisible);
@@ -75,12 +74,10 @@ const MoodTracker = () => {
   }
 
   return (
-    <div className="pt-8 md:pt-10 pb-20 relative flex flex-col items-center">
-      <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] mt-12 md:mt-16 flex flex-col items-center">
+    <div className="relative flex flex-col items-center">
+      <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] flex flex-col items-center">
         <form
-          className={`justify-center my-12 lg:my-16 ${
-            todayMood ? "hidden" : "flex"
-          }`}
+          className={`justify-center my-12 lg:my-16 `}
           onSubmit={(e) => {
             e.preventDefault();
             setLogIsVisible(true);
@@ -115,7 +112,7 @@ const MoodTracker = () => {
         <div
           className={`${
             todayMood ? "flex" : "hidden"
-          } w-full flex-col gap-5 mt-12 mb-8 lg:mt-16 lg:flex-row lg:gap-8`}
+          } w-full flex-col gap-5 mb-8lg:flex-row lg:gap-8`}
         >
           <TodayMood todayRecord={todayMood} />
 

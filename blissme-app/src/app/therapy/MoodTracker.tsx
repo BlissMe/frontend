@@ -45,19 +45,16 @@ const MoodTracker = () => {
     description: string,
     tags: string[] = []
   ) => {
-    console.group("📝 Debug: Submitting Mood");
-    console.log("Mood:", mood);
-    console.log("Sleep Hours:", sleepHours);
-    console.log("Description:", description);
-    console.groupEnd();
-
     try {
       const res = await submitMood(mood, sleepHours, description, tags);
       if (res.success) {
         setLogIsVisible(false);
-        const today = await fetchTodayMood();
 
+        const today = await fetchTodayMood();
         setTodayMood(today);
+
+        const allRecords = await fetchAllMoods();
+        setAllMoodRecords(allRecords);
       } else {
         alert("Error logging mood: " + res.error);
       }
@@ -65,6 +62,7 @@ const MoodTracker = () => {
       alert("Error logging mood. Check console for details.");
     }
   };
+
   console.log("todayMood in Dashboard:", todayMood);
 
   if (loading) {

@@ -13,7 +13,7 @@ type VisualMoodBarType = {
   hours: string;
   mood: string;
   reflection: string;
-  tags: string;
+  tags?: string[];
   isLastFour?: boolean;
 };
 type Mood = "Very Happy" | "Happy" | "Neutral" | "Sad" | "Very Sad";
@@ -22,7 +22,7 @@ const VisualMoodBar = ({
   hours,
   mood,
   reflection,
-  tags,
+  tags = [],
   isLastFour,
 }: VisualMoodBarType) => {
   const heightMap: Record<string, string> = {
@@ -41,8 +41,9 @@ const VisualMoodBar = ({
     "Very Sad": ["bg-[#FF9B99]", verySadWhiteEmoji, verySadEmoji],
   };
 
-  const barHeight = heightMap[hours];
-  const [barColor, barWhiteEmoji, barEmoji] = moodMap[mood as Mood];
+  const barHeight = heightMap[hours] ?? "h-[58px]";
+  const [barColor, barWhiteEmoji, barEmoji] =
+    moodMap[mood as Mood] ?? moodMap["Neutral"];
 
   return (
     <div className="w-10 flex flex-col-reverse items-center h-fit self-end">
@@ -69,7 +70,7 @@ const VisualMoodBar = ({
               Mood
             </p>
             <div className="flex items-center gap-1.5">
-              <img src={barEmoji} className="w-4 h-4"></img>
+              <img src={barEmoji} className="w-4 h-4" alt="mood icon" />
               <p className="font-RedditSans text-neutral-900 text-[0.938rem]/[140%] tracking-[-0.019rem]">
                 {mood}
               </p>
@@ -88,7 +89,7 @@ const VisualMoodBar = ({
               Reflection
             </p>
             <p className="font-RedditSans text-neutral-900 text-[0.938rem]/[140%] line-clamp-2 tracking-[-0.019rem]">
-              {reflection}
+              {reflection || "No reflection"}
             </p>
           </div>
           <div className="flex flex-col gap-1.5">
@@ -96,7 +97,7 @@ const VisualMoodBar = ({
               Tags
             </p>
             <p className="font-RedditSans text-neutral-900 text-[0.938rem]/[140%] tracking-[-0.019rem]">
-              {tags}
+              {tags.length > 0 ? tags.join(", ") : "No tags"}
             </p>
           </div>
         </div>
@@ -107,9 +108,10 @@ const VisualMoodBar = ({
               : "absolute left-[-15px]  top-3 border-y-8 border-y-transparent border-l-[12px] border-l-white z-50"
           } opacity-0 group-hover:opacity-100`}
         ></div>
-        <img className="w-[30px] mt-[5px]" src={barWhiteEmoji}></img>
+        <img className="w-[30px] mt-[5px]" src={barWhiteEmoji} alt="bar icon" />
       </div>
     </div>
   );
 };
+
 export default VisualMoodBar;

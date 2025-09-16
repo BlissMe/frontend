@@ -3,7 +3,7 @@ import { getLocalStoragedata } from "../helpers/Storage";
 
 const metadataServiceURL = "http://localhost:8080";
 
-interface MoodRecord {
+export interface MoodRecord {
   mood: string;
   sleepHours: string;
   reflection: string;
@@ -11,6 +11,7 @@ interface MoodRecord {
   createdAt: string;
   updatedAt: string;
   userId: number;
+  tags?: string[];
 }
 
 const getAuthHeaders = () => {
@@ -31,7 +32,7 @@ export const submitMood = async (
   try {
     const res = await axios.post(
       `${metadataServiceURL}/moods/log`,
-      { mood, sleepHours, reflection,tags },
+      { mood, sleepHours, reflection, tags },
       getAuthHeaders()
     );
     return { success: true, data: res.data };
@@ -52,14 +53,10 @@ export const fetchTodayMood = async (): Promise<MoodRecord | null> => {
   }
 };
 
-
-export const fetchAllMoods = async () => {
+export const fetchAllMoods = async (): Promise<MoodRecord[]> => {
   try {
-    const res = await axios.get(
-      `${metadataServiceURL}/moods/all`,
-      getAuthHeaders()
-    );
-    return res.data;
+    const res = await axios.get(`${metadataServiceURL}/moods/all`, getAuthHeaders());
+    return res.data as MoodRecord[];
   } catch (err: any) {
     return [];
   }

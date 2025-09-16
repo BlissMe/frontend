@@ -9,7 +9,11 @@ import TodayMood from "../../components/therapy/TodayMood";
 import TodaySleep from "../../components/therapy/TodaySleep";
 import TodayReflection from "../../components/therapy/TodayReflection";
 import { useVisibleStore } from "../../store/useVisibleStore";
-import { submitMood, fetchTodayMood } from "../../services/MoodTracker";
+import {
+  submitMood,
+  fetchTodayMood,
+  fetchAllMoods,
+} from "../../services/MoodTracker";
 
 const MoodTracker = () => {
   const logIsVisible = useVisibleStore((state) => state.logIsVisible);
@@ -18,13 +22,18 @@ const MoodTracker = () => {
   const [phase, setPhase] = useState(0);
   const [loading, setLoading] = useState(true);
   const [todayMood, setTodayMood] = useState<any>(null);
+  const [allMoodRecords, setAllMoodRecords] = useState<any[]>([]);
 
   // Load today's mood
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      const record = await fetchTodayMood();
-      setTodayMood(record);
+      const today = await fetchTodayMood();
+      setTodayMood(today);
+
+      const allRecords = await fetchAllMoods();
+      setAllMoodRecords(allRecords);
+
       setLoading(false);
     };
     loadData();
@@ -103,7 +112,7 @@ const MoodTracker = () => {
             <LogSlider
               phase={phase}
               setPhase={setPhase}
-              onSubmit={handleSubmitMood} 
+              onSubmit={handleSubmitMood}
             />
           </DefaultContainer>
         )}
@@ -123,8 +132,8 @@ const MoodTracker = () => {
 
         {/* Trends */}
         <div className="flex flex-col w-full gap-8 min-[780px]:flex-row">
-          <UserResultContainer />
-          <TrendContainer />
+          <UserResultContainer records={allMoodRecords} />
+          <TrendContainer userMoodRecord={allMoodRecords} />
         </div>
       </main>
     </div>

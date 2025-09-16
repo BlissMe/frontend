@@ -79,13 +79,10 @@ const MoodTracker = () => {
   return (
     <div className="pt-8 md:pt-10 pb-20 relative flex flex-col items-center">
       <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] mt-12 md:mt-16 flex flex-col items-center">
-        {/* Show log button if no mood logged today */}
-        {/* <form
+        <form
           className={`justify-center my-12 lg:my-16 ${
             todayMood ? "hidden" : "flex"
-          }`} */}
-        <form
-          className={`justify-center my-12 lg:my-16 `}
+          }`}
           onSubmit={(e) => {
             e.preventDefault();
             setLogIsVisible(true);

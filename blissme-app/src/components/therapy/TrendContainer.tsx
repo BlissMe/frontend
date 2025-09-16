@@ -1,53 +1,47 @@
 import VisualMoodBar from "./VisualMoodBar";
 
 const TrendContainer = ({ userMoodRecord }: { userMoodRecord: any[] }) => {
-  // Extract all dates from records
-  const recordDates = userMoodRecord.map((day: any) => day.date);
-  const numberOfDates = 11;
-  const missingNumberDates = numberOfDates - recordDates.length;
+  const uniqueRecordsMap = new Map<string, any>();
+  userMoodRecord.forEach((record) => {
+    const dateKey = new Date(record.date).toISOString().split("T")[0];
+    if (!uniqueRecordsMap.has(dateKey)) {
+      uniqueRecordsMap.set(dateKey, record);
+    }
+  });
+  const today = new Date();
+  const last11Days: { dateKey: string; dateObj: Date }[] = [];
+  for (let i = 10; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const dateKey = d.toISOString().split("T")[0];
+    last11Days.push({ dateKey, dateObj: d });
+  }
 
-  // Format existing records
-  const formattedDates = userMoodRecord.map((day: any) => {
-    const date = new Date(day.date);
+  const finalRecords = last11Days.map(({ dateKey, dateObj }) => {
+    const record = uniqueRecordsMap.get(dateKey);
+    if (record) {
+      return record;
+    }
     return {
-      day: date.getDate(),
-      month: date.toLocaleString("en-US", { month: "short" }),
+      date: dateObj.toISOString(),
+      sleepHours: null,
+      mood: null,
+      reflection: null,
+      tags: [],
+      empty: true,
     };
   });
 
-  // Generate missing dates if any
-  const missingDates: { day: number; month: string }[] = [];
-  if (formattedDates.length > 0) {
-    const startDate = new Date(recordDates[0]);
-    for (let i = 1; i <= missingNumberDates; i++) {
-      const prevDate = new Date(startDate);
-      prevDate.setDate(startDate.getDate() - i);
-      missingDates.push({
-        day: prevDate.getDate(),
-        month: prevDate.toLocaleString("en-US", { month: "short" }),
-      });
-    }
-    missingDates.reverse();
-  } else {
-    // If no records at all → generate last 11 days
-    const today = new Date();
-    for (let i = 10; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(today.getDate() - i);
-      missingDates.push({
-        day: date.getDate(),
-        month: date.toLocaleString("en-US", { month: "long" }),
-      });
-    }
-  }
+  const formattedDates = finalRecords.map((record) => {
+    const d = new Date(record.date);
+    return {
+      day: d.getDate().toString().padStart(2, "0"),
+      month: d.toLocaleString("en-US", { month: "short" }),
+    };
+  });
 
-  const allDates = [...missingDates, ...formattedDates].map((item) => ({
-    day: item.day.toString().padStart(2, "0"),
-    month: item.month,
-  }));
-
-  const reverseAllDates = [...allDates].reverse();
-  const inverseRecords = [...userMoodRecord].reverse();
+  const reverseDates = [...formattedDates].reverse();
+  const reverseRecords = [...finalRecords].reverse();
 
   return (
     <section className="px-4 py-5 md:px-5 md:py-8 rounded-2xl bg-white w-full flex flex-col border border-blue-100 gap-8 min-[780px]:w-[52%] min-[896px]:w-[57%] lg:w-[62%] min-[73.125rem]:w-full">
@@ -55,7 +49,6 @@ const TrendContainer = ({ userMoodRecord }: { userMoodRecord: any[] }) => {
         Mood and sleep trends
       </h3>
       <div className="flex flex-row">
-        {/* Sleep hours legend */}
         <div className="flex flex-col gap-10 mr-4">
           {["9+ hours", "7-8 hours", "5-6 hours", "3-4 hours", "0-2 hours"].map(
             (label, i) => (
@@ -81,39 +74,42 @@ const TrendContainer = ({ userMoodRecord }: { userMoodRecord: any[] }) => {
           )}
         </div>
 
-        {/* Mood bars */}
         <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap flex flex-row-reverse w-full max-w-[626px]">
           <div className="w-[626px] flex flex-col shrink-0 relative">
-            {/* horizontal lines */}
             <div className="flex flex-col w-full mt-[7px] gap-[52px]">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="w-full h-[1px] bg-blue-100/[30%]"></div>
               ))}
             </div>
 
-            {/* mood bars */}
             <div className="absolute w-full flex flex-row-reverse gap-[1.125rem] h-[84%] items-end">
-              {inverseRecords.map((record, index) => (
-                <VisualMoodBar
-                  key={index}
-                  hours={record.sleepHours}
-                  mood={record.mood}
-                  reflection={record.reflection}
-                  tags={
-                    Array.isArray(record.tags)
-                      ? record.tags
-                      : typeof record.tags === "string"
-                      ? [record.tags]
-                      : []
-                  }
-                  isLastFour={index >= 7}
-                />
-              ))}
+              {reverseRecords.map((record, index) =>
+                record.empty ? (
+                  <div
+                    key={index}
+                    className="w-6 h-full flex items-end justify-center"
+                  ></div>
+                ) : (
+                  <VisualMoodBar
+                    key={index}
+                    hours={record.sleepHours}
+                    mood={record.mood}
+                    reflection={record.reflection}
+                    tags={
+                      Array.isArray(record.tags)
+                        ? record.tags
+                        : typeof record.tags === "string"
+                        ? [record.tags]
+                        : []
+                    }
+                    isLastFour={index >= reverseRecords.length - 4}
+                  />
+                )
+              )}
             </div>
 
-            {/* dates */}
             <div className="flex gap-[1.125rem] flex-row-reverse mt-[55px]">
-              {reverseAllDates.map((date, i) => (
+              {reverseDates.map((date, i) => (
                 <div
                   key={i}
                   className="flex flex-col w-10 gap-1.5 items-center"

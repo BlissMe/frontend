@@ -9,6 +9,7 @@ import {
   fetchTodayMood,
   submitMood,
 } from "../../services/MoodTracker";
+import { useNotification } from "../context/notificationContext";
 
 const LogMood = () => {
   const logIsVisible = useVisibleStore((state) => state.logIsVisible);
@@ -18,7 +19,8 @@ const LogMood = () => {
   const [todayMood, setTodayMood] = useState<any>(null);
   const [allMoodRecords, setAllMoodRecords] = useState<any[]>([]);
   const navigate = useNavigate();
-  const handleLogoClick = () => navigate("/home");
+  const { openNotification } = useNotification();
+
   const handleSubmitMood = async (
     mood: string,
     sleepHours: string,
@@ -29,40 +31,42 @@ const LogMood = () => {
       const res = await submitMood(mood, sleepHours, description, tags);
       if (res.success) {
         setLogIsVisible(false);
-
+        navigate("/therapy/mood-tracker", { replace: true });
         const today = await fetchTodayMood();
         setTodayMood(today);
 
         const allRecords = await fetchAllMoods();
         setAllMoodRecords(allRecords);
+        openNotification("success", "Mood logged successfully!");
       } else {
-        alert("Error logging mood: " + res.error);
+        openNotification("error", res.error);
       }
     } catch (err) {
-      alert("Error logging mood. Check console for details.");
+      openNotification(
+        "error",
+        "Error logging mood. Check console for details."
+      );
     }
   };
- return (
-  <div className="flex justify-center h-screen">
-
-    {logIsVisible && (
-      <DefaultContainer
-        py="default"
-        setIsVisible={setLogIsVisible}
-        setPhase={setPhase}
-        backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
-      >
-        <LogHeader phase={phase} />
-        <LogSlider
-          phase={phase}
+  return (
+    <div className="flex justify-center h-screen">
+      {logIsVisible && (
+        <DefaultContainer
+          py="default"
+          setIsVisible={setLogIsVisible}
           setPhase={setPhase}
-          onSubmit={handleSubmitMood}
-        />
-      </DefaultContainer>
-    )}
-  </div>
-);
-
+          backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
+        >
+          <LogHeader phase={phase} />
+          <LogSlider
+            phase={phase}
+            setPhase={setPhase}
+            onSubmit={handleSubmitMood}
+          />
+        </DefaultContainer>
+      )}
+    </div>
+  );
 };
 
 export default LogMood;

@@ -9,11 +9,7 @@ import TodayMood from "../../components/therapy/TodayMood";
 import TodaySleep from "../../components/therapy/TodaySleep";
 import TodayReflection from "../../components/therapy/TodayReflection";
 import { useVisibleStore } from "../../store/useVisibleStore";
-import {
-  submitMood,
-  fetchTodayMood,
-  fetchAllMoods,
-} from "../../services/MoodTracker";
+import { fetchTodayMood, fetchAllMoods } from "../../services/MoodTracker";
 
 const MoodTracker = () => {
   const logIsVisible = useVisibleStore((state) => state.logIsVisible);
@@ -39,30 +35,6 @@ const MoodTracker = () => {
     loadData();
   }, []);
 
-  const handleSubmitMood = async (
-    mood: string,
-    sleepHours: string,
-    description: string,
-    tags: string[] = []
-  ) => {
-    try {
-      const res = await submitMood(mood, sleepHours, description, tags);
-      if (res.success) {
-        setLogIsVisible(false);
-
-        const today = await fetchTodayMood();
-        setTodayMood(today);
-
-        const allRecords = await fetchAllMoods();
-        setAllMoodRecords(allRecords);
-      } else {
-        alert("Error logging mood: " + res.error);
-      }
-    } catch (err) {
-      alert("Error logging mood. Check console for details.");
-    }
-  };
-
   console.log("todayMood in Dashboard:", todayMood);
 
   if (loading) {
@@ -76,39 +48,6 @@ const MoodTracker = () => {
   return (
     <div className="relative flex flex-col items-center">
       <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] mt-12 md:mt-16 flex flex-col items-center">
-        <form
-          className={`justify-center my-12 lg:my-16 `}
-          onSubmit={(e) => {
-            e.preventDefault();
-            setLogIsVisible(true);
-          }}
-        >
-          <Button
-            buttonText="Log today's mood"
-            py="1rem"
-            fontSize="1.25rem"
-            lineHeight="140%"
-            letterSpacing="0px"
-          />
-        </form>
-
-        {/* Log modal */}
-        {logIsVisible && (
-          <DefaultContainer
-            py="default"
-            setIsVisible={setLogIsVisible}
-            setPhase={setPhase}
-            backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
-          >
-            <LogHeader phase={phase} />
-            <LogSlider
-              phase={phase}
-              setPhase={setPhase}
-              onSubmit={handleSubmitMood}
-            />
-          </DefaultContainer>
-        )}
-        {/* Today's mood/sleep/reflection */}
         <div
           className={`${
             todayMood ? "grid" : "hidden"

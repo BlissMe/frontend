@@ -1,15 +1,15 @@
-import { Typography, Button } from "antd";
-import { SmileOutlined } from "@ant-design/icons";
+import { Typography } from "antd";
+import Button from "../../components/therapy/Button";
 import { useNavigate } from "react-router-dom";
+import { SmileOutlined } from "@ant-design/icons";
+import { useVisibleStore } from "../../store/useVisibleStore";
 
 const { Title, Text } = Typography;
 
 export default function MoodTrackerMain() {
   const navigate = useNavigate();
-   const handleClick = () => {
-    
-    navigate("/therapy/mood-tracker");
-  };
+  const setLogIsVisible = useVisibleStore((state) => state.setLogIsVisible);
+
   return (
     <div className="flex flex-col justify-between items-center  text-center px-6 py-10">
       <div className="mt-8">
@@ -32,15 +32,24 @@ export default function MoodTrackerMain() {
           </Text>
         </div>
         <div className="mt-8">
-          <Button
-            type="primary"
-            size="large"
-            icon={<SmileOutlined />}
-             onClick={handleClick}
-            className="!bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-8 !py-5 !shadow-lg transition-transform transform hover:scale-105"
+          <form
+            className={`justify-center my-12 lg:my-16 `}
+            onSubmit={(e) => {
+              e.preventDefault();
+              setLogIsVisible(true);
+              navigate("/mood/step1");
+            }}
           >
-            Log Today’s Mood
-          </Button>
+            <Button
+              buttonText="Log Today’s Mood"
+              py="20px"
+              fontSize="18px"
+              lineHeight="28px"
+              letterSpacing="0.5px"
+              icon={<SmileOutlined />}
+              className="!bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-8 !py-5 !shadow-lg transition-transform transform hover:scale-105 text-green-400"
+            />
+          </form>
         </div>
       </div>
     </div>

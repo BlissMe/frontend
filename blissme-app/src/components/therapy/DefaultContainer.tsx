@@ -30,7 +30,7 @@ const DefaultContainer = ({
           ? "linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
           : "",
       }}
-      className={`flex absolute flex-col px-5 md:px-10 rounded-2xl mt-[4.58rem] md:mt-20 bg-white w-[89.33%] max-w-[37.5rem] gap-6 md:gap-8 z-30 top-0 ${paddingYclassname}`}
+      className={`flex absolute flex-col px-8 rounded-2xl mt-[4.58rem] md:mt-6 bg-white w-[89.33%] max-w-[37.5rem] gap-6 md:gap-8 z-30 top-0 ${paddingYclassname}`}
     >
       <svg
         onClick={() => {

@@ -1,10 +1,10 @@
 import Sidebar from "../../components/chat/Sidebar";
-import backgroundImage from "../../assets/images/bgnew.jpeg";
+import backgroundImage from "../../assets/images/chatbg.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { Content } from "antd/es/layout/layout";
 
-const MoodLayout = () => {
+const DashLayout = () => {
   const navigate = useNavigate();
   const handleLogoClick = () => navigate("/home");
 
@@ -33,4 +33,4 @@ const MoodLayout = () => {
   );
 };
 
-export default MoodLayout;
+export default DashLayout;

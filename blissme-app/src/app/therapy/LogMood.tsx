@@ -31,7 +31,7 @@ const LogMood = () => {
       const res = await submitMood(mood, sleepHours, description, tags);
       if (res.success) {
         setLogIsVisible(false);
-        navigate("/therapy/mood-tracker", { replace: true });
+        navigate("/dash/mood-tracker", { replace: true });
         const today = await fetchTodayMood();
         setTodayMood(today);
 

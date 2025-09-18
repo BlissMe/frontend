@@ -29,7 +29,9 @@ const TodayReflection = ({ todayRecord }: TodayReflectionProps) => {
   if (!reflection && !formattedTags) return null;
 
   return (
-    <section className="flex flex-col gap-4 p-5 w-full rounded-2xl text-white bg-gradient-to-r from-purple-400 to-purple-300">
+    <section className="flex flex-col gap-4 p-5 w-full rounded-2xl text-white"  style={{
+    background: "linear-gradient(135deg, #1E1E2F 0%, #3A3A5A 100%)",
+  }}>
       <div className="flex items-center gap-3">
         <img className="w-[22px] h-[22px]" src={star} alt="reflection icon" />
         <p className="font-RedditSans font-medium text-lg">Reflection</p>

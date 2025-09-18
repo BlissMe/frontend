@@ -18,9 +18,9 @@ type ResultCardProps = {
 const ResultCard = ({ averageResult, information }: ResultCardProps) => {
   return (
     <div className="flex flex-col gap-3 ">
-      <h2 className="font-RedditSans text-neutral-900 font-semibold text-[1.25rem]/[140%] flex items-center">
+      <h2 className="font-RedditSans text-white font-semibold text-[1.25rem]/[140%] flex items-center">
         {information}
-        <span className="font-RedditSans font-normal text-neutral-600 text-[0.938rem]/[140%] tracking-[0.019rem] ml-1">
+        <span className="font-RedditSans font-normal text-white text-[0.938rem]/[140%] tracking-[0.019rem] ml-1">
           (Last 5 check-ins)
         </span>
       </h2>

@@ -12,10 +12,6 @@ import { useVisibleStore } from "../../store/useVisibleStore";
 import { fetchTodayMood, fetchAllMoods } from "../../services/MoodTracker";
 
 const MoodTracker = () => {
-  const logIsVisible = useVisibleStore((state) => state.logIsVisible);
-  const setLogIsVisible = useVisibleStore((state) => state.setLogIsVisible);
-
-  const [phase, setPhase] = useState(0);
   const [loading, setLoading] = useState(true);
   const [todayMood, setTodayMood] = useState<any>(null);
   const [allMoodRecords, setAllMoodRecords] = useState<any[]>([]);
@@ -47,24 +43,29 @@ const MoodTracker = () => {
 
   return (
     <div className="relative flex flex-col items-center">
-      <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] mt-12 md:mt-16 flex flex-col items-center">
-        <div
-          className={`${
-            todayMood ? "grid" : "hidden"
-          } w-full grid-cols-1 gap-5 mt-12 mb-8 lg:mt-16 lg:grid lg:grid-cols-3`}
-        >
-          <TodayMood todayRecord={todayMood} />
-          <TodaySleep todayRecord={todayMood} />
-          <TodayReflection todayRecord={todayMood} />
+      <div className="w-full bg-white/20 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center">
+        <div className="text-2xl font-semibold text-green-800">
+          My Mood Tracker
         </div>
+        <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] flex flex-col items-center">
+          <div
+            className={`${
+              todayMood ? "grid" : "hidden"
+            } w-full grid-cols-1 gap-5 mt-6 mb-8  lg:grid lg:grid-cols-3`}
+          >
+            <TodayMood todayRecord={todayMood} />
+            <TodaySleep todayRecord={todayMood} />
+            <TodayReflection todayRecord={todayMood} />
+          </div>
 
-        {/* Trends */}
-        <div className="flex flex-row w-full gap-10 min-[780px]:flex-row">
-          <TrendContainer userMoodRecord={allMoodRecords} />
+          {/* Trends */}
+          <div className="flex flex-row w-full gap-10 min-[780px]:flex-row">
+            <TrendContainer userMoodRecord={allMoodRecords} />
 
-          <UserResultContainer records={allMoodRecords} />
-        </div>
-      </main>
+            <UserResultContainer records={allMoodRecords} />
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

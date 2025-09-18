@@ -30,6 +30,7 @@ import TherapyLayout from "../app/layouts/TherapyLayout";
 import MoodTrackerMain from "../app/therapy/MoodTrackerMain";
 import LogMood from "../app/therapy/LogMood";
 import MoodLayout from "../app/layouts/MoodLayout";
+import DashLayout from "../app/layouts/DashLayout";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -77,8 +78,10 @@ const Routerset = () => {
             <Route path="breathing" element={<BreathingExercise />} />
             <Route path="anxiety" element={<AnxietyGames />} />
             <Route path="medication" element={<MeditationPlayer />} />
-            <Route path="mood-tracker" element={<MoodTracker />} />
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
+          </Route>
+          <Route path="/dash" element={<DashLayout />}>
+            <Route path="mood-tracker" element={<MoodTracker />} />
           </Route>
           <Route path="/mood" element={<MoodLayout />}>
             <Route path="step1" element={<LogMood />} />

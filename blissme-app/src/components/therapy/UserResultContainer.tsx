@@ -213,21 +213,20 @@ const UserResultContainer: FC<Props> = ({ records }) => {
     };
   })();
 
- return (
-  <section
-    className="py-5 px-4 md:px-6 md:py-6 gap-6 flex flex-col border border-blue-100 rounded-2xl min-[780px]:max-w-[370px] min-[1170px]:min-w-[305px]"
-    style={{
-      background: "linear-gradient(135deg, #89CAFF 0%, #FFC97C 100%)",
-    }}
-  >
-    <ResultCard
-      averageResult={averageMoodResult}
-      information="Average Mood"
-    />
-    <ResultCard averageResult={sleepResult} information="Average Sleep" />
-  </section>
-);
-
+  return (
+    <section
+      className="py-5 px-4 md:px-6 md:py-6 gap-6 flex flex-col border border-blue-100 rounded-2xl min-[780px]:max-w-[370px] min-[1170px]:min-w-[305px]"
+      style={{
+        background: "linear-gradient(135deg, #1E1E2F 0%, #3A3A5A 100%)",
+      }}
+    >
+      <ResultCard
+        averageResult={averageMoodResult}
+        information="Average Mood"
+      />
+      <ResultCard averageResult={sleepResult} information="Average Sleep" />
+    </section>
+  );
 };
 
 export default UserResultContainer;

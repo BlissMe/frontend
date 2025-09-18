@@ -1,6 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import SignUp from "../app/signUp/SignUp";
-import SignIn from "../app/signIn/SignIn";
 import ChatBox from "../app/chatBox/ChatBox";
 import MainLayout from "../app/layouts/MainLayout";
 import VoiceChatBox from "../app/chatBox/VoiceChatBox";
@@ -11,7 +9,6 @@ import { AuthContext } from "../app/context/AuthContext";
 import { useContext } from "react";
 import SendEmail from "../app/forget-password/SendEmail";
 import ResetPassword from "../app/forget-password/ResetPassword";
-import Mood from "../app/start/Mood";
 import ModelLayout from "../app/layouts/ModelLayout";
 import Register from "../app/signUp/Register";
 import Login from "../app/signIn/Login";
@@ -29,6 +26,8 @@ import BreathingExercise from "../app/therapy/BreathingExercise";
 import { AnxietyGames } from "../app/therapy/Anxiety_Games";
 import MeditationPlayer from "../app/therapy/MeditationPlayer";
 import Dashboard from "../app/therapy/MoodTracker";
+import TherapyLayout from "../app/layouts/TherapyLayout";
+import MoodTrackerMain from "../app/therapy/MoodTrackerMain";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -71,11 +70,13 @@ const Routerset = () => {
             <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} />
-            <Route path="therapy/breathing" element={<BreathingExercise />} />
-            <Route path="therapy/anxiety" element={<AnxietyGames />} />
-            <Route path="therapy/medication" element={<MeditationPlayer />} />
-            <Route path="therapy/mood-tracker" element={<Dashboard />} />
-
+          </Route>
+          <Route path="/therapy" element={<TherapyLayout />}>
+            <Route path="breathing" element={<BreathingExercise />} />
+            <Route path="anxiety" element={<AnxietyGames />} />
+            <Route path="medication" element={<MeditationPlayer />} />
+            <Route path="mood-tracker" element={<Dashboard />} />
+            <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
           </Route>
         </>
       ) : (

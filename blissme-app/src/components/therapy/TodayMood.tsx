@@ -3,7 +3,6 @@ import happyEmoji from "../../assets/svg/icon-happy-color.svg";
 import neutralEmoji from "../../assets/svg/icon-neutral-color.svg";
 import sadEmoji from "../../assets/svg/icon-sad-color.svg";
 import verySadEmoji from "../../assets/svg/icon-very-sad-color.svg";
-import quote from "../../assets/svg/icon-quote.svg";
 import moodPhrases from "../../data/moodPhrases";
 import { useEffect, useState } from "react";
 
@@ -42,26 +41,13 @@ const TodayMood = ({ todayRecord }: TodayMoodProps) => {
   const moodEmoji = moodMap[todayRecord.mood as MoodType];
 
   return (
-    <section className="px-4 py-8 md:px-8 flex flex-col gap-8 md:gap-[101px] overflow-hidden items-center md:items-start relative bg-white rounded-2xl border border-blue-100 w-full text-center md:text-start lg:max-w-[670px]">
-      <div className="flex flex-col items-center md:items-start">
-        <p className="font-RedditSans text-neutral-900/70 font-bold text-[2rem]/[140%] tracking-[-0.019rem]">
-          I’m feeling
-        </p>
-        <h2 className="font-RedditSans text-neutral-900 font-bold text-[2.5rem]/[120%] tracking-[-0.019rem]">
-          {todayRecord.mood}
-        </h2>
+    <section className="flex flex-col gap-4 p-5 w-full rounded-2xl text-white bg-gradient-to-r from-blue-400 to-blue-300">
+      <p className="font-RedditSans font-medium text-lg">Today Mood</p>
+      <div className="flex items-center justify-between">
+        <h2 className="font-RedditSans font-bold text-4xl">{todayRecord.mood}</h2>
+        <img src={moodEmoji} alt="Mood Emoji" className="w-[50px] h-[50px]" />
       </div>
-      <img
-        className="w-[200px] h-[200px] md:absolute md:h-[320px] md:w-[320px] md:right-10 md:bottom-[-25px]"
-        src={moodEmoji}
-        alt="Mood Emoji"
-      />
-      <div className="flex flex-col gap-4 items-center md:items-start md:gap-3">
-        <img className="w-6 h-[21px]" src={quote} alt="Quote icon" />
-        <p className="font-RedditSans text-neutral-900 font-medium italic text-[1.125rem]/[130%] max-w-[280px]">
-          "{phrase}"
-        </p>
-      </div>
+      <p className="italic">"{phrase}"</p>
     </section>
   );
 };

@@ -30,7 +30,7 @@ const LogSlider = ({ phase, setPhase, onSubmit }: LogSliderProps) => {
 
   return (
     <div>
-      <div className="relative overflow-hidden transition-all duration-300">
+      <div className="relative overflow-hidden transition-all duration-300 -mt-4">
         <div
           className="flex transition-transform duration-600 ease-in-out"
           style={{ transform: `translateX(-${phase * 100}%)` }}

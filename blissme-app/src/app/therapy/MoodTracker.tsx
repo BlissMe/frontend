@@ -111,21 +111,19 @@ const MoodTracker = () => {
         {/* Today's mood/sleep/reflection */}
         <div
           className={`${
-            todayMood ? "flex" : "hidden"
-          } w-full flex-col gap-5 mt-12 mb-8 lg:mt-16 lg:flex-row lg:gap-8`}
+            todayMood ? "grid" : "hidden"
+          } w-full grid-cols-1 gap-5 mt-12 mb-8 lg:mt-16 lg:grid lg:grid-cols-3`}
         >
           <TodayMood todayRecord={todayMood} />
-
-          <div className="flex flex-col gap-5 lg:w-[39.1%] lg:justify-between">
-            <TodaySleep todayRecord={todayMood} />
-            <TodayReflection todayRecord={todayMood} />
-          </div>
+          <TodaySleep todayRecord={todayMood} />
+          <TodayReflection todayRecord={todayMood} />
         </div>
 
         {/* Trends */}
-        <div className="flex flex-row w-full gap-8 min-[780px]:flex-row">
-          <UserResultContainer records={allMoodRecords} />
+        <div className="flex flex-row w-full gap-10 min-[780px]:flex-row">
           <TrendContainer userMoodRecord={allMoodRecords} />
+
+          <UserResultContainer records={allMoodRecords} />
         </div>
       </main>
     </div>

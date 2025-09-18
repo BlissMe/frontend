@@ -42,18 +42,18 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
 
   return (
     <div
-      className="flex-col gap-6 md:gap-8"
+      className="flex-col gap-6"
       style={phase === 0 ? { display: "flex" } : { display: "none" }}
     >
-      <h2 className="font-bold font-RedditSans text-[1.75rem]/[130%] md:text-[2rem]/[140%] text-neutral-900">
+      <div className="font-bold font-RedditSans text-2xl text-neutral-900">
         How was your mood today?
-      </h2>
-      <div className="flex flex-col gap-3">
+      </div>
+      <div className="flex flex-col gap-2">
         {humorOptions.map((option) => (
           <div
             key={option}
             onClick={() => setLogData({ humor: option })}
-            className="bg-white px-5 py-[10px] rounded-[0.625rem] flex items-center border-2 border-transparent cursor-pointer hover:bg-transparent"
+            className="bg-white px-5 py-[4px] rounded-[0.625rem] flex items-center border-2 border-transparent cursor-pointer hover:bg-transparent"
             style={
               logData.humor === option
                 ? { borderColor: "#4865db" }
@@ -80,7 +80,7 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
         ))}
       </div>
 
-      <form onSubmit={phase1Function} className="flex flex-col">
+      <form onSubmit={phase1Function} className="flex flex-col mt-2">
         {logError && (
           <div className="flex items-center gap-1.5 mb-4">
             <svg width="16" height="17" viewBox="0 0 16 17" fill="none">
@@ -96,11 +96,12 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
         )}
         <Button
           buttonText="Continue"
-          py="1rem"
+          py="0.5rem"
           fontSize="1.5rem"
           lineHeight="140%"
           letterSpacing="0px"
-        />{" "}
+          className="!bg-green-500 hover:!bg-green-600 text-white rounded-md"
+        />
       </form>
     </div>
   );

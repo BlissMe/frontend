@@ -10,14 +10,14 @@ const FeelTags = ({ tag }: FeelTagsType) => {
   return (
     <div
       className={`flex items-center px-3.5 py-2.5 border-2 w-fit bg-white rounded-[10px] gap-[7px] cursor-pointer hover:bg-transparent ${
-        logData.tags.includes(tag) ? "border-blue-600" : "border-blue-100"
+        logData.tags.includes(tag) ? "border-green-600" : "border-green-100"
       }`}
     >
       <div
         className={`w-4 h-4 rounded-sm flex items-center justify-center ${
           logData.tags.includes(tag)
-            ? "bg-blue-600"
-            : "border-2 border-blue-200"
+            ? "bg-green-600"
+            : "border-2 border-green-200"
         }`}
       >
         <svg

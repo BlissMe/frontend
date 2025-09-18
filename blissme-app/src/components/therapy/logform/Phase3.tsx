@@ -44,7 +44,7 @@ const Phase3 = ({ next, phase }: PhaseProps) => {
       </h2>
       <div className="flex flex-col gap-2">
         <textarea
-          className="resize-none h-[9.375rem] py-3 px-4 bg-white rounded border border-neutral-300 outline-blue-600"
+          className="resize-none h-[9.375rem] py-3 px-4 bg-white rounded border border-neutral-300 outline-green-600"
           placeholder="Today, I felt..."
           maxLength={150}
           value={temporaryDescription}
@@ -68,13 +68,14 @@ const Phase3 = ({ next, phase }: PhaseProps) => {
             </p>
           </div>
         )}
-        <Button
+       <Button
           buttonText="Continue"
-          py="1rem"
+          py="0.5rem"
           fontSize="1.5rem"
           lineHeight="140%"
           letterSpacing="0px"
-        />{" "}
+          className="!bg-green-500 hover:!bg-green-600 text-white rounded-md"
+        />
       </form>
     </div>
   );

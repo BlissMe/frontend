@@ -51,17 +51,17 @@ const Phase2 = ({ next, phase }: PhaseProps) => {
 
   return (
     <div
-      className="flex-col gap-6 md:gap-8"
+      className="flex-col gap-2"
       style={phase === 1 ? { display: "flex" } : { display: "none" }}
     >
-      <div className="flex flex-col gap-1.5">
-        <h2 className="font-bold text-[1.75rem] md:text-2xl text-neutral-900">
+      <div className="flex flex-col">
+        <div className="font-bold text-2xl text-neutral-900">
           How did you feel?
-        </h2>
+        </div>
         <p className="text-neutral-600">Select up to three tags:</p>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-3">
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
         {tagOptions.map((tag) => {
           const handleClick = () => {
             const tagMarked = logData.tags.includes(tag);
@@ -101,10 +101,11 @@ const Phase2 = ({ next, phase }: PhaseProps) => {
         )}
         <Button
           buttonText="Continue"
-          py="1rem"
+          py="0.5rem"
           fontSize="1.5rem"
           lineHeight="140%"
           letterSpacing="0px"
+          className="!bg-green-500 hover:!bg-green-600 text-white rounded-md"
         />
       </form>
     </div>

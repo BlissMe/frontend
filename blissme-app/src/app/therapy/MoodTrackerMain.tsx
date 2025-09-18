@@ -1,7 +1,7 @@
 import { Typography } from "antd";
 import Button from "../../components/therapy/Button";
 import { useNavigate } from "react-router-dom";
-import { SmileOutlined } from "@ant-design/icons";
+import { EyeOutlined, SmileOutlined } from "@ant-design/icons";
 import { useVisibleStore } from "../../store/useVisibleStore";
 import { useEffect, useState } from "react";
 import { fetchTodayMood } from "../../services/MoodTracker";
@@ -41,26 +41,37 @@ export default function MoodTrackerMain() {
           </Text>
         </div>
         <div className="mt-8">
-          <form
-            className={`justify-center my-12 lg:my-16 ${
-              todayMood ? "hidden" : "flex"
-            } `}
-            onSubmit={(e) => {
-              e.preventDefault();
-              setLogIsVisible(true);
-              navigate("/mood/step1");
-            }}
-          >
+          {!todayMood ? (
+            <form
+              className="justify-center my-12 lg:my-16 flex"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setLogIsVisible(true);
+                navigate("/mood/step1");
+              }}
+            >
+              <Button
+                buttonText="Log Today’s Mood"
+                py="20px"
+                fontSize="18px"
+                lineHeight="28px"
+                letterSpacing="0.5px"
+                icon={<SmileOutlined />}
+                className="!h-10 !bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-6 !shadow-lg text-white"
+              />
+            </form>
+          ) : (
             <Button
-              buttonText="Log Today’s Mood"
-              py="20px"
+              buttonText="View Your Mood Trcker"
+              py="10px"
               fontSize="18px"
               lineHeight="28px"
               letterSpacing="0.5px"
-              icon={<SmileOutlined />}
-              className="!bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-8 !py-5 !shadow-lg transition-transform transform hover:scale-105 text-white"
+              icon={<EyeOutlined />}
+              className="!h-10 !bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-6 !shadow-lg text-white"
+              onClick={() => navigate("/dash/mood-tracker")}
             />
-          </form>
+          )}
         </div>
       </div>
     </div>

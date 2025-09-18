@@ -1,5 +1,5 @@
 import { useUserDataStore } from "../../store/useUserDataStore";
-import { ReactNode } from "react";
+import { ReactNode, MouseEventHandler } from "react";
 
 type ButtonProps = {
   buttonText: string;
@@ -8,8 +8,9 @@ type ButtonProps = {
   lineHeight: string;
   letterSpacing: string;
   formSubmit?: boolean;
-  className?: string; // ✅ allow passing custom styles
-  icon?: ReactNode;   // ✅ new icon prop
+  className?: string; 
+  icon?: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>; 
 };
 
 const Button = ({
@@ -21,6 +22,7 @@ const Button = ({
   formSubmit,
   className,
   icon,
+  onClick, 
 }: ButtonProps) => {
   const logData = useUserDataStore((state) => state.logData);
 
@@ -33,8 +35,8 @@ const Button = ({
   return (
     <button
       disabled={!!formSubmit && logData.horasSono === ""}
-      type="submit"
-      className={className ? className : defaultClass} // ✅ custom or default
+      type={formSubmit ? "submit" : "button"} 
+      className={className ? className : defaultClass}
       style={{
         paddingTop: py,
         paddingBottom: py,
@@ -42,9 +44,10 @@ const Button = ({
         lineHeight: lineHeight,
         letterSpacing: letterSpacing,
       }}
+      onClick={onClick}
     >
-      {icon && <span>{icon}</span>} {/* ✅ render icon if passed */}
-      <span>{buttonText}</span>
+      {icon && <span>{icon}</span>} 
+      <span className="mx-2">{buttonText}</span>
     </button>
   );
 };

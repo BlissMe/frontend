@@ -1,10 +1,15 @@
-import backgroundImage from "../../assets/images/bgnew.jpeg";
 import { Typography, Button } from "antd";
 import { SmileOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 export default function MoodTrackerMain() {
+  const navigate = useNavigate();
+   const handleClick = () => {
+    
+    navigate("/therapy/mood-tracker");
+  };
   return (
     <div className="flex flex-col justify-between items-center  text-center px-6 py-10">
       <div className="mt-8">
@@ -31,6 +36,7 @@ export default function MoodTrackerMain() {
             type="primary"
             size="large"
             icon={<SmileOutlined />}
+             onClick={handleClick}
             className="!bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-8 !py-5 !shadow-lg transition-transform transform hover:scale-105"
           >
             Log Today’s Mood

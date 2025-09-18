@@ -25,7 +25,7 @@ import VoiceChat from "../app/chatBox/VoiceChat";
 import BreathingExercise from "../app/therapy/BreathingExercise";
 import { AnxietyGames } from "../app/therapy/Anxiety_Games";
 import MeditationPlayer from "../app/therapy/MeditationPlayer";
-import Dashboard from "../app/therapy/MoodTracker";
+import MoodTracker from "../app/therapy/MoodTracker";
 import TherapyLayout from "../app/layouts/TherapyLayout";
 import MoodTrackerMain from "../app/therapy/MoodTrackerMain";
 
@@ -75,7 +75,7 @@ const Routerset = () => {
             <Route path="breathing" element={<BreathingExercise />} />
             <Route path="anxiety" element={<AnxietyGames />} />
             <Route path="medication" element={<MeditationPlayer />} />
-            <Route path="mood-tracker" element={<Dashboard />} />
+            <Route path="mood-tracker" element={<MoodTracker />} />
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
           </Route>
         </>

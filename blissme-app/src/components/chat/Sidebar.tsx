@@ -115,7 +115,7 @@ const Sidebar: React.FC = () => {
                 Meditation
               </Link>
               <Link
-                to="/therapy/anxiety"
+                to="/dash/anxiety"
                 className="block px-4 py-2 hover:bg-gray-100"
                 onClick={() => setShowBrainDropdown(false)}
               >

@@ -33,12 +33,13 @@ const TrendContainer = ({ userMoodRecord }: { userMoodRecord: any[] }) => {
   });
 
   const formattedDates = finalRecords.map((record) => {
-    const d = new Date(record.date);
-    return {
-      day: d.getDate().toString().padStart(2, "0"),
-      month: d.toLocaleString("en-US", { month: "short" }),
-    };
-  });
+  const d = new Date(record.date);
+  return {
+    day: d.getUTCDate().toString().padStart(2, "0"),
+    month: d.toLocaleString("en-US", { month: "short", timeZone: "UTC" }),
+  };
+});
+
 
   const reverseDates = [...formattedDates].reverse();
   const reverseRecords = [...finalRecords].reverse();

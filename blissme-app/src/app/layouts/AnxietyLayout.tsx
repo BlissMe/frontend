@@ -1,12 +1,12 @@
 import Sidebar from "../../components/chat/Sidebar";
-import backgroundImage from "../../assets/images/bgnew.jpeg";
+import backgroundImage from "../../assets/images/moodbg.jpg";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { Content } from "antd/es/layout/layout";
 
-const TherapyLayout = () => {
+const AnxietyLayout = () => {
   const navigate = useNavigate();
-  const handleLogoClick = () => navigate("/therapy/mood-tracker-home");
+  const handleLogoClick = () => navigate("/home");
 
   return (
     <div
@@ -33,4 +33,4 @@ const TherapyLayout = () => {
   );
 };
 
-export default TherapyLayout;
+export default AnxietyLayout;

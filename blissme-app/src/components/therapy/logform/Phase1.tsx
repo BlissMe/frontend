@@ -67,8 +67,8 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
             <span
               className={`w-5 h-5 rounded-full ${
                 logData.humor === option
-                  ? "border-[5px] border-blue-600"
-                  : "border-2 border-blue-200"
+                  ? "border-[5px] border-green-600"
+                  : "border-2 border-green-200"
               }`}
             ></span>
             <p className="ml-3 font-semibold text-[1.25rem]">{option}</p>
@@ -101,6 +101,7 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
           lineHeight="140%"
           letterSpacing="0px"
           className="!bg-green-500 hover:!bg-green-600 text-white rounded-md"
+          formSubmit={true}
         />
       </form>
     </div>

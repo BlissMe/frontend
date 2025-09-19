@@ -12,7 +12,6 @@ import {
 import { useNotification } from "../context/notificationContext";
 
 const LogMood = () => {
-  const logIsVisible = useVisibleStore((state) => state.logIsVisible);
   const setLogIsVisible = useVisibleStore((state) => state.setLogIsVisible);
   const [phase, setPhase] = useState(0);
 
@@ -50,21 +49,20 @@ const LogMood = () => {
   };
   return (
     <div className="flex justify-center h-screen">
-      {logIsVisible && (
-        <DefaultContainer
-          py="default"
-          setIsVisible={setLogIsVisible}
+      <DefaultContainer
+        py="default"
+        setIsVisible={setLogIsVisible}
+        setPhase={setPhase}
+        backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
+        navigateTo="/dash/mood-tracker"
+      >
+        <LogHeader phase={phase} />
+        <LogSlider
+          phase={phase}
           setPhase={setPhase}
-          backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
-        >
-          <LogHeader phase={phase} />
-          <LogSlider
-            phase={phase}
-            setPhase={setPhase}
-            onSubmit={handleSubmitMood}
-          />
-        </DefaultContainer>
-      )}
+          onSubmit={handleSubmitMood}
+        />
+      </DefaultContainer>
     </div>
   );
 };

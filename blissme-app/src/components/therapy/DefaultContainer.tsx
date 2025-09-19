@@ -1,13 +1,14 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useUserDataStore } from "../../store/useUserDataStore";
+import { useNavigate } from "react-router-dom"; 
 
 type DefaultContainerProps = {
   children: React.ReactNode;
   py: string;
-
   setIsVisible: (value: boolean) => void;
   setPhase?: Dispatch<SetStateAction<number>>;
   backgroundGradient?: string;
+  navigateTo?: string; 
 };
 
 const DefaultContainer = ({
@@ -16,12 +17,15 @@ const DefaultContainer = ({
   setIsVisible,
   setPhase,
   backgroundGradient,
+  navigateTo,
 }: DefaultContainerProps) => {
   const paddingYclassname =
     py === "settings" ? "py-10 md:py-12" : "py-8 md:py-12";
 
   const setLogData = useUserDataStore((state) => state.setLogData);
   const setLogError = useUserDataStore((state) => state.setLogError);
+
+  const navigate = useNavigate(); 
 
   return (
     <div
@@ -45,6 +49,10 @@ const DefaultContainer = ({
               tags: [],
             });
             setLogError(false);
+          }
+
+          if (navigateTo) {
+            navigate(navigateTo); 
           }
         }}
         className="absolute top-[17.5px] right-[16.5px] md:top-[30px] md:right-[30px] w-[10px] h-[10px] md:w-[15px] md:h-[15px] cursor-pointer"

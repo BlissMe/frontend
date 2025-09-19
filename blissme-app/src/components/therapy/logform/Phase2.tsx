@@ -106,6 +106,8 @@ const Phase2 = ({ next, phase }: PhaseProps) => {
           lineHeight="140%"
           letterSpacing="0px"
           className="!bg-green-500 hover:!bg-green-600 text-white rounded-md"
+                    formSubmit={true}
+
         />
       </form>
     </div>

@@ -1,37 +1,32 @@
 import { useEffect, useState } from "react";
-import DefaultContainer from "../../components/therapy/DefaultContainer";
-import Button from "../../components/therapy/Button";
-import LogHeader from "../../components/therapy/LogHeader";
-import LogSlider from "../../components/therapy/LogSlider";
+import { useLocation } from "react-router-dom";
 import UserResultContainer from "../../components/therapy/UserResultContainer";
 import TrendContainer from "../../components/therapy/TrendContainer";
 import TodayMood from "../../components/therapy/TodayMood";
 import TodaySleep from "../../components/therapy/TodaySleep";
 import TodayReflection from "../../components/therapy/TodayReflection";
-import { useVisibleStore } from "../../store/useVisibleStore";
 import { fetchTodayMood, fetchAllMoods } from "../../services/MoodTracker";
 
 const MoodTracker = () => {
   const [loading, setLoading] = useState(true);
   const [todayMood, setTodayMood] = useState<any>(null);
   const [allMoodRecords, setAllMoodRecords] = useState<any[]>([]);
+  const location = useLocation();
 
-  // Load today's mood
+  const loadData = async () => {
+    setLoading(true);
+    const today = await fetchTodayMood();
+    setTodayMood(today);
+
+    const allRecords = await fetchAllMoods();
+    setAllMoodRecords(allRecords);
+
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      const today = await fetchTodayMood();
-      setTodayMood(today);
-
-      const allRecords = await fetchAllMoods();
-      setAllMoodRecords(allRecords);
-
-      setLoading(false);
-    };
     loadData();
-  }, []);
-
-  console.log("todayMood in Dashboard:", todayMood);
+  }, [location.pathname]);
 
   if (loading) {
     return (
@@ -51,17 +46,15 @@ const MoodTracker = () => {
           <div
             className={`${
               todayMood ? "grid" : "hidden"
-            } w-full grid-cols-1 gap-5 mt-6 mb-8  lg:grid lg:grid-cols-3`}
+            } w-full grid-cols-1 gap-5 mt-6 mb-8 lg:grid lg:grid-cols-3`}
           >
             <TodayMood todayRecord={todayMood} />
             <TodaySleep todayRecord={todayMood} />
             <TodayReflection todayRecord={todayMood} />
           </div>
 
-          {/* Trends */}
           <div className="flex flex-row w-full gap-10 min-[780px]:flex-row">
             <TrendContainer userMoodRecord={allMoodRecords} />
-
             <UserResultContainer records={allMoodRecords} />
           </div>
         </main>

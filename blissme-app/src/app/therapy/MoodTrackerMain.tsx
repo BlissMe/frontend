@@ -16,6 +16,7 @@ export default function MoodTrackerMain() {
   useEffect(() => {
     (async () => {
       const today = await fetchTodayMood();
+      console.log(today);
       if (today) setTodayMood(today);
     })();
   }, []);
@@ -47,17 +48,17 @@ export default function MoodTrackerMain() {
               onSubmit={(e) => {
                 e.preventDefault();
                 setLogIsVisible(true);
-                navigate("/mood/step1");
               }}
             >
               <Button
                 buttonText="Log Today’s Mood"
-                py="20px"
+                py="10px"
                 fontSize="18px"
                 lineHeight="28px"
                 letterSpacing="0.5px"
                 icon={<SmileOutlined />}
                 className="!h-10 !bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-6 !shadow-lg text-white"
+                onClick={() => navigate("/mood/step1")}
               />
             </form>
           ) : (

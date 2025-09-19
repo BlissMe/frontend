@@ -34,7 +34,6 @@ const Button = ({
 
   return (
     <button
-      disabled={!!formSubmit && logData.horasSono === ""}
       type={formSubmit ? "submit" : "button"} 
       className={className ? className : defaultClass}
       style={{

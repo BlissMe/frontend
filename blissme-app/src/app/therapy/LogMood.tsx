@@ -31,11 +31,13 @@ const LogMood = () => {
       if (res.success) {
         setLogIsVisible(false);
         navigate("/dash/mood-tracker", { replace: true });
+
         const today = await fetchTodayMood();
         setTodayMood(today);
 
         const allRecords = await fetchAllMoods();
         setAllMoodRecords(allRecords);
+
         openNotification("success", "Mood logged successfully!");
       } else {
         openNotification("error", res.error);
@@ -47,6 +49,7 @@ const LogMood = () => {
       );
     }
   };
+
   return (
     <div className="flex justify-center h-screen">
       <DefaultContainer
@@ -56,7 +59,8 @@ const LogMood = () => {
         backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
         navigateTo="/dash/mood-tracker"
       >
-        <LogHeader phase={phase} />
+        <LogHeader phase={phase} setPhase={setPhase} />
+
         <LogSlider
           phase={phase}
           setPhase={setPhase}

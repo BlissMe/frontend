@@ -128,6 +128,13 @@ const Sidebar: React.FC = () => {
               >
                 Mood Tracker
               </Link>
+              <Link
+                to="/game/therapy_game"
+                className="block px-4 py-2 hover:bg-gray-100"
+                onClick={() => setShowBrainDropdown(false)}
+              >
+                Number Guessingm Game
+              </Link>
             </div>
           )}
         </div>

@@ -38,17 +38,17 @@ const Phase2 = ({ next, phase }: PhaseProps) => {
 
   return (
     <div
-      className="flex-col gap-2"
+      className="flex-col gap-6"
       style={phase === 1 ? { display: "flex" } : { display: "none" }}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-2">
         <div className="font-bold text-2xl text-neutral-900">
           How did you feel when you were {logData.humor.toLowerCase()}?
         </div>
         <p className="text-neutral-600">Select up to three tags:</p>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
+      <div className="flex flex-wrap gap-x-4 gap-y-4">
         {tagOptions.map((tag) => {
           const handleClick = () => {
             const tagMarked = logData.tags.includes(tag);

@@ -57,7 +57,7 @@ const LogMood = () => {
         setIsVisible={setLogIsVisible}
         setPhase={setPhase}
         backgroundGradient="linear-gradient(180deg, #F5F5FF 72.99%, #E0E0FF 100%)"
-        navigateTo="/dash/mood-tracker"
+        navigateTo="/therapy/mood-tracker-home"
       >
         <LogHeader phase={phase} setPhase={setPhase} />
 

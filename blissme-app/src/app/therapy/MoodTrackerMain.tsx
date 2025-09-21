@@ -63,7 +63,7 @@ export default function MoodTrackerMain() {
             </form>
           ) : (
             <Button
-              buttonText="View Your Mood Trcker"
+              buttonText="View Your Mood Tracker"
               py="10px"
               fontSize="18px"
               lineHeight="28px"

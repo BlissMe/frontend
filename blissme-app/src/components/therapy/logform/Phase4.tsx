@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import Button from "../Button";
 import { useUserDataStore } from "../../../store/useUserDataStore";
+import { useNotification } from "../../../app/context/notificationContext";
 
 type PhaseProps = {
   next: () => void;
@@ -29,13 +30,15 @@ const Phase4 = ({
     "7-8 hours",
     "9+ hours",
   ];
+  const { openNotification } = useNotification();
   const logData = useUserDataStore((state) => state.logData);
   const logedToday = useUserDataStore((state) => state.logedToday);
   const setLogData = useUserDataStore((state) => state.setLogData);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!logData.horasSono) return alert("Please select sleep hours!");
+    if (!logData.horasSono)
+      return openNotification("warning", "Please select sleep hours!");
 
     if (onSubmit) {
       onSubmit(

@@ -52,7 +52,9 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
         {humorOptions.map((option) => (
           <div
             key={option}
-            onClick={() => setLogData({ humor: option })}
+            onClick={() =>
+              setLogData({ ...logData, humor: option, tags: [], descricao: "" })
+            }
             className="bg-white px-5 py-[4px] rounded-[0.625rem] flex items-center border-2 border-transparent cursor-pointer hover:bg-transparent"
             style={
               logData.humor === option
@@ -61,7 +63,13 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
             }
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === "Enter") setLogData({ humor: option });
+              if (e.key === "Enter")
+                setLogData({
+                  ...logData,
+                  humor: option,
+                  tags: [],
+                  descricao: "",
+                });
             }}
           >
             <span

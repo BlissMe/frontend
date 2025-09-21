@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import UserResultContainer from "../../components/therapy/UserResultContainer";
 import TrendContainer from "../../components/therapy/TrendContainer";
 import TodayMood from "../../components/therapy/TodayMood";
@@ -12,7 +12,7 @@ const MoodTracker = () => {
   const [todayMood, setTodayMood] = useState<any>(null);
   const [allMoodRecords, setAllMoodRecords] = useState<any[]>([]);
   const location = useLocation();
-
+  const navigate = useNavigate();
   const loadData = async () => {
     setLoading(true);
     const today = await fetchTodayMood();
@@ -39,8 +39,31 @@ const MoodTracker = () => {
   return (
     <div className="relative flex flex-col items-center">
       <div className="w-full bg-white/20 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center">
-        <div className="text-2xl font-semibold text-green-800">
-          My Mood Tracker
+        <div className="relative w-full flex items-center justify-center mb-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-full  absolute left-36 bg-green-200 text-green-900 hover:bg-green-300 transition"
+            aria-label="Back to Home"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5 text-green-700"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <div className="text-2xl font-semibold text-green-800 text-center">
+            My Mood Tracker
+          </div>
         </div>
         <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] flex flex-col items-center">
           <div

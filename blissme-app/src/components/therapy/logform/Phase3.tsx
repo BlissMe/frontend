@@ -13,26 +13,17 @@ type PhaseProps = {
 const Phase3 = ({ next, phase }: PhaseProps) => {
   const logError = useUserDataStore((state) => state.logError);
   const setLogError = useUserDataStore((state) => state.setLogError);
-  const setLogData = useUserDataStore((state) => state.setLogData);
-
-  const [temporaryDescription, setTemporaryDescription] = useState("");
+  const { logData, setLogData } = useUserDataStore();
 
   const phase3Function = (e: React.FormEvent) => {
     e.preventDefault();
-    if (temporaryDescription === "") {
+    if (!logData.descricao || logData.descricao.trim() === "") {
       setLogError(true);
     } else {
-      setLogData({ descricao: temporaryDescription });
       setLogError(false);
       next();
     }
   };
-
-  useEffect(() => {
-    if (phase !== 2) {
-      setTemporaryDescription("");
-    }
-  }, [phase]);
 
   return (
     <div
@@ -47,11 +38,13 @@ const Phase3 = ({ next, phase }: PhaseProps) => {
           className="resize-none h-[9.375rem] py-3 px-4 bg-white rounded border border-neutral-300 outline-green-600"
           placeholder="Today, I felt..."
           maxLength={150}
-          value={temporaryDescription}
-          onChange={(e) => setTemporaryDescription(e.target.value)}
+          value={logData.descricao || ""}
+          onChange={(e) =>
+            setLogData({ ...logData, descricao: e.target.value })
+          }
         ></textarea>
         <span className="text-right text-neutral-600 font-semibold text-sm">
-          {temporaryDescription.length}/150
+          {(logData.descricao?.length || 0)}/150
         </span>
       </div>
       <form className="flex flex-col" onSubmit={phase3Function}>
@@ -68,18 +61,18 @@ const Phase3 = ({ next, phase }: PhaseProps) => {
             </p>
           </div>
         )}
-       <Button
+        <Button
           buttonText="Continue"
           py="0.5rem"
           fontSize="1.5rem"
           lineHeight="140%"
           letterSpacing="0px"
           className="!bg-green-500 hover:!bg-green-600 text-white rounded-md"
-                    formSubmit={true}
-
+          formSubmit={true}
         />
       </form>
     </div>
   );
 };
+
 export default Phase3;

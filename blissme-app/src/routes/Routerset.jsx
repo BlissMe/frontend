@@ -79,7 +79,6 @@ const Routerset = () => {
           </Route>
           <Route path="/therapy" element={<TherapyLayout />}>
             <Route path="breathing" element={<BreathingExercise />} />
-
             <Route path="medication" element={<MeditationPlayer />} />
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
           </Route>

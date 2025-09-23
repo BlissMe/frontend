@@ -26,6 +26,9 @@ import Chat from "../app/chatBox/Chat";
 import SettingsLayout from "../app/layouts/SettingsLayout";
 import VoiceChat from "../app/chatBox/VoiceChat";
 
+import Songs from "../app/features/Songs";
+import Doctors from "../app/features/Doctors";
+
 const Routerset = () => {
   const { token } = useContext(AuthContext);
 
@@ -43,6 +46,8 @@ const Routerset = () => {
       <Route path="/landing" element={<Landing />} />
       <Route path="/home" element={<Home />} />
       <Route path="/face-auth" element={<FaceSignin />} />
+      <Route path="/songs" element={<Songs />} />
+      <Route path="/doctors" element={<Doctors />} />
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>
@@ -56,7 +61,7 @@ const Routerset = () => {
           <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
-            <Route path="setting" element={<Setting />} />  
+            <Route path="setting" element={<Setting />} />
             {/* <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} /> */}

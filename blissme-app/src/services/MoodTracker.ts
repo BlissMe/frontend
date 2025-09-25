@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getLocalStoragedata } from "../helpers/Storage";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const metadataServiceURL = `${API_URL}`;
 
 export interface MoodRecord {

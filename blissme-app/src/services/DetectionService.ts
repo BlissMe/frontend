@@ -29,8 +29,9 @@ export async function getClassifierResult(
     return res.json();
 }
 
+const API_URL = process.env.REACT_APP_API_URL;
 
-const API_BASE = "http://localhost:8080";
+const API_BASE = `${API_URL}`;
 
 export async function getDepressionLevel() {
     const token = getLocalStoragedata("token");

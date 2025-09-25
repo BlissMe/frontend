@@ -31,6 +31,7 @@ const ProfileSetting = () => {
     getLocalStoragedata("selectedCharacterId")
   );
   const isFaceSign = getLocalStoragedata("isFaceSign") === "true";
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -79,7 +80,7 @@ const ProfileSetting = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/blissme/upload",
+        `${API_URL}/api/blissme/upload`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

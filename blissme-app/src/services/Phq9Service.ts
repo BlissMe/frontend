@@ -1,6 +1,6 @@
 import { getLocalStoragedata } from "../helpers/Storage";
 
-const API_BASE = "http://localhost:8080";
+const API_BASE = `${API_URL}`;
 
 export async function savePHQ9Answer(
     sessionID: string,

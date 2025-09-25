@@ -17,12 +17,13 @@ const SendEmail: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (values: { email: string }) => {
     setIsLoading(true);
     try {
       const response = await axios.post<{ message: string }>(
-        "http://localhost:8080/authuser/forgot-password",
+        `${API_URL}/authuser/forgot-password`,
         { email: values.email }
       );
       openNotification("success", "Reset successful", response.data.message);

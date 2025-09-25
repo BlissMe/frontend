@@ -66,6 +66,8 @@ const Settings: React.FC = () => {
   const webcamRef = useRef<Webcam | null>(null);
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [loading, setLoading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const handleFileChange = (info: any) => {
     if (info.file.status === "removed") {
       setFile(null);
@@ -108,7 +110,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/blissme/upload",
+        `${API_URL}/api/blissme/upload`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -235,7 +237,7 @@ const Settings: React.FC = () => {
       }
 
       const res = await axios.post<ResetResponse>(
-        "http://localhost:8080/authuser/change-password",
+        `${API_URL}/authuser/change-password`,
         {
           currentPassword,
           newPassword,
@@ -256,7 +258,7 @@ const Settings: React.FC = () => {
   const handleDeleteAccount = async () => {
     try {
       const res = await axios.delete<ResetResponse>(
-        "http://localhost:8080/authuser/delete-account",
+        "${API_URL}/authuser/delete-account",
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -19,8 +19,9 @@ const SignIn: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { setToken } = useContext(AuthContext);
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
 
-const dispatch = useDispatch<AppDispatch>(); 
+  const dispatch = useDispatch<AppDispatch>();
   const onFinish = async (values: any) => {
     try {
       setLoading(true);
@@ -64,7 +65,7 @@ const dispatch = useDispatch<AppDispatch>();
   };
 
   const googleAuth = () => {
-    window.open(`http://localhost:8080/auth/google`, "_self");
+    window.open(`${API_URL}/auth/google`, "_self");
   };
   return (
     <>

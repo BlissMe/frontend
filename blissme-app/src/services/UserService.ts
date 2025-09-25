@@ -1,4 +1,4 @@
-const metadataServiceURL = "http://localhost:8080/";
+const metadataServiceURL = `${API_URL}/`;
 
 interface SignUpPayload {
   email: string;

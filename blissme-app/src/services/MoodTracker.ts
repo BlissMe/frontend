@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getLocalStoragedata } from "../helpers/Storage";
 
-const metadataServiceURL = "http://localhost:8080";
+const metadataServiceURL = `${API_URL}`;
 
 export interface MoodRecord {
   mood: string;

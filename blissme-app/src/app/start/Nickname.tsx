@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setPreferencesSuccess } from "../../redux/reducers/userReducer";
 import { useNotification } from "../context/notificationContext";
-import bg2 from "../../assets/images/bg2.jpg";
 import { LayeredBackground } from "animated-backgrounds";
 
 const Nickname = () => {

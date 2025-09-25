@@ -6,7 +6,6 @@ import {
   Button,
   Checkbox,
   Typography,
-  message,
   Modal,
 } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";

@@ -83,6 +83,7 @@ const Phase1 = ({ next, phase }: PhaseProps) => {
             <img
               src={humorIcons[option]}
               className="w-[38px] h-[38px] ml-auto"
+              alt="mood"
             />
           </div>
         ))}

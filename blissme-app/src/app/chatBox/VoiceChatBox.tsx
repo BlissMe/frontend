@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Divider, Typography, Modal, Tooltip } from "antd";
-import { assets } from "../../assets/assets";
+import { Button, Typography, Modal, Tooltip } from "antd";
 import ReactBarsLoader from "../../components/loader/ReactBarLoader";
 import { getCurrentTime } from "../../helpers/Time";
 import {
@@ -15,7 +14,6 @@ import {
   AudioMutedOutlined,
   AudioOutlined,
   LoadingOutlined,
-  StopOutlined,
 } from "@ant-design/icons";
 import Avatar from "../../components/profile/Avatar";
 import { useNotification } from "../context/notificationContext";

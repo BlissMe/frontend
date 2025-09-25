@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Flower2 } from "lucide-react";
 
 const items = [
   { type: "rock", icon: "🪨" },

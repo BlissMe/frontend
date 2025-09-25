@@ -30,7 +30,7 @@ const ResultCard = ({ averageResult, information }: ResultCardProps) => {
         <div className="flex flex-col gap-3 mr-10">
           <div className="flex items-center gap-3">
             {averageResult.emoji && (
-              <img className="w-6 h-6" src={averageResult.emoji} />
+              <img className="w-6 h-6" src={averageResult.emoji} alt="image" />
             )}
             <h3
               className={`font-RedditSans font-semibold text-2xl/[140%] ${averageResult.color1}`}
@@ -43,6 +43,7 @@ const ResultCard = ({ averageResult, information }: ResultCardProps) => {
               <img
                 className="self-baseline arrowalign:self-center mt-[3px]"
                 src={averageResult.arrow}
+                alt="image"
               />
             )}
             <p
@@ -52,7 +53,11 @@ const ResultCard = ({ averageResult, information }: ResultCardProps) => {
             </p>
           </div>
         </div>
-        <img className="absolute right-[-190px] top-[-40px]" src={circle}></img>
+        <img
+          className="absolute right-[-190px] top-[-40px]"
+          src={circle}
+          alt="image"
+        ></img>
       </div>
     </div>
   );

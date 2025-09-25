@@ -98,7 +98,7 @@ const Sidebar: React.FC = () => {
             <Brain className="w-6 h-6 text-white" />
           </button>
 
-          {showBrainDropdown && (
+         {/*  {showBrainDropdown && (
             <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-50 w-48 text-sm">
               <Link
                 to="/therapy/breathing"
@@ -136,7 +136,7 @@ const Sidebar: React.FC = () => {
                 Number Guessing Game
               </Link>
             </div>
-          )}
+          )} */}
         </div>
 
         <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">

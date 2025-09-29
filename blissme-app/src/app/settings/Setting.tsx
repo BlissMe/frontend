@@ -67,6 +67,7 @@ const Settings: React.FC = () => {
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [loading, setLoading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.Python_APP_API_URL;
 
   const handleFileChange = (info: any) => {
     if (info.file.status === "removed") {
@@ -333,7 +334,7 @@ const Settings: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/face-signup", {
+      const response = await fetch(`${Python_URL}/face-signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, image: imageSrc }),

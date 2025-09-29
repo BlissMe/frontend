@@ -92,6 +92,7 @@ const ViceChatInterface = () => {
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
   const [levelOpen, setLevelOpen] = useState(false);
+  const Python_URL = process.env.Python_APP_API_URL;
 
   const phqOptions = [
     "Not at all",
@@ -218,7 +219,7 @@ const ViceChatInterface = () => {
         .join("\n");
       formData.append("history", historyText);
 
-      const response = await fetch("http://localhost:8000/voice-chat", {
+      const response = await fetch(`${Python_URL}/voice-chat`, {
         method: "POST",
         body: formData,
       });
@@ -272,7 +273,7 @@ const ViceChatInterface = () => {
       await saveMessage(botMessage.text, sessionID, "bot");
       setMessages((prev) => [...prev, botMessage]);
 
-      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+      const audio = new Audio(`${Python_URL}${result.audio_url}`);
       audio.play();
 
       // Handle emotion state
@@ -339,7 +340,7 @@ const ViceChatInterface = () => {
     formData.append("history", historyText);
 
     try {
-      const response = await fetch("http://localhost:8000/voice-chat", {
+      const response = await fetch(`${Python_URL}/voice-chat`, {
         method: "POST",
         body: formData,
       });
@@ -379,7 +380,7 @@ const ViceChatInterface = () => {
 
       // Play audio if any
       if (result.audio_url) {
-        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+        const audio = new Audio(`${Python_URL}${result.audio_url}`);
         await audio.play();
       }
     } catch (err) {

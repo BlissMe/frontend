@@ -69,6 +69,7 @@ const VoiceChatBox: React.FC = () => {
   const [detecting, setDetecting] = useState(false);
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
+  const Python_URL = process.env.Python_APP_API_URL;
 
   const phqOptions = [
     "Not at all",
@@ -92,9 +93,9 @@ const VoiceChatBox: React.FC = () => {
     const allSummaries = await fetchAllSummaries();
     setSessionSummaries(allSummaries);
 
-    const res = await fetch("http://localhost:8000/greeting");
-    if (res.ok) {
-      const greeting = await res.json();
+      const res = await fetch(`${Python_URL}/greeting`);
+      if (res.ok) {
+        const greeting = await res.json();
 
       const botMessage: Message = {
         text: greeting.bot_response,
@@ -105,14 +106,13 @@ const VoiceChatBox: React.FC = () => {
       setMessages([botMessage]); // first message
       await saveMessage(botMessage.text, session, "bot");
 
-      if (greeting.audio_url) {
-        const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
-        audio.play();
+        if (greeting.audio_url) {
+          const audio = new Audio(`${Python_URL}${greeting.audio_url}`);
+          audio.play();
+        }
       }
-    }
-  })();
-}, []);
-
+    })();
+  }, []);
 
   const handleStartRecording = async () => {
     isCancelledRef.current = false; // reset cancellation flag
@@ -199,7 +199,7 @@ const VoiceChatBox: React.FC = () => {
         .join("\n");
       formData.append("history", historyText);
 
-      const response = await fetch("http://localhost:8000/voice-chat", {
+      const response = await fetch(`${Python_URL}/voice-chat`, {
         method: "POST",
         body: formData,
       });
@@ -253,7 +253,7 @@ const VoiceChatBox: React.FC = () => {
       await saveMessage(botMessage.text, sessionID, "bot");
       setMessages((prev) => [...prev, botMessage]);
 
-      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+      const audio = new Audio(`${Python_URL}${result.audio_url}`);
       audio.play();
 
       // Handle emotion state
@@ -320,7 +320,7 @@ const VoiceChatBox: React.FC = () => {
     formData.append("history", historyText);
 
     try {
-      const response = await fetch("http://localhost:8000/voice-chat", {
+      const response = await fetch(`${Python_URL}/voice-chat`, {
         method: "POST",
         body: formData,
       });
@@ -360,7 +360,7 @@ const VoiceChatBox: React.FC = () => {
 
       // Play audio if any
       if (result.audio_url) {
-        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+        const audio = new Audio(`${Python_URL}${result.audio_url}`);
         await audio.play();
       }
     } catch (err) {

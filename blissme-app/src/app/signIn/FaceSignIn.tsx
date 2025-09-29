@@ -22,6 +22,7 @@ const FaceSignin = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { Text } = Typography;
   const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.Python_APP_API_URL;
 
   const handleFaceLogin = async () => {
     if (!webcamRef.current) {
@@ -39,7 +40,7 @@ const FaceSignin = () => {
       setLoading(true);
 
       const fastApiResponse = await fetch(
-        "http://localhost:8000/generate-descriptor",
+        `${Python_URL}/generate-descriptor`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

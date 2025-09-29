@@ -1,6 +1,7 @@
 // services/DetectionService.ts
 import { getLocalStoragedata } from "../helpers/Storage";
-const metadataServiceURL = "http://localhost:8000/";
+const API_Python_URL = process.env.Python_APP_API_URL;
+const metadataServiceURL = `${API_Python_URL}/`;
 export type EmotionLabel = "happy" | "neutral" | "sad" | "angry" | "fearful";
 export type DepressionDetectedLabel = "Depression Signs Detected" | "No Depression Signs Detected";
 

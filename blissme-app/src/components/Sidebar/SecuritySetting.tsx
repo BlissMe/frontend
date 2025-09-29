@@ -16,6 +16,7 @@ const SecuritySetting = () => {
   const [activeTabKey, setActiveTabKey] = useState("1");
   const { openNotification } = useNotification();
   const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.Python_APP_API_URL;
 
   const capture = async () => {
     if (!webcamRef.current) {
@@ -40,7 +41,7 @@ const SecuritySetting = () => {
 
       // Step 1: Send image to FastAPI to get descriptor
       const fastApiResponse = await fetch(
-        "http://localhost:8000/generate-descriptor",
+        `${Python_URL}/generate-descriptor`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -106,6 +106,7 @@ const MeditationApp: React.FC = () => {
             <img
               src={isPlaying ? "/svg/pause.svg" : "/svg/play.svg"}
               className="play w-[70px] cursor-pointer"
+              alt="image"
               onClick={togglePlay}
             />
             <br />

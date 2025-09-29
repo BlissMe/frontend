@@ -69,7 +69,7 @@ const VoiceChatBox: React.FC = () => {
   const [detecting, setDetecting] = useState(false);
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
-  const Python_URL = process.env.Python_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const phqOptions = [
     "Not at all",

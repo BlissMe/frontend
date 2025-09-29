@@ -22,7 +22,7 @@ const FaceSignin = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { Text } = Typography;
   const API_URL = process.env.REACT_APP_API_URL;
-  const Python_URL = process.env.Python_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const handleFaceLogin = async () => {
     if (!webcamRef.current) {

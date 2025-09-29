@@ -92,7 +92,7 @@ const ViceChatInterface = () => {
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
   const [levelOpen, setLevelOpen] = useState(false);
-  const Python_URL = process.env.Python_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const phqOptions = [
     "Not at all",

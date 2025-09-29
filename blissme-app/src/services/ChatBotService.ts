@@ -1,4 +1,4 @@
-const API_Python_URL = process.env.Python_APP_API_URL;
+const API_Python_URL = process.env.REACT_APP_Python_API_URL;
 const metadataServiceURL = `${API_Python_URL}/`;
 export async function chatBotService(
   history: string,

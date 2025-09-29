@@ -67,7 +67,7 @@ const Settings: React.FC = () => {
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [loading, setLoading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
-  const Python_URL = process.env.Python_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const handleFileChange = (info: any) => {
     if (info.file.status === "removed") {

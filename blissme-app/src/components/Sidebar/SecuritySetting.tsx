@@ -16,7 +16,7 @@ const SecuritySetting = () => {
   const [activeTabKey, setActiveTabKey] = useState("1");
   const { openNotification } = useNotification();
   const API_URL = process.env.REACT_APP_API_URL;
-  const Python_URL = process.env.Python_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const capture = async () => {
     if (!webcamRef.current) {

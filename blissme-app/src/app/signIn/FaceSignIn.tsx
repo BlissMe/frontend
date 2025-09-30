@@ -21,6 +21,8 @@ const FaceSignin = () => {
   const { setToken } = useContext(AuthContext);
   const dispatch = useDispatch<AppDispatch>();
   const { Text } = Typography;
+  const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const handleFaceLogin = async () => {
     if (!webcamRef.current) {
@@ -38,7 +40,7 @@ const FaceSignin = () => {
       setLoading(true);
 
       const fastApiResponse = await fetch(
-        "http://localhost:8000/generate-descriptor",
+        `${Python_URL}/generate-descriptor`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -58,14 +60,11 @@ const FaceSignin = () => {
 
       const descriptor = fastApiResult.descriptor;
 
-      const expressResponse = await fetch(
-        "http://localhost:8080/authUser/face-login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ descriptor }),
-        }
-      );
+      const expressResponse = await fetch(`${API_URL}/authUser/face-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ descriptor }),
+      });
 
       const expressResult = await expressResponse.json();
       if (expressResponse.ok) {

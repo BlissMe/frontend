@@ -23,6 +23,7 @@ const ResetPassword: React.FC = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
   const [form] = Form.useForm();
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     setIsButtonDisabled(newPassword.trim().length === 0);
@@ -34,7 +35,7 @@ const ResetPassword: React.FC = () => {
 
     try {
       const res = await axios.post<ResetResponse>(
-        "http://localhost:8080/authuser/reset-password",
+        `${API_URL}/authuser/reset-password`,
         {
           token,
           newPassword,
@@ -78,7 +79,6 @@ const ResetPassword: React.FC = () => {
               >
                 Reset Your Password
               </Text>
-
             </div>
           </div>
 
@@ -89,7 +89,6 @@ const ResetPassword: React.FC = () => {
               onSubmitCapture={handleReset}
               form={form}
             >
-
               <Form.Item
                 name="password"
                 label="New Password   "
@@ -124,7 +123,6 @@ const ResetPassword: React.FC = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

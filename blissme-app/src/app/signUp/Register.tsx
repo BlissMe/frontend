@@ -6,7 +6,6 @@ import {
   Button,
   Checkbox,
   Typography,
-  message,
   Modal,
 } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
@@ -32,6 +31,7 @@ const Register = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [form] = Form.useForm();
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleScroll = () => {
     const el = contentRef.current;
@@ -41,8 +41,7 @@ const Register = () => {
     }
   };
 
-  const handleLogoClick = () => navigate('/home');
-
+  const handleLogoClick = () => navigate("/home");
 
   interface RegisterFormValues {
     email: string;
@@ -103,7 +102,7 @@ const Register = () => {
   };
 
   const googleAuth = () => {
-    window.open(`http://localhost:8080/auth/google`, "_self");
+    window.open(`${API_URL}/auth/google`, "_self");
   };
 
   return (
@@ -119,7 +118,6 @@ const Register = () => {
           className="h-10 w-auto cursor-pointer"
         />
       </div>
-
 
       <div className="fixed inset-0 z-10 flex items-center justify-center">
         <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
@@ -288,17 +286,30 @@ const Register = () => {
             Consent and Privacy Policy
           </h2>
           <p className="mb-5">
-            Welcome to <strong>Bliss Me</strong>. Please read this carefully before using our services. By clicking “I Agree”, you consent to the following:
+            Welcome to <strong>Bliss Me</strong>. Please read this carefully
+            before using our services. By clicking “I Agree”, you consent to the
+            following:
           </p>
           <ol className="list-decimal list-inside mb-5 space-y-5">
             <li>
               <strong className="text-[#207F6A] text-lg font-semibold">
                 Purpose of the Application
               </strong>
-              <p>Bliss Me uses Artificial Intelligence to detect depression severity through your text and voice inputs.</p>
+              <p>
+                Bliss Me uses Artificial Intelligence to detect depression
+                severity through your text and voice inputs.
+              </p>
               <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-                <li>For mild to moderate depression, the app provides non-clinical therapeutic support such as Cognitive Behavioral Therapy (CBT)-based exercises and mindfulness techniques.</li>
-                <li>For severe depression, the app will not provide therapy. Instead, you will be given options to contact a mental health consultant or emergency services for professional assistance.</li>
+                <li>
+                  For mild to moderate depression, the app provides non-clinical
+                  therapeutic support such as Cognitive Behavioral Therapy
+                  (CBT)-based exercises and mindfulness techniques.
+                </li>
+                <li>
+                  For severe depression, the app will not provide therapy.
+                  Instead, you will be given options to contact a mental health
+                  consultant or emergency services for professional assistance.
+                </li>
               </ul>
             </li>
 
@@ -306,7 +317,9 @@ const Register = () => {
               <strong className="text-[#207F6A] text-lg font-semibold">
                 Information We Collect
               </strong>
-              <p>To assess your emotional state and depression level, we collect:</p>
+              <p>
+                To assess your emotional state and depression level, we collect:
+              </p>
               <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
                 <li>Text and voice inputs</li>
                 <li>Responses to the Patient Health Questionnaire-9 (PHQ-9)</li>
@@ -319,7 +332,10 @@ const Register = () => {
                 How We Use Your Data
               </strong>
               <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-                <li>To detect depression levels and provide personalized support (for mild to moderate cases)</li>
+                <li>
+                  To detect depression levels and provide personalized support
+                  (for mild to moderate cases)
+                </li>
                 <li>To recommend professional consultation in severe cases</li>
                 <li>To improve our AI model using anonymized data only</li>
               </ul>
@@ -330,9 +346,15 @@ const Register = () => {
                 Data Privacy and Security
               </strong>
               <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-                <li>Your identity and personal information will never be shared with third parties.</li>
+                <li>
+                  Your identity and personal information will never be shared
+                  with third parties.
+                </li>
                 <li>All interaction data is securely stored and encrypted.</li>
-                <li>We comply with data protection laws to keep your information safe.</li>
+                <li>
+                  We comply with data protection laws to keep your information
+                  safe.
+                </li>
               </ul>
             </li>
 
@@ -343,7 +365,10 @@ const Register = () => {
               <p>If a severe depression level or self-harm risk is detected:</p>
               <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
                 <li>The app will not attempt therapy</li>
-                <li>You will be given immediate options to contact a licensed consultant or emergency helpline for professional help</li>
+                <li>
+                  You will be given immediate options to contact a licensed
+                  consultant or emergency helpline for professional help
+                </li>
               </ul>
             </li>
 
@@ -364,9 +389,17 @@ const Register = () => {
               </strong>
               <p>By clicking “I Agree”, you confirm that:</p>
               <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
-                <li>You understand Bliss Me provides non-clinical support only</li>
-                <li>You voluntarily provide your data for depression detection and guidance</li>
-                <li>You are at least 18 years old or using the app with parental/guardian consent</li>
+                <li>
+                  You understand Bliss Me provides non-clinical support only
+                </li>
+                <li>
+                  You voluntarily provide your data for depression detection and
+                  guidance
+                </li>
+                <li>
+                  You are at least 18 years old or using the app with
+                  parental/guardian consent
+                </li>
               </ul>
             </li>
           </ol>
@@ -375,7 +408,6 @@ const Register = () => {
           </p>
         </div>
       </Modal>
-
     </div>
   );
 };

@@ -15,6 +15,8 @@ const SecuritySetting = () => {
   const [consentGiven, setConsentGiven] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const capture = async () => {
     if (!webcamRef.current) {
@@ -39,7 +41,7 @@ const SecuritySetting = () => {
 
       // Step 1: Send image to FastAPI to get descriptor
       const fastApiResponse = await fetch(
-        "http://localhost:8000/generate-descriptor",
+        `${Python_URL}/generate-descriptor`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -61,7 +63,7 @@ const SecuritySetting = () => {
 
       // Step 2: Send descriptor to Express backend for registration
       const expressResponse = await fetch(
-        "http://localhost:8080/authUser/face-register",
+        `${API_URL}/authUser/face-register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

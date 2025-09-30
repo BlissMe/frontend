@@ -1,6 +1,7 @@
 // services/DetectionService.ts
 import { getLocalStoragedata } from "../helpers/Storage";
-const metadataServiceURL = "http://localhost:8000/";
+const API_Python_URL = process.env.REACT_APP_Python_API_URL;
+const metadataServiceURL = `${API_Python_URL}/`;
 export type EmotionLabel = "happy" | "neutral" | "sad" | "angry" | "fearful";
 export type DepressionDetectedLabel = "Depression Signs Detected" | "No Depression Signs Detected";
 
@@ -29,8 +30,9 @@ export async function getClassifierResult(
     return res.json();
 }
 
+const API_URL = process.env.REACT_APP_API_URL;
 
-const API_BASE = "http://localhost:8080";
+const API_BASE = `${API_URL}`;
 
 export async function getDepressionLevel() {
     const token = getLocalStoragedata("token");

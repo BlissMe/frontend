@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Typography, Switch, Tooltip } from "antd";
+import { Typography, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import logo from "../../assets/images/logoShort.png";
 import ProfileDropdown from "../profile/Dropdown";
@@ -7,14 +6,8 @@ import { useCharacterContext } from "../../app/context/CharacterContext";
 const { Text, Title } = Typography;
 
 const Navbar = () => {
-  /* const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const toggleDarkMode = (checked: boolean) => {
-    setIsDarkMode(checked);
-    document.documentElement.classList.toggle("dark", checked);
-  }; */
   const { nickname } = useCharacterContext();
-  console.log("2", nickname);
+  
   const getGreeting = () => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) return "Good Morning";
@@ -46,9 +39,6 @@ const Navbar = () => {
             <InfoCircleOutlined className="text-xl text-green-700" />
           </span>
         </Tooltip>
-
-        {/*  <Switch checked={isDarkMode} onChange={toggleDarkMode} />
-         */}
         <ProfileDropdown />
       </div>
     </div>

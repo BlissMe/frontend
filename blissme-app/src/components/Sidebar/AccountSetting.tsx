@@ -31,6 +31,7 @@ const AccountSetting = () => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
   const [confirmDeleteChecked, setConfirmDeleteChecked] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleTabChange = (key: string) => {
     setActiveTabKey(key);
@@ -51,17 +52,14 @@ const AccountSetting = () => {
         return;
       }
 
-      const res = await fetch(
-        "http://localhost:8080/authuser/change-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ currentPassword, newPassword }),
-        }
-      );
+      const res = await fetch(`${API_URL}/authuser/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -83,7 +81,7 @@ const AccountSetting = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      const res = await fetch("http://localhost:8080/authuser/delete-account", {
+      const res = await fetch(`${API_URL}/authuser/delete-account`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

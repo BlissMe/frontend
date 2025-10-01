@@ -1,5 +1,5 @@
-
-const metadataServiceURL = "http://localhost:8000/";
+const API_Python_URL = process.env.REACT_APP_Python_API_URL;
+const metadataServiceURL = `${API_Python_URL}/`;
 export async function chatBotService(
   history: string,
   userQuery: string,

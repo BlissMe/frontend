@@ -33,7 +33,7 @@ export const setUserPreferences =
       dispatch(setPreferencesRequest());
 
       const response = await axios.post(
-        `${url}/preferences`,
+        `${url}/api/blissme/preferences`,
         {
           nickname,
           virtualCharacter,
@@ -78,7 +78,7 @@ export const getUserPreferences = () => async (dispatch: AppDispatch) => {
     dispatch(getPreferencesRequest());
 
     const response = await axios.get<PreferencesResponse>(
-      `${url}/get-preferences`,
+      `${url}/api/blissme/get-preferences`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -118,7 +118,7 @@ export const updateUserPreferences =
       if (inputMode !== undefined) payload.inputMode = inputMode;
 
       const response = await axios.put(
-        `${url}/update-preferences`, 
+        `${url}/api/blissme/update-preferences`, 
         payload,
         {
           headers: {

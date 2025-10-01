@@ -1,10 +1,8 @@
-import React from 'react';
 import Bubble from '../../components/Background/Bubble';
 import bg from "../../assets/images/loading-bg.png";
 import logo from "../../assets/images/logo.png";
 import { Button } from 'antd';
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const Landing = () => {

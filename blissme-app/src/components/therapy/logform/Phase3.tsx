@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import Button from "../Button";
 import { useUserDataStore } from "../../../store/useUserDataStore";

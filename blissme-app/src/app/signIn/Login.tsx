@@ -26,7 +26,8 @@ const Login = () => {
   const { setToken } = useContext(AuthContext);
   const { openNotification } = useNotification();
   const dispatch = useDispatch<AppDispatch>();
-  const handleLogoClick = () => navigate('/home');
+  const handleLogoClick = () => navigate("/home");
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const onFinish = async (values: any) => {
     try {
@@ -72,7 +73,7 @@ const Login = () => {
     }
   };
   const googleAuth = () => {
-    window.open(`http://localhost:8080/auth/google`, "_self");
+    window.open(`${API_URL}/auth/google`, "_self");
   };
 
   return (
@@ -138,7 +139,7 @@ const Login = () => {
                   }}
                   size="large"
                   maxLength={100}
-                  autoComplete="off"
+ 
                   className="w-full custom-input rounded-none"
                 />
               </Form.Item>

@@ -14,7 +14,7 @@ type Props = {
   protocolId?: string;
   durationMinutes?: number;
   onSessionComplete?: (summary: any) => void;
-  apiBase?: string; 
+  apiBase?: string;
 };
 
 const AUDIO_FREQ = 440;
@@ -22,12 +22,13 @@ const prefersReducedMotion =
   typeof window !== "undefined" &&
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const AdvancedBreathing: React.FC<Props> = ({
   protocolId = "resonance-6bpm",
   durationMinutes = 5,
   onSessionComplete,
-  apiBase = "http://localhost:8080",
+  apiBase = `${API_URL}`,
 }) => {
   const protocol: BreathingProtocol = useMemo(
     () => PROTOCOLS.find((p) => p.id === protocolId) || PROTOCOLS[0],

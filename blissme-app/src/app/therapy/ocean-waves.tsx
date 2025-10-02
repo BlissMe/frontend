@@ -100,15 +100,15 @@ export function OceanWaves() {
 
       <div className="w-64 space-y-6">
         <div className="space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
+          <div className="flex justify-between text-sm text-[#f9fbfc]">
             <span>Volume</span>
             <span>{volume}%</span>
           </div>
           <div className="flex items-center gap-2">
             {volume === 0 ? (
-              <VolumeX className="w-4 h-4" />
+              <VolumeX className="w-4 h-4 text-[#f9fbfc]" />
             ) : (
-              <Volume2 className="w-4 h-4" />
+              <Volume2 className="w-4 h-4 text-[#f9fbfc]" />
             )}
             <Slider
               value={[volume]}
@@ -122,7 +122,7 @@ export function OceanWaves() {
         <Progress value={progress} className="h-2" />
 
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-[#f9fbfc]">
             {formatTime(timeLeft)}
           </span>
           <Button
@@ -132,12 +132,12 @@ export function OceanWaves() {
             className="rounded-full"
           >
             {isPlaying ? (
-              <Pause className="h-4 w-4" />
+              <Pause className="h-4 w-4 text-[#f9fbfc]" />
             ) : (
-              <Play className="h-4 w-4" />
+              <Play className="h-4 w-4 text-[#f9fbfc]" />
             )}
           </Button>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-[#f9fbfc]">
             {formatTime(SESSION_DURATION)}
           </span>
         </div>

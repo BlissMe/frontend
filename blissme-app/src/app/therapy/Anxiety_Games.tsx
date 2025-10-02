@@ -101,73 +101,74 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
 
   return (
     <>
-     <Card className="border-slate-300/20">
-  <CardHeader>
-    <CardTitle className="text-xl font-semibold flex items-center gap-2">
-      <Gamepad2 className="h-5 w-5 text-slate-600" />
-      Anxiety Relief Activities
-    </CardTitle>
-    <CardDescription>
-      Interactive exercises to help reduce stress and anxiety
-    </CardDescription>
-  </CardHeader>
-  <CardContent>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {games.map((game) => (
-        <motion.div
-          key={game.id}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Card
-            className={`border-slate-300/20 hover:bg-slate-100/40 transition-colors cursor-pointer ${
-              selectedGame === game.id ? "ring-2 ring-slate-400" : ""
-            }`}
-            onClick={() => handleGameStart(game.id)}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-start gap-4">
-                <div
-                  className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}
+      <Card className="border-slate-300/20">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold flex items-center gap-2 text-white">
+            <Gamepad2 className="h-5 w-5 text-white" />
+            Anxiety Relief Activities
+          </CardTitle>
+          <CardDescription className="text-white">
+            Interactive exercises to help reduce stress and anxiety
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {games.map((game) => (
+              <motion.div
+                key={game.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className={`border-slate-300/20transition-colors cursor-pointer ${
+                    selectedGame === game.id ? "ring-2 ring-slate-400" : ""
+                  }`}
+                  onClick={() => handleGameStart(game.id)}
                 >
-                  <game.icon className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-slate-800">{game.title}</h4>
-                  <p className="text-sm text-slate-500 mt-1">
-                    {game.description}
-                  </p>
-                  <div className="flex items-center gap-2 mt-3">
-                    <Music2 className="h-4 w-4 text-slate-500" />
-                    <span className="text-sm text-slate-500">
-                      {game.duration}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      ))}
-    </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}
+                      >
+                        <game.icon className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-white">
+                          {game.title}
+                        </h4>
+                        <p className="text-sm text-white mt-1">
+                          {game.description}
+                        </p>
+                        <div className="flex items-center gap-2 mt-3">
+                          <Music2 className="h-4 w-4 text-slate-500" />
+                          <span className="text-sm text-slate-500">
+                            {game.duration}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
 
-    {selectedGame && (
-      <div className="mt-6 text-center">
-        <Button
-          className="gap-2 bg-slate-700 text-white hover:bg-slate-600"
-          onClick={() => setSelectedGame(null)}
-        >
-          <Gamepad2 className="h-4 w-4" />
-          Start {games.find((g) => g.id === selectedGame)?.title}
-        </Button>
-      </div>
-    )}
-  </CardContent>
-</Card>
-
+         {/*  {selectedGame && (
+            <div className="mt-6 text-center">
+              <Button
+                className="gap-2 bg-slate-700 text-white hover:bg-slate-600"
+                onClick={() => setSelectedGame(null)}
+              >
+                <Gamepad2 className="h-4 w-4" />
+                Start {games.find((g) => g.id === selectedGame)?.title}
+              </Button>
+            </div>
+          )} */}
+        </CardContent>
+      </Card>
 
       <Dialog open={showGame} onOpenChange={setShowGame}>
-        <DialogContent className="sm:max-w-[600px] bg-card">
+        <DialogContent className="sm:max-w-[600px] bg-[#01090b]">
           <DialogHeader>
             <DialogTitle>
               {games.find((g) => g.id === selectedGame)?.title}

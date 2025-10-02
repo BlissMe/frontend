@@ -90,7 +90,7 @@ const Sidebar: React.FC = () => {
           <Home className="w-6 h-6 text-white" />
         </button>
 
-       {/*  <div className="relative" ref={brainRef}>
+       <div className="relative" ref={brainRef}>
           <button
             className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
             onClick={() => setShowBrainDropdown((prev) => !prev)}
@@ -137,7 +137,7 @@ const Sidebar: React.FC = () => {
               </Link>
             </div>
           )}
-        </div> */}
+        </div>
 
         <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
           <Calendar className="w-6 h-6 text-white" />

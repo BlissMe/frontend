@@ -47,7 +47,6 @@ const ChatInterface = () => {
     const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
     const [isPhq9, setIsPhq9] = useState(false);
     const { selectedCharacter, nickname, fetchCharacters } = useCharacterContext();
-    console.log(selectedCharacter)
     const [levelResult, setLevelResult] = useState<any>(null);
     const [levelOpen, setLevelOpen] = useState(false);
 
@@ -60,7 +59,6 @@ const ChatInterface = () => {
             setSessionSummaries(allSummaries);
         })();
     }, []);
-    console.log("sessionSummaries:", sessionSummaries);
     useEffect(() => {
         fetchCharacters();
     }, []);
@@ -233,10 +231,8 @@ const ChatInterface = () => {
             const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
             setClassifier(res);
 
-            console.log("Classifier:", res);
             try {
                 await saveClassifierToServer(Number(sessionID), res);
-                console.log("Classifier result saved.");
             } catch (err) {
                 console.error("Failed to persist classifier result:", err);
             }
@@ -255,7 +251,6 @@ const ChatInterface = () => {
             // 2) compute composite index by userID (backend uses token->userID)
             const resp = await getDepressionLevel();
             if (!resp?.success) throw new Error("level API failed");
-            console.log("Depression Level Response:", resp);
             setLevelResult(resp.data);
             setLevelOpen(true); // open modal to show results
         } catch (e) {

@@ -72,6 +72,7 @@ export async function endCurrentSession(sessionID: string) {
       },
       body: JSON.stringify({ sessionID }),
     });
+    console.log(response)
 
     return await response.json();
   } catch (err) {
@@ -91,7 +92,6 @@ export async function fetchAllSummaries(): Promise<string[]> {
         },
       }
     );
-    console.log("Fetched summaries:", response);
     const data = await response.json();
     return data.summaries || [];
   } catch (error) {

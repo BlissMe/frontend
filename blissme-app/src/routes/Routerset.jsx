@@ -34,6 +34,8 @@ import DashLayout from "../app/layouts/DashLayout";
 import AnxietyLayout from "../app/layouts/AnxietyLayout";
 import NumberGuessingGame from "../app/therapy/Game/guessing_f/NumberGuessingGame";
 import GameLayout from "../app/layouts/GameLayout";
+import DoctorDashboard from "../app/dashboard/DoctorDashboard";
+import DashboardLayout from "../app/layouts/DashboardLayout";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -64,7 +66,7 @@ const Routerset = () => {
           <Route path="/chats" element={<MainLayout />}>
             <Route path="text" element={<ChatBox />} />
             <Route path="voice" element={<VoiceChatBox />} />
-            <Route path="setting" element={<Setting />} />  
+            <Route path="setting" element={<Setting />} />
             {/* <Route path="setting/profile" element={<ProfileSetting />} />
             <Route path="setting/account" element={<AccountSetting />} />
             <Route path="setting/security" element={<SecuritySetting />} /> */}
@@ -82,10 +84,10 @@ const Routerset = () => {
             <Route path="medication" element={<MeditationPlayer />} />
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
           </Route>
-          <Route path="/game" element={<GameLayout/>}>
+          <Route path="/game" element={<GameLayout />}>
             <Route path="therapy_game" element={<NumberGuessingGame />} />
           </Route>
-            <Route path="/dash" element={<AnxietyLayout/>}>
+          <Route path="/dash" element={<AnxietyLayout />}>
             <Route path="anxiety" element={<AnxietyGames />} />
           </Route>
           <Route path="/dash" element={<DashLayout />}>
@@ -93,6 +95,9 @@ const Routerset = () => {
           </Route>
           <Route path="/mood" element={<MoodLayout />}>
             <Route path="step1" element={<LogMood />} />
+          </Route>
+          <Route path="/doctor" element={<DashboardLayout />}>
+            <Route path="dash" element={<DoctorDashboard />} />
           </Route>
         </>
       ) : (

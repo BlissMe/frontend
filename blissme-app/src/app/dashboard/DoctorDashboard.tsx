@@ -13,12 +13,30 @@ import {
   Users,
 } from "lucide-react";
 import axios from "axios";
+import { Tag } from "antd";
 
+const levelColor = (lvl?: string) => {
+  switch ((lvl || "").toLowerCase()) {
+    case "minimal":
+      return "green";
+    case "moderate":
+      return "gold";
+    case "severe":
+      return "red";
+    default:
+      return "default";
+  }
+};
 interface User {
+  userID: number;
   nickname: string;
   virtualCharacter: string;
   inputMode: string;
+  level?: string;
+  R_value?: number;
+  createdAt?: string;
 }
+
 interface GetPreferencesResponse {
   message: string;
   preferences: {
@@ -32,6 +50,7 @@ const DoctorDashboard = () => {
   const url = process.env.REACT_APP_API_URL;
   useEffect(() => {
     fetchAllUsers();
+    fetchLevelDetection();
   }, [url]);
   const fetchAllUsers = async () => {
     const token = getLocalStoragedata("token");
@@ -51,6 +70,42 @@ const DoctorDashboard = () => {
       console.error("Error fetching characters:", error.message);
     } finally {
       setLoading(false);
+    }
+  };
+  const fetchLevelDetection = async () => {
+    const token = getLocalStoragedata("token");
+
+    try {
+      const res = await axios.get<{
+        success: boolean;
+        data: {
+          userID: number;
+          R_value: number;
+          level: string;
+          createdAt: string;
+        }[];
+      }>(`${url}/levelDetection/all-users-latest-index`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(res);
+      const levelData = res.data.data;
+
+      // Merge level data into users
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => {
+          const match = levelData.find((ld) => ld.userID === user.userID);
+          return match
+            ? {
+                ...user,
+                level: match.level,
+                R_value: match.R_value,
+                createdAt: match.createdAt,
+              }
+            : user;
+        })
+      );
+    } catch (error: any) {
+      console.error("Error fetching levels:", error.message);
     }
   };
 
@@ -191,7 +246,6 @@ const DoctorDashboard = () => {
                         <p className="font-medium text-slate-900 dark:text-slate-50">
                           {user.nickname}
                         </p>
-                       
                       </div>
                     </td>
                     <td className="table-cell">
@@ -204,12 +258,7 @@ const DoctorDashboard = () => {
                     </td>
                     <td className="table-cell">
                       <div className="flex items-center gap-x-4">
-                        <button className="text-blue-500 dark:text-blue-600">
-                          <PencilLine size={20} />
-                        </button>
-                        <button className="text-red-500">
-                          <Trash size={20} />
-                        </button>
+                        <Tag color={levelColor(user.level)}>{user.level}</Tag>
                       </div>
                     </td>
                   </tr>

@@ -4,13 +4,8 @@ import { overviewData, recentSalesData, topProducts } from "./Constants";
 
 import {
   Activity,
-  CreditCard,
-  DollarSign,
   HeartPulse,
-  Package,
   PencilLine,
-  Star,
-  Trash,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -55,8 +50,13 @@ interface User {
     minimal_max: number;
     moderate_max: number;
   };
-  doctorLevel?: string;  
-  doctorComment?: string; 
+  doctorData?: {
+    doctorLevel?: string;
+    doctorComment?: string;
+  };
+  lastSessionID?: string | null;
+  doctorLevel?: string;
+  doctorComment?: string;
 }
 
 interface GetPreferencesResponse {
@@ -86,43 +86,10 @@ const DoctorDashboard = () => {
     setIsModalOpen(false);
   };
 
-  const handleSubmitComment = async () => {
-    if (!selectedUser) return;
-
-    const token = getLocalStoragedata("token");
-
-    try {
-      await axios.post(
-        `${url}/doctorlevel/comments`,
-        {
-          userID: selectedUser.userID,
-          comment,
-          level: selectedLevel,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      message.success("Comment saved successfully!");
-      setIsModalOpen(false);
-
-      // Optionally update UI locally
-      setUsers((prev) =>
-  prev.map((u) =>
-    u.userID === selectedUser.userID
-      ? { ...u, doctorLevel: selectedLevel, doctorComment: comment }
-      : u
-  )
-);
-
-    } catch (error: any) {
-      console.error("Error saving comment:", error.message);
-      message.error("Failed to save comment.");
-    }
-  };
-
   useEffect(() => {
     fetchAllUsers();
     fetchLevelDetection();
+    fetchDoctorLevels();
   }, [url]);
 
   const fetchAllUsers = async () => {
@@ -145,6 +112,7 @@ const DoctorDashboard = () => {
       setLoading(false);
     }
   };
+
   const fetchLevelDetection = async () => {
     const token = getLocalStoragedata("token");
 
@@ -210,6 +178,68 @@ const DoctorDashboard = () => {
       );
     } catch (error: any) {
       console.error("Error fetching levels:", error.message);
+    }
+  };
+
+  const handleSubmitComment = async () => {
+    if (!selectedUser) return;
+
+    const token = getLocalStoragedata("token");
+
+    try {
+      await axios.post(
+        `${url}/doctorlevel/comments`,
+        {
+          userID: selectedUser.userID,
+          comment,
+          level: selectedLevel,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      message.success("Comment saved successfully!");
+      setIsModalOpen(false);
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.userID === selectedUser.userID
+            ? { ...u, doctorLevel: selectedLevel, doctorComment: comment }
+            : u
+        )
+      );
+    } catch (error: any) {
+      console.error("Error saving comment:", error.message);
+      message.error("Failed to save comment.");
+    }
+  };
+
+  const fetchDoctorLevels = async () => {
+    const token = getLocalStoragedata("token");
+
+    try {
+      const res = await axios.get<{
+        success: boolean;
+        data: { userID: number; level?: string; comment?: string }[];
+      }>(`${url}/doctorlevel/comments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const doctorData = res.data.data;
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => {
+          const match = doctorData.find((d) => d.userID === user.userID);
+          return match
+            ? {
+                ...user,
+                doctorLevel: match.level,
+                doctorComment: match.comment,
+              }
+            : user;
+        })
+      );
+    } catch (err: any) {
+      console.error("Error fetching doctor levels:", err.message);
     }
   };
 
@@ -348,35 +378,34 @@ const DoctorDashboard = () => {
               <thead className="table-header">
                 <tr className="table-row">
                   <th className="table-head">#</th>
-                  <th className="table-head">UserID</th>
-                  <th className="table-head">Nickname</th>
-                  <th className="table-head">Emotion</th>
+{/*                   <th className="table-head">UserID</th>
+ */}                  <th className="table-head">Nickname</th>
+                  {/*<th className="table-head">Emotion</th>*/}
                   <th className="table-head">Actions</th>
                   <th className="table-head">Actions</th>
                   <th className="table-head">Comment</th>
-                                    <th className="table-head">Doctor Level</th>
-
+                  <th className="table-head">Doctor Level</th>
                 </tr>
               </thead>
               <tbody className="table-body">
                 {users.map((user, index) => (
                   <tr key={index} className="table-row">
                     <td className="table-cell">{index + 1}</td>
-                    <td className="table-cell">{user.userID}</td>
-                    <td className="table-cell">
+{/*                     <td className="table-cell">{user.userID}</td>
+ */}                    <td className="table-cell">
                       <div className="flex flex-col">
                         <p className="font-medium text-slate-900 dark:text-slate-50">
                           {user.nickname}
                         </p>
                       </div>
                     </td>
-                    <td className="table-cell">
+                  {/*   <td className="table-cell">
                       <div className="flex flex-col">
                         <p className="font-medium text-slate-900 dark:text-slate-50">
                           {user.components?.classifier?.emotion}
                         </p>
                       </div>
-                    </td>
+                    </td> */}
                     <td className="table-cell text-white">
                       <div className="flex flex-col text-white">
                         <Typography.Text strong className="text-white">
@@ -407,14 +436,19 @@ const DoctorDashboard = () => {
                       <Button
                         type="primary"
                         icon={<PencilLine size={16} />}
+                        disabled={
+                          !!user.doctorComment || user.level === "Pending"
+                        }
                         onClick={() => openCommentModal(user)}
                       >
                         Add Comment
                       </Button>
                     </td>
                     <td className="table-cell">
-  <Tag color={levelColor(user.doctorLevel)}>{user.doctorLevel || "N/A"}</Tag>
-</td>
+                      <Tag color={levelColor(user.doctorLevel)}>
+                        {user.doctorLevel || "N/A"}
+                      </Tag>
+                    </td>
                   </tr>
                 ))}
               </tbody>

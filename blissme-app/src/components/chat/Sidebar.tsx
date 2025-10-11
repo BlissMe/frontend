@@ -38,6 +38,7 @@ const Sidebar: React.FC = () => {
   const handleLogout = async () => {
     if (sessionID) {
       const res = await endCurrentSession(sessionID);
+      console.log(res)
       if (!res.success) {
         openNotification("warning", "Logout failed. Please try again.");
         return;

@@ -1,17 +1,13 @@
 import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Form,
-  Input,
-  Button,
-  Checkbox,
-  Typography,
-  Modal,
-} from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Checkbox, Typography, Modal } from "antd";
+import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
-import { passwordFieldValidation } from "../../helpers/PasswordValidation";
+import {
+  passwordFieldValidation,
+  validateUsername,
+} from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import "../../index.css";
@@ -44,14 +40,14 @@ const Register = () => {
   const handleLogoClick = () => navigate("/home");
 
   interface RegisterFormValues {
-    email: string;
+    username: string;
     password: string;
     scrolledToBottom: boolean;
     agree: boolean;
   }
 
   interface UserSignUpData {
-    email: string;
+    username: string;
     password: string;
     authType: string;
   }
@@ -65,7 +61,7 @@ const Register = () => {
     try {
       setLoading(true);
       const userData = {
-        email: values.email,
+        username: values.username,
         password: values.password,
         authType: "normal",
       };
@@ -76,7 +72,7 @@ const Register = () => {
         openNotification("success", "Signup Successful", "Welcome!");
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
-        setLocalStorageData("user", response?.email);
+        setLocalStorageData("user", response?.username);
         setLocalStorageData("userId", response?.userID);
         setLocalStorageData("isSignUp", true);
         navigate("/mode/nick-name", { replace: true });
@@ -148,20 +144,18 @@ const Register = () => {
               onFinish={onFinish}
             >
               <Form.Item
-                name="email"
-                label="Email"
+                name="username"
+                label="Username"
                 className="custom-label"
                 rules={[
-                  { required: true, message: "Email is required!" },
-                  { type: "email", message: "Email is invalid!" },
+                  { validator: validateUsername },
                 ]}
               >
                 <Input
-                  prefix={<MailOutlined />}
-                  placeholder="Email"
+                  prefix={<UserOutlined />}
+                  placeholder="username"
                   size="large"
                   maxLength={100}
- 
                   className="w-full custom-input rounded-none"
                 />
               </Form.Item>

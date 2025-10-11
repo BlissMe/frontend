@@ -2,7 +2,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 const metadataServiceURL = `${API_URL}/`;
 
 interface SignUpPayload {
-  email: string;
+  username: string;
   password: string;
 }
 export async function userSignUpService(userData: SignUpPayload): Promise<any> {

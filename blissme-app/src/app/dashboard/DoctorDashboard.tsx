@@ -3,8 +3,10 @@ import { getLocalStoragedata } from "../../helpers/Storage";
 import { overviewData, recentSalesData, topProducts } from "./Constants";
 
 import {
+  Activity,
   CreditCard,
   DollarSign,
+  HeartPulse,
   Package,
   PencilLine,
   Star,
@@ -13,7 +15,7 @@ import {
   Users,
 } from "lucide-react";
 import axios from "axios";
-import { Tag } from "antd";
+import { Progress, Tag, Typography } from "antd";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -35,6 +37,15 @@ interface User {
   level?: string;
   R_value?: number;
   createdAt?: string;
+  components?: {
+    classifier?: {
+      emotion?: string;
+    };
+  };
+  cutoffs?: {
+    minimal_max: number;
+    moderate_max: number;
+  };
 }
 
 interface GetPreferencesResponse {
@@ -83,23 +94,54 @@ const DoctorDashboard = () => {
           R_value: number;
           level: string;
           createdAt: string;
+          components?: { classifier?: { emotion?: string } };
         }[];
       }>(`${url}/levelDetection/all-users-latest-index`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res);
+
       const levelData = res.data.data;
 
-      // Merge level data into users
+      const updatedUsers = await Promise.all(
+        levelData.map(async (ld) => {
+          try {
+            const last = await axios.get<{
+              success: boolean;
+              sessionID: string | null;
+              answeredCount: number;
+            }>(`${url}/phq9/last-session/${ld.userID}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const isComplete = last.data.answeredCount === 9;
+            return {
+              ...ld,
+              level: isComplete ? ld.level : "Pending",
+              lastSessionID: last.data.sessionID,
+            };
+          } catch (err) {
+            console.error(
+              "Error fetching PHQ9 session for user",
+              ld.userID,
+              err
+            );
+            return { ...ld, level: "Pending", lastSessionID: null };
+          }
+        })
+      );
+
+      // Merge with users
       setUsers((prevUsers) =>
         prevUsers.map((user) => {
-          const match = levelData.find((ld) => ld.userID === user.userID);
+          const match = updatedUsers.find((u) => u.userID === user.userID);
           return match
             ? {
                 ...user,
                 level: match.level,
                 R_value: match.R_value,
+                components: match.components,
                 createdAt: match.createdAt,
+                lastSessionID: match.lastSessionID,
               }
             : user;
         })
@@ -109,77 +151,91 @@ const DoctorDashboard = () => {
     }
   };
 
+  const totalPatients = users.length;
+  const severePatients = users.filter(
+    (u) => u.level?.toLowerCase() === "severe"
+  ).length;
+  const moderatePatients = users.filter(
+    (u) => u.level?.toLowerCase() === "moderate"
+  ).length;
+  const minimalPatients = users.filter(
+    (u) => u.level?.toLowerCase() === "minimal"
+  ).length;
+
   return (
     <div className="flex flex-col gap-y-4">
       <h1 className="title">Dashboard</h1>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="card">
           <div className="card-header">
-            <div className="w-fit rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
-              <Package size={26} />
-            </div>
-            <p className="card-title">Total Products</p>
-          </div>
-          <div className="card-body bg-slate-100 transition-colors dark:bg-slate-950">
-            <p className="text-3xl font-bold text-slate-900 transition-colors dark:text-slate-50">
-              25,154
-            </p>
-            <span className="flex w-fit items-center gap-x-2 rounded-full border border-blue-500 px-2 py-1 font-medium text-blue-500 dark:border-blue-600 dark:text-blue-600">
-              <TrendingUp size={18} />
-              25%
-            </span>
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-header">
-            <div className="rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
-              <DollarSign size={26} />
-            </div>
-            <p className="card-title">Total Paid Orders</p>
-          </div>
-          <div className="card-body bg-slate-100 transition-colors dark:bg-slate-950">
-            <p className="text-3xl font-bold text-slate-900 transition-colors dark:text-slate-50">
-              $16,000
-            </p>
-            <span className="flex w-fit items-center gap-x-2 rounded-full border border-blue-500 px-2 py-1 font-medium text-blue-500 dark:border-blue-600 dark:text-blue-600">
-              <TrendingUp size={18} />
-              12%
-            </span>
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-header">
-            <div className="rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
+            <div className="rounded-lg bg-purple-500/20 p-2 text-purple-600 dark:text-purple-400">
               <Users size={26} />
             </div>
-            <p className="card-title">Total Customers</p>
+            <p className="card-title">Total Patients</p>
           </div>
-          <div className="card-body bg-slate-100 transition-colors dark:bg-slate-950">
-            <p className="text-3xl font-bold text-slate-900 transition-colors dark:text-slate-50">
-              15,400k
-            </p>
-            <span className="flex w-fit items-center gap-x-2 rounded-full border border-blue-500 px-2 py-1 font-medium text-blue-500 dark:border-blue-600 dark:text-blue-600">
-              <TrendingUp size={18} />
-              15%
-            </span>
+          <div className="card-body">
+            <p className="text-3xl font-bold">{totalPatients}</p>
           </div>
         </div>
+
         <div className="card">
           <div className="card-header">
-            <div className="rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors dark:bg-blue-600/20 dark:text-blue-600">
-              <CreditCard size={26} />
+            <div className="rounded-lg bg-red-500/20 p-2 text-red-600 dark:text-red-400">
+              <HeartPulse size={26} />
             </div>
-            <p className="card-title">Sales</p>
+            <p className="card-title">Severe Cases</p>
           </div>
-          <div className="card-body bg-slate-100 transition-colors dark:bg-slate-950">
-            <p className="text-3xl font-bold text-slate-900 transition-colors dark:text-slate-50">
-              12,340
-            </p>
-            <span className="flex w-fit items-center gap-x-2 rounded-full border border-blue-500 px-2 py-1 font-medium text-blue-500 dark:border-blue-600 dark:text-blue-600">
-              <TrendingUp size={18} />
-              19%
-            </span>
+          <div className="card-body">
+            <p className="text-3xl font-bold">{severePatients}</p>
           </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <div className="rounded-lg bg-yellow-500/20 p-2 text-yellow-600 dark:text-yellow-400">
+              <Activity size={26} />
+            </div>
+            <p className="card-title">Moderate Cases</p>
+          </div>
+          <div className="card-body">
+            <p className="text-3xl font-bold">{moderatePatients}</p>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <div className="rounded-lg bg-green-500/20 p-2 text-green-600 dark:text-green-400">
+              <TrendingUp size={26} />
+            </div>
+            <p className="card-title">Minimal Cases</p>
+          </div>
+          <div className="card-body">
+            <p className="text-3xl font-bold">{minimalPatients}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Patient Activity */}
+      <div className="card">
+        <div className="card-header">
+          <p className="card-title">Recent Assessments</p>
+        </div>
+        <div className="card-body h-[300px] overflow-auto p-0">
+          {users.slice(0, 5).map((user, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between border-b px-4 py-2"
+            >
+              <div>
+                <p className="font-medium">{user.nickname}</p>
+                <p className="text-sm text-slate-500">
+                  Assessed:{" "}
+                  {new Date(user.createdAt || "").toLocaleDateString()}
+                </p>
+              </div>
+              <Tag color={levelColor(user.level)}>{user.level || "N/A"}</Tag>
+            </div>
+          ))}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -230,10 +286,10 @@ const DoctorDashboard = () => {
               <thead className="table-header">
                 <tr className="table-row">
                   <th className="table-head">#</th>
-                  <th className="table-head">Product</th>
-                  <th className="table-head">Price</th>
-                  <th className="table-head">Status</th>
-                  <th className="table-head">Rating</th>
+                  <th className="table-head">UserID</th>
+                  <th className="table-head">Nickname</th>
+                  <th className="table-head">Emotion</th>
+                  <th className="table-head">Actions</th>
                   <th className="table-head">Actions</th>
                 </tr>
               </thead>
@@ -241,6 +297,7 @@ const DoctorDashboard = () => {
                 {users.map((user, index) => (
                   <tr key={index} className="table-row">
                     <td className="table-cell">{index + 1}</td>
+                    <td className="table-cell">{user.userID}</td>
                     <td className="table-cell">
                       <div className="flex flex-col">
                         <p className="font-medium text-slate-900 dark:text-slate-50">
@@ -249,13 +306,33 @@ const DoctorDashboard = () => {
                       </div>
                     </td>
                     <td className="table-cell">
-                      <div className="flex items-center gap-x-2">
-                        <Star
-                          size={18}
-                          className="fill-yellow-600 stroke-yellow-600"
+                      <div className="flex flex-col">
+                        <p className="font-medium text-slate-900 dark:text-slate-50">
+                          {user.components?.classifier?.emotion}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="table-cell text-white">
+                      <div className="flex flex-col text-white">
+                        <Typography.Text strong className="text-white">
+                          Composite Index (R)
+                        </Typography.Text>
+                        <Progress
+                          percent={Math.round(Number(user.R_value || 0) * 100)}
+                          status="active"
+                          strokeColor={
+                            levelColor(user.level) === "gold"
+                              ? "#faad14"
+                              : levelColor(user.level) === "red"
+                              ? "#ff4d4f"
+                              : "#52c41a"
+                          }
+                          trailColor="rgba(255, 255, 255, 0.2)"
+                          showInfo
                         />
                       </div>
                     </td>
+
                     <td className="table-cell">
                       <div className="flex items-center gap-x-4">
                         <Tag color={levelColor(user.level)}>{user.level}</Tag>

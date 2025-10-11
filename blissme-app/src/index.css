@@ -288,6 +288,9 @@ video {
   width: 100%;
   z-index: 0;
 }
+.ant-progress-text {
+  color: white !important;
+}
 
 html {
   @apply scroll-smooth;
@@ -338,7 +341,7 @@ html {
     }
 
     .card-body {
-        @apply flex flex-col gap-y-2 rounded-lg p-4;
+        @apply flex flex-col gap-y-2 rounded-lg p-4 text-white;
     }
 
     .table {

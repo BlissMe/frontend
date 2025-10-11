@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Checkbox, Typography, message } from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
@@ -34,7 +34,7 @@ const Login = () => {
       setLoading(true);
 
       const userData = {
-        email: values.email,
+        username: values.username,
         password: values.password,
       };
 
@@ -46,7 +46,7 @@ const Login = () => {
 
         setToken(response.token);
         setLocalStorageData("token", response.token);
-        setLocalStorageData("user", response.email);
+        setLocalStorageData("user", response.username);
         setLocalStorageData("userId", response?.userID);
 
         await dispatch(getUserPreferences());
@@ -119,18 +119,17 @@ const Login = () => {
               onFinish={onFinish}
             >
               <Form.Item
-                name="email"
-                label="Email "
+                name="username"
+                label="Username "
                 className="custom-label"
                 required={false}
                 rules={[
-                  { required: true, message: "Email is required!" },
-                  { type: "email", message: "Email is invalid!" },
+                  { required: true, message: "Username is required!" },
                 ]}
               >
                 <Input
-                  prefix={<MailOutlined />}
-                  placeholder="Email"
+                  prefix={<UserOutlined />}
+                  placeholder="Username"
                   onKeyDown={(e) => {
                     const key = e.key;
                     if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {

@@ -42,7 +42,7 @@ export async function userSignUpService(userData: SignUpPayload): Promise<any> {
 }
 
 interface SignInPayload {
-  email: string;
+  username: string;
   password: string;
 }
 export async function userSignInService(userData: SignInPayload): Promise<any> {

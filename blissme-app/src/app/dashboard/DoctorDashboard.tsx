@@ -15,7 +15,16 @@ import {
   Users,
 } from "lucide-react";
 import axios from "axios";
-import { Progress, Tag, Typography } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Modal,
+  Progress,
+  Select,
+  Tag,
+  Typography,
+} from "antd";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -46,6 +55,8 @@ interface User {
     minimal_max: number;
     moderate_max: number;
   };
+  doctorLevel?: string;  
+  doctorComment?: string; 
 }
 
 interface GetPreferencesResponse {
@@ -58,11 +69,62 @@ interface GetPreferencesResponse {
 const DoctorDashboard = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string>("");
+  const [comment, setComment] = useState("");
   const url = process.env.REACT_APP_API_URL;
+
+  const openCommentModal = (user: User) => {
+    setSelectedUser(user);
+    setSelectedLevel(user.level || "");
+    setComment("");
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmitComment = async () => {
+    if (!selectedUser) return;
+
+    const token = getLocalStoragedata("token");
+
+    try {
+      await axios.post(
+        `${url}/doctorlevel/comments`,
+        {
+          userID: selectedUser.userID,
+          comment,
+          level: selectedLevel,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      message.success("Comment saved successfully!");
+      setIsModalOpen(false);
+
+      // Optionally update UI locally
+      setUsers((prev) =>
+  prev.map((u) =>
+    u.userID === selectedUser.userID
+      ? { ...u, doctorLevel: selectedLevel, doctorComment: comment }
+      : u
+  )
+);
+
+    } catch (error: any) {
+      console.error("Error saving comment:", error.message);
+      message.error("Failed to save comment.");
+    }
+  };
+
   useEffect(() => {
     fetchAllUsers();
     fetchLevelDetection();
   }, [url]);
+
   const fetchAllUsers = async () => {
     const token = getLocalStoragedata("token");
 
@@ -291,6 +353,9 @@ const DoctorDashboard = () => {
                   <th className="table-head">Emotion</th>
                   <th className="table-head">Actions</th>
                   <th className="table-head">Actions</th>
+                  <th className="table-head">Comment</th>
+                                    <th className="table-head">Doctor Level</th>
+
                 </tr>
               </thead>
               <tbody className="table-body">
@@ -338,6 +403,18 @@ const DoctorDashboard = () => {
                         <Tag color={levelColor(user.level)}>{user.level}</Tag>
                       </div>
                     </td>
+                    <td className="table-cell">
+                      <Button
+                        type="primary"
+                        icon={<PencilLine size={16} />}
+                        onClick={() => openCommentModal(user)}
+                      >
+                        Add Comment
+                      </Button>
+                    </td>
+                    <td className="table-cell">
+  <Tag color={levelColor(user.doctorLevel)}>{user.doctorLevel || "N/A"}</Tag>
+</td>
                   </tr>
                 ))}
               </tbody>
@@ -345,6 +422,32 @@ const DoctorDashboard = () => {
           </div>
         </div>
       </div>
+      <Modal
+        title={`Add Comment for ${selectedUser?.nickname || ""}`}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        onOk={handleSubmitComment}
+        okText="Save Comment"
+      >
+        <div className="flex flex-col gap-y-3">
+          <Select
+            value={selectedLevel}
+            onChange={(val) => setSelectedLevel(val)}
+            placeholder="Select Depression Level"
+          >
+            <Select.Option value="Minimal">Minimal</Select.Option>
+            <Select.Option value="Moderate">Moderate</Select.Option>
+            <Select.Option value="Severe">Severe</Select.Option>
+          </Select>
+
+          <Input.TextArea
+            rows={4}
+            placeholder="Enter your comment..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

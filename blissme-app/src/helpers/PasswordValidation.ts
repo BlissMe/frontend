@@ -32,7 +32,7 @@ export const passwordFieldValidation = (
 
 // Username validation function
 export const validateUsername = (_: any, value: string) => {
-  const usernameRegex = /^[a-zA-Z0-9._]{4,20}$/;
+  const usernameRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@]{6,10}$/;
 
   if (!value || value.trim() === "") {
     return Promise.reject("Username is required");
@@ -40,7 +40,7 @@ export const validateUsername = (_: any, value: string) => {
 
   if (!usernameRegex.test(value)) {
     return Promise.reject(
-      "Username must be 4–20 characters and can contain letters, numbers, dots, or underscores"
+        "Username must be 6–10 characters, include at least one capital letter, and can only contain letters, numbers, or @.",
     );
   }
 

@@ -42,6 +42,7 @@ const ResetPassword: React.FC = () => {
         }
       );
       openNotification("success", "Reset successful", res.data.message);
+      localStorage.clear();
       navigate("/sign-in", { replace: true });
       setNewPassword("");
       setIsButtonDisabled(true);

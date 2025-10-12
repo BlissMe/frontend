@@ -16,6 +16,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import axios from "axios";
 import { useNotification } from "../../app/context/notificationContext";
 import { useCharacterContext } from "../../app/context/CharacterContext";
+import { validateUsername } from "../../helpers/PasswordValidation";
 
 const ProfileSetting = () => {
   const { nickname, selectId, characters, fetchCharacters } =
@@ -23,7 +24,7 @@ const ProfileSetting = () => {
   const [form] = Form.useForm();
   const token = getLocalStoragedata("token") || "";
   const dispatch = useDispatch<AppDispatch>();
-  const [email, setEmail] = useState(getLocalStoragedata("user"));
+  const [username, setUsername] = useState(getLocalStoragedata("user"));
   const userId = Number(getLocalStoragedata("userId"));
   const { openNotification } = useNotification();
   const inputMode = useSelector((state: RootState) => state.user.inputMode);
@@ -101,7 +102,7 @@ const ProfileSetting = () => {
   const handleSave = async (values: any) => {
     const {
       nickname: newNickname,
-      email: newEmail,
+      username: newUsername,
       name: newCharacterName,
     } = values;
 
@@ -168,14 +169,14 @@ const ProfileSetting = () => {
         }
       }
 
-      if (!isFaceSign && newEmail !== email) {
-        const response = await updateEmailService({ newEmail }, token);
-        if (response.message === "Email updated successfully") {
-          setLocalStorageData("user", newEmail);
-          setEmail(newEmail);
+      if (!isFaceSign && newUsername!== username) {
+        const response = await updateEmailService({newUsername}, token);
+        if (response.message === "Username updated successfully") {
+          setLocalStorageData("user", newUsername);
+          setUsername(newUsername);
           emailChanged = true;
         } else {
-          openNotification("error", "Email update failed", response.message);
+          openNotification("error", "Username update failed", response.message);
         }
       }
 
@@ -194,7 +195,7 @@ const ProfileSetting = () => {
       setOriginalCharacterName(selectedCharacter.name);
       form.setFieldsValue({
         nickname: nickname || "",
-        email: email,
+        username: username,
         name: selectedCharacter.name,
       });
     }
@@ -203,14 +204,14 @@ const ProfileSetting = () => {
   useEffect(() => {
     const values = form.getFieldsValue();
     const isNicknameChanged = values.nickname !== nickname;
-    const isEmailChanged = isFaceSign ? false : values.email !== email;
+    const isEmailChanged = isFaceSign ? false : values.username !== username;
     const isCharacterNameChanged = values.name !== originalCharacterName;
     const isImageChanged = !!file;
 
     const characterChanged = isCharacterNameChanged && isImageChanged;
 
     setIsFormChanged(isNicknameChanged || isEmailChanged || characterChanged);
-  }, [file, form, nickname, email, originalCharacterName, isFaceSign]);
+  }, [file, form, nickname, username, originalCharacterName, isFaceSign]);
 
   useEffect(() => {
     return () => {
@@ -221,7 +222,6 @@ const ProfileSetting = () => {
   }, [previewUrl]);
   return (
     <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32 z-10">
-
       <div className="w-full flex justify-center mt-4">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Profile Settings
@@ -234,12 +234,14 @@ const ProfileSetting = () => {
         onFinish={handleSave}
         initialValues={{
           nickname: nickname || "",
-          email: email,
+          username: username,
           name: originalCharacterName,
         }}
         onValuesChange={(_, values) => {
           const isNicknameChanged = values.nickname !== nickname;
-          const isEmailChanged = isFaceSign ? false : values.email !== email;
+          const isEmailChanged = isFaceSign
+            ? false
+            : values.username !== username;
           const isCharacterNameChanged = values.name !== originalCharacterName;
           const isImageChanged = !!file;
 
@@ -309,12 +311,9 @@ const ProfileSetting = () => {
 
         {!isFaceSign && (
           <Form.Item
-            name="email"
-            label={<span className="font-medium text-gray-700">Email</span>}
-            rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Please enter a valid email" },
-            ]}
+            name="username"
+            label={<span className="font-medium text-gray-700">Username</span>}
+            rules={[{ validator: validateUsername }]}
           >
             <Input className="h-10" />
           </Form.Item>

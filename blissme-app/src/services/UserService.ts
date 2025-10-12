@@ -113,7 +113,7 @@ export async function updateNicknameService(
 }
 
 interface UpdateEmailPayload {
-  newEmail: string;
+  newUsername: string;
 }
 
 export async function updateEmailService(
@@ -133,7 +133,7 @@ export async function updateEmailService(
     const data = await response.json();
 
     if (!response.ok) {
-      return { message: data.message || "Email update failed" };
+      return { message: data.message || "Username update failed" };
     }
 
     return data;

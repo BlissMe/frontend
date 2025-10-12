@@ -25,6 +25,8 @@ const SignUp: React.FC = () => {
       const userData = {
         username: values.username,
         password: values.password,
+        securityQuestion:values.securityQuestion,
+        securityAnswer:values.securityAnswer,
         authType: "normal",
       };
 

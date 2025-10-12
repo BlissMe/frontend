@@ -4,6 +4,9 @@ const metadataServiceURL = `${API_URL}/`;
 interface SignUpPayload {
   username: string;
   password: string;
+  securityQuestion: string;
+  securityAnswer: string;
+  authType: string;
 }
 export async function userSignUpService(userData: SignUpPayload): Promise<any> {
   try {

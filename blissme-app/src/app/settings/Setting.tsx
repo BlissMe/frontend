@@ -133,7 +133,7 @@ const Settings: React.FC = () => {
   const handleSave = async (values: any) => {
     const {
       nickname: newNickname,
-      email: newEmail,
+      email: newUsername,
       name: newCharacterName,
     } = values;
 
@@ -200,11 +200,11 @@ const Settings: React.FC = () => {
         }
       }
 
-      if (newEmail !== email) {
-        const response = await updateEmailService({ newEmail }, token);
+      if (newUsername !== email) {
+        const response = await updateEmailService({ newUsername }, token);
         if (response.message === "Email updated successfully") {
-          setLocalStorageData("user", newEmail);
-          setEmail(newEmail);
+          setLocalStorageData("user", newUsername);
+          setEmail(newUsername);
           emailChanged = true;
         } else {
           openNotification("error", "Email update failed", response.message);

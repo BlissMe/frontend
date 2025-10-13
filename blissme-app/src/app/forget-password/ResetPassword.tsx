@@ -1,13 +1,13 @@
 import React, { useState, FormEvent, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { Form, Input, Button, Typography, Alert, message } from "antd";
-import signin from "../../assets/images/signin.png";
 import { LockOutlined } from "@ant-design/icons";
 import { useNotification } from "../context/notificationContext";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import MessageBubble from "../../components/Background/MessageBubble";
 import bg from "../../assets/images/fpw.png";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 const { Text } = Typography;
 
@@ -16,11 +16,11 @@ interface ResetResponse {
 }
 
 const ResetPassword: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
+  const token = getLocalStoragedata("resetToken");
   const [newPassword, setNewPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const { openNotification } = useNotification();
   const API_URL = process.env.REACT_APP_API_URL;
@@ -42,7 +42,8 @@ const ResetPassword: React.FC = () => {
         }
       );
       openNotification("success", "Reset successful", res.data.message);
-      message.success(res.data.message, 5);
+      localStorage.clear();
+      navigate("/sign-in", { replace: true });
       setNewPassword("");
       setIsButtonDisabled(true);
       form.resetFields();
@@ -70,7 +71,6 @@ const ResetPassword: React.FC = () => {
           {/* Message Bubble on top */}
           <MessageBubble />
 
-          {/* Form & other content below */}
           <div className="flex flex-col items-center w-full ">
             <div className="flex flex-col items-center w-full gap-1 mb-2">
               <Text

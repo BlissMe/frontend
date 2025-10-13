@@ -27,7 +27,7 @@ const SignIn: React.FC = () => {
       setLoading(true);
 
       const userData = {
-        email: values.email,
+        username: values.username,
         password: values.password,
       };
 
@@ -91,22 +91,18 @@ const SignIn: React.FC = () => {
           <div className="flex flex-col items-center w-full max-w-[400px]">
             <Form layout="vertical" className="w-full" onFinish={onFinish}>
               <Form.Item
-                name="email"
-                label="Email *"
+                name="username"
+                label="username *"
                 rules={[
                   {
                     required: true,
-                    message: "Email is required!",
-                  },
-                  {
-                    type: "email",
-                    message: "Email is invalid!",
+                    message: "username is required!",
                   },
                 ]}
               >
                 <Input
                   prefix={<MailOutlined />}
-                  placeholder="Email"
+                  placeholder="username"
                   onKeyDown={(e) => {
                     const key = e.key;
                     if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {

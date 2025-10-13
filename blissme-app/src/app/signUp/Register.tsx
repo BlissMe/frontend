@@ -1,17 +1,13 @@
 import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Form,
-  Input,
-  Button,
-  Checkbox,
-  Typography,
-  Modal,
-} from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Checkbox, Typography, Modal, Select } from "antd";
+import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
-import { passwordFieldValidation } from "../../helpers/PasswordValidation";
+import {
+  passwordFieldValidation,
+  validateUsername,
+} from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import "../../index.css";
@@ -32,6 +28,13 @@ const Register = () => {
   const [form] = Form.useForm();
   const { openNotification } = useNotification();
   const API_URL = process.env.REACT_APP_API_URL;
+  const [stepOneValues, setStepOneValues] = useState({
+    username: "",
+    password: "",
+  });
+  const [currentStep, setCurrentStep] = useState(1);
+  const next = () => setCurrentStep(2);
+  const prev = () => setCurrentStep(1);
 
   const handleScroll = () => {
     const el = contentRef.current;
@@ -44,14 +47,14 @@ const Register = () => {
   const handleLogoClick = () => navigate("/home");
 
   interface RegisterFormValues {
-    email: string;
+    username: string;
     password: string;
     scrolledToBottom: boolean;
     agree: boolean;
   }
 
   interface UserSignUpData {
-    email: string;
+    username: string;
     password: string;
     authType: string;
   }
@@ -62,42 +65,48 @@ const Register = () => {
   }
 
   const onFinish = async (values: any) => {
-    try {
-      setLoading(true);
-      const userData = {
-        email: values.email,
+    if (currentStep === 1) {
+      setStepOneValues({
+        username: values.username,
         password: values.password,
+      });
+      next();
+    } else if (currentStep === 2) {
+      const userData = {
+        ...stepOneValues,
+        securityQuestion: values.securityQuestion,
+        securityAnswer: values.securityAnswer,
         authType: "normal",
       };
 
-      const response = await userSignUpService(userData);
+      try {
+        setLoading(true);
+        const response = await userSignUpService(userData);
 
-      if (response.message === "Successfully Registered") {
-        openNotification("success", "Signup Successful", "Welcome!");
-        setToken(response?.token);
-        setLocalStorageData("token", response?.token);
-        setLocalStorageData("user", response?.email);
-        setLocalStorageData("userId", response?.userID);
-        setLocalStorageData("isSignUp", true);
-        navigate("/mode/nick-name", { replace: true });
-      } else {
-        openNotification(
-          "error",
-          "Signup Failed",
-          response.message || "Signup failed.Please try again later"
-        );
+        if (response.message === "Successfully Registered") {
+          openNotification("success", "Signup Successful", "Welcome!");
+          setToken(response?.token);
+          setLocalStorageData("token", response?.token);
+          setLocalStorageData("user", response?.username);
+          setLocalStorageData("userId", response?.userID);
+          setLocalStorageData("isSignUp", true);
+          navigate("/mode/nick-name", { replace: true });
+        } else {
+          openNotification(
+            "error",
+            "Signup Failed",
+            response.message || "Signup failed. Please try again later"
+          );
+        }
+      } catch (error: any) {
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong. Please try again later.";
+        openNotification("error", "Signup Failed", errorMessage);
+      } finally {
+        setLoading(false);
       }
-    } catch (error: any) {
-      console.error("signup error:", error);
-
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Something went wrong. Please try again later.";
-
-      openNotification("error", "Login Failed", errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -147,87 +156,159 @@ const Register = () => {
               className="w-[380px] sm:w-[400px]"
               onFinish={onFinish}
             >
-              <Form.Item
-                name="email"
-                label="Email"
-                className="custom-label"
-                rules={[
-                  { required: true, message: "Email is required!" },
-                  { type: "email", message: "Email is invalid!" },
-                ]}
-              >
-                <Input
-                  prefix={<MailOutlined />}
-                  placeholder="Email"
-                  size="large"
-                  maxLength={100}
- 
-                  className="w-full custom-input rounded-none"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="password"
-                label="Password"
-                className="custom-label"
-                rules={[
-                  { required: true, message: "Password is required!" },
-                  { validator: passwordFieldValidation },
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined />}
-                  size="large"
-                  placeholder="Password"
-                  maxLength={60}
-                  className="w-full custom-input"
-                />
-              </Form.Item>
-
-              <Form.Item name="scrolledToBottom" initialValue={false} hidden>
-                <input type="hidden" />
-              </Form.Item>
-
-              <Form.Item
-                name="agree"
-                valuePropName="checked"
-                rules={[
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value)
-                        return Promise.reject("You must agree to terms");
-                      if (!getFieldValue("scrolledToBottom"))
-                        return Promise.reject(
-                          "Please scroll and read all terms"
-                        );
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <Checkbox disabled={!form.getFieldValue("scrolledToBottom")}>
-                  I agree to the{" "}
-                  <span
-                    className="text-textColorTwo cursor-pointer underline"
-                    onClick={() => setModalVisible(true)}
+              {currentStep === 1 && (
+                <>
+                  <Form.Item
+                    name="username"
+                    label="Username"
+                    className="custom-label"
+                    rules={[
+                      { required: true, message: "Username is required!" },
+                      { validator: validateUsername },
+                    ]}
                   >
-                    Terms & Privacy Policy
-                  </span>
-                </Checkbox>
-              </Form.Item>
+                    <Input
+                      prefix={<UserOutlined />}
+                      placeholder="username"
+                      size="large"
+                      maxLength={100}
+                      className="w-full custom-input rounded-none"
+                    />
+                  </Form.Item>
 
-              <Form.Item>
-                <div className="flex justify-center">
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
-                    loading={loading}
+                  <Form.Item
+                    name="password"
+                    label="Password"
+                    className="custom-label"
+                    rules={[
+                      { required: true, message: "Password is required!" },
+                      { validator: passwordFieldValidation },
+                    ]}
                   >
-                    Sign Up
-                  </Button>
-                </div>
-              </Form.Item>
+                    <Input.Password
+                      prefix={<LockOutlined />}
+                      size="large"
+                      placeholder="Password"
+                      maxLength={60}
+                      className="w-full custom-input"
+                    />
+                  </Form.Item>
+                  <div className="flex justify-center">
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </>
+              )}
+              {currentStep === 2 && (
+                <>
+                  <Form.Item
+                    name="securityQuestion"
+                    label="Security Question"
+                    className="custom-label"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a security question",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select a security question"
+                      size="large"
+                    >
+                      <Select.Option value="first_school">
+                        What was your first school?
+                      </Select.Option>
+                      <Select.Option value="pet_name">
+                        What is your pet’s name?
+                      </Select.Option>
+                      <Select.Option value="birth_city">
+                        In which city were you born?
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item
+                    name="securityAnswer"
+                    label="Security Answer"
+                    className="custom-label"
+                    rules={[
+                      { required: true, message: "Please provide an answer" },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      placeholder="Your Answer"
+                      maxLength={100}
+                      className="w-full custom-input"
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="scrolledToBottom"
+                    initialValue={false}
+                    hidden
+                  >
+                    <input type="hidden" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="agree"
+                    valuePropName="checked"
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value)
+                            return Promise.reject("You must agree to terms");
+                          if (!getFieldValue("scrolledToBottom"))
+                            return Promise.reject(
+                              "Please scroll and read all terms"
+                            );
+                          return Promise.resolve();
+                        },
+                      }),
+                    ]}
+                  >
+                    <div className="flex items-center justify-between">
+                      <Checkbox
+                        disabled={!form.getFieldValue("scrolledToBottom")}
+                      >
+                        I agree to the{" "}
+                        <span
+                          className="text-textColorTwo cursor-pointer underline"
+                          onClick={() => setModalVisible(true)}
+                        >
+                          Terms & Privacy Policy
+                        </span>
+                      </Checkbox>
+                      <span
+                        className="text-textColorTwo cursor-pointer hover:text-black text-sm md:text-base"
+                        onClick={prev}
+                      >
+                        ← Back
+                      </span>
+                    </div>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <div className="flex justify-center">
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                        loading={loading}
+                      >
+                        Sign Up
+                      </Button>
+                    </div>
+                  </Form.Item>
+                </>
+              )}
             </Form>
 
             <Form>

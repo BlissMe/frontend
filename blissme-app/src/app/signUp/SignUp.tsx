@@ -5,7 +5,7 @@ import { Form, Input, Button, Checkbox, Typography, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
-import { passwordFieldValidation } from "../../helpers/PasswordValidation";
+import { passwordFieldValidation, validateUsername } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import { useNotification } from "../context/notificationContext";
@@ -23,8 +23,10 @@ const SignUp: React.FC = () => {
     try {
       setLoading(true);
       const userData = {
-        email: values.email,
+        username: values.username,
         password: values.password,
+        securityQuestion:values.securityQuestion,
+        securityAnswer:values.securityAnswer,
         authType: "normal",
       };
 
@@ -83,18 +85,18 @@ const SignUp: React.FC = () => {
           <div className="flex flex-col items-center w-full max-w-[400px]">
             <Form layout="vertical" className="w-full" onFinish={onFinish}>
               <Form.Item
-                name="email"
-                label="Email *"
+                name="username"
+                label="Username *"
                 className="custom-label"
                 required={false}
                 rules={[
-                  { required: true, message: "Email is required!" },
-                  { type: "email", message: "Email is invalid!" },
+                  { required: true, message: "username is required!" },
+                  { validator: validateUsername },
                 ]}
               >
                 <Input
                   prefix={<MailOutlined />}
-                  placeholder="Email"
+                  placeholder="username"
                   onKeyDown={(e) => {
                     const key = e.key;
                     if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {
@@ -103,7 +105,6 @@ const SignUp: React.FC = () => {
                   }}
                   size="large"
                   maxLength={100}
- 
                   className="custom-input"
                 />
               </Form.Item>

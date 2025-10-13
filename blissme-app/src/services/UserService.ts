@@ -2,8 +2,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 const metadataServiceURL = `${API_URL}/`;
 
 interface SignUpPayload {
-  email: string;
+  username: string;
   password: string;
+  securityQuestion: string;
+  securityAnswer: string;
+  authType: string;
 }
 export async function userSignUpService(userData: SignUpPayload): Promise<any> {
   try {
@@ -42,7 +45,7 @@ export async function userSignUpService(userData: SignUpPayload): Promise<any> {
 }
 
 interface SignInPayload {
-  email: string;
+  username: string;
   password: string;
 }
 export async function userSignInService(userData: SignInPayload): Promise<any> {
@@ -113,7 +116,7 @@ export async function updateNicknameService(
 }
 
 interface UpdateEmailPayload {
-  newEmail: string;
+  newUsername: string;
 }
 
 export async function updateEmailService(
@@ -133,7 +136,7 @@ export async function updateEmailService(
     const data = await response.json();
 
     if (!response.ok) {
-      return { message: data.message || "Email update failed" };
+      return { message: data.message || "Username update failed" };
     }
 
     return data;

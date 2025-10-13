@@ -59,7 +59,7 @@ const VirtualCharacter = () => {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const response = await axios.get<Character[]>(`${url}/`);
+        const response = await axios.get<Character[]>(`${url}/api/blissme/all-characters`);
         console.log("Characters fetched:", response.data);
         setLocalStorageData("selectedCharacterId",selectedCharacterId)
         setCharacters(response.data);

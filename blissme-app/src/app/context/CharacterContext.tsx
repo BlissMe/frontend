@@ -46,7 +46,7 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!localToken) return;
 
     try {
-      const response = await axios.get<Character[]>(`${url}/api/blissme/`, {
+      const response = await axios.get<Character[]>(`${url}/api/blissme/all-characters`, {
         headers: { Authorization: `Bearer ${localToken}` },
       });
       setCharacters(response.data);

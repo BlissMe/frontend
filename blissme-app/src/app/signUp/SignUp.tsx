@@ -103,7 +103,7 @@ const SignUp: React.FC = () => {
                   }}
                   size="large"
                   maxLength={100}
-                  autoComplete="off"
+ 
                   className="custom-input"
                 />
               </Form.Item>

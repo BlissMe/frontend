@@ -37,6 +37,9 @@ import GameLayout from "../app/layouts/GameLayout";
 import DoctorDashboard from "../app/dashboard/DoctorDashboard";
 import DashboardLayout from "../app/layouts/DashboardLayout";
 
+import Songs from "../app/features/Songs";
+import Doctors from "../app/features/Doctors";
+
 const Routerset = () => {
   const { token } = useContext(AuthContext);
 
@@ -54,6 +57,8 @@ const Routerset = () => {
       <Route path="/landing" element={<Landing />} />
       <Route path="/home" element={<Home />} />
       <Route path="/face-auth" element={<FaceSignin />} />
+      <Route path="/songs" element={<Songs />} />
+      <Route path="/doctors" element={<Doctors />} />
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>

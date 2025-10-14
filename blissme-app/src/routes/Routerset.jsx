@@ -88,6 +88,8 @@ const Routerset = () => {
             <Route path="breathing" element={<BreathingExercise />} />
             <Route path="medication" element={<MeditationPlayer />} />
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
+            <Route path="all-songs" element={<Songs />} />
+            <Route path="all-doctors" element={<Doctors />} />
           </Route>
           <Route path="/game" element={<GameLayout />}>
             <Route path="therapy_game" element={<NumberGuessingGame />} />

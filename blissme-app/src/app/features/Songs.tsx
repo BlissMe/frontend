@@ -24,7 +24,7 @@ const Songs = () => {
     useEffect(() => {
         const fetchSongs = async () => {
             try {
-                const res = await axios.get<Song[]>(`${API_URL}/songs`);
+                const res = await axios.get<Song[]>(`${API_URL}/api/blissme/songs`);
                 setSongs(res.data);
             } catch (err) {
                 setError("Failed to load songs.");
@@ -51,14 +51,14 @@ const Songs = () => {
                 backgroundRepeat: "no-repeat",
             }}
         >
-            <div className="fixed top-4 left-4 z-20 ">
+           {/*  <div className="fixed top-4 left-4 z-20 ">
                 <img
                     onClick={handleLogoClick}
                     src={logo}
                     alt="Logo"
                     className="h-10 w-auto cursor-pointer"
                 />
-            </div>
+            </div> */}
             {/* Left scrollable list */}
             <div className="w-full md:w-2/5 bg-[#95BFA7] backdrop-blur-sm overflow-y-auto p-6 ml-6 mt-20 mr-6 mb-6 rounded-xl shadow-lg">
                 <h1 className="text-3xl font-bold text-green-800 mb-6 text-center md:text-center" style={{ fontFamily: 'Merienda, cursive' }}>

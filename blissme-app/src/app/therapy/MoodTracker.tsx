@@ -41,7 +41,7 @@ const MoodTracker = () => {
       <div className="w-full bg-white/20 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center">
         <div className="relative w-full flex items-center justify-center mb-4">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/dash/mood-tracker")}
             className="p-2 rounded-full  absolute left-36 bg-green-200 text-green-900 hover:bg-green-300 transition"
             aria-label="Back to Home"
           >

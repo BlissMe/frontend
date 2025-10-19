@@ -10,8 +10,12 @@ import {
   saveMessage,
   fetchAllSummaries,
 } from "../../services/ChatMessageService";
-import { getClassifierResult ,ClassifierResult,getDepressionLevel  } from "../../services/DetectionService";
-import {saveClassifierToServer  } from "../../services/ClassifierResults";
+import {
+  getClassifierResult,
+  ClassifierResult,
+  getDepressionLevel,
+} from "../../services/DetectionService";
+import { saveClassifierToServer } from "../../services/ClassifierResults";
 import { savePHQ9Answer } from "../../services/Phq9Service";
 import Avatar from "../../components/profile/Avatar";
 import { useCharacterContext } from "../context/CharacterContext";
@@ -19,17 +23,22 @@ import { AuthContext } from "../context/AuthContext";
 import { Message } from "../context/AuthContext";
 import Nickname from "../start/Nickname";
 import { Modal, Tag, Progress, Descriptions } from "antd";
+import { therapyAgentChat, User } from "../../services/TherapyAgentService";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 const { Text } = Typography;
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
-    case "minimal":  return "green";
-    case "moderate": return "gold";
-    case "severe":   return "red";
-    default:         return "default";
+    case "minimal":
+      return "green";
+    case "moderate":
+      return "gold";
+    case "severe":
+      return "red";
+    default:
+      return "default";
   }
 };
-
 
 const ChatBox = () => {
   const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
@@ -46,11 +55,16 @@ const ChatBox = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const { selectedCharacter,nickname ,fetchCharacters } = useCharacterContext();
-  console.log(selectedCharacter)
+  const { selectedCharacter, nickname, fetchCharacters } =
+    useCharacterContext();
+  console.log(selectedCharacter);
   const [levelResult, setLevelResult] = useState<any>(null);
-  const [levelOpen, setLevelOpen] = useState(false); 
-
+  console.log("levelResult", levelResult);
+  const [levelOpen, setLevelOpen] = useState(false);
+  const [therapyMode, setTherapyMode] = useState(false);
+  const navigate = useNavigate();
+  console.log("therapyMode", therapyMode);
+  console.log("sessionSummaries", sessionSummaries);
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
@@ -62,13 +76,40 @@ const ChatBox = () => {
   }, []);
   console.log("sessionSummaries:", sessionSummaries);
   useEffect(() => {
-    fetchCharacters(); 
+    fetchCharacters();
   }, []);
-
 
   useEffect(() => {
     fetchCharacters();
   }, []);
+
+  useEffect(() => {
+    const initTherapyMode = async () => {
+      const user: User | null = getLocalStoragedata("user") as User | null;
+      if (!user?.id) return;
+
+      try {
+        const resp = await getDepressionLevel();
+        if (resp?.success && resp.data) {
+          setLevelResult(resp.data);
+          setLevelOpen(true);
+
+          // Enable therapy mode if user has a level
+          if (resp.data.level) setTherapyMode(true);
+        } else {
+          setLevelResult(null);
+          setTherapyMode(false);
+        }
+      } catch (err) {
+        console.error("Failed to fetch depression level:", err);
+        setLevelResult(null);
+        setTherapyMode(false);
+      }
+    };
+
+    initTherapyMode();
+  }, []);
+
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
@@ -82,39 +123,51 @@ const ChatBox = () => {
     setInputValue("");
     setLoading(true);
 
-    // Save user message to DB
     await saveMessage(inputValue, sessionID, "user");
 
-    if (lastPhq9) {
-      await savePHQ9Answer(
-        sessionID,
-        lastPhq9.id,
-        lastPhq9.question,
-        inputValue // this is the user's answer
+    let botReply;
+
+    // 💬 Therapy Mode
+    if (therapyMode && levelResult) {
+      // Get user ID from local storage (or your auth context)
+
+      const user: User | null = getLocalStoragedata("user") as User | null;
+      const userID = user?.id || "guest";
+
+      botReply = await therapyAgentChat(
+        inputValue,
+        levelResult.level,
+        userID, // pass correct user ID
+        sessionID
       );
-      setLastPhq9(null); // clear it after saving
+
+      if (botReply.action === "START_THERAPY") {
+        navigate(`/therapy/${botReply.therapy_id}`);
+        setLoading(false);
+        return;
+      }
+    } else {
+      const updatedHistory = await fetchChatHistory(sessionID);
+      const formattedHistory = Array.isArray(updatedHistory)
+        ? updatedHistory.map((msg: any) => ({
+            sender: msg.sender === "bot" ? "popo" : "you",
+            text: msg.message,
+            time: getCurrentTime(),
+          }))
+        : [];
+
+      const context = formattedHistory
+        .map((m) => `${m.sender}: ${m.text}`)
+        .join("\n");
+
+      botReply = await chatBotService(
+        context,
+        inputValue,
+        sessionSummaries,
+        askedPhq9Ids
+      );
+      console.log("botReply:", botReply);
     }
-
-    // Get updated chat history
-    const updatedHistory = await fetchChatHistory(sessionID);
-    const formattedHistory = Array.isArray(updatedHistory)
-      ? updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "popo" : "you",
-        text: msg.message,
-        time: getCurrentTime(),
-      }))
-      : [];
-
-    const context = formattedHistory
-      .map((m) => `${m.sender}: ${m.text}`)
-      .join("\n");
-
-    const botReply = await chatBotService(
-      context,
-      inputValue,
-      sessionSummaries,
-      askedPhq9Ids
-    );
 
     const finalBotMsg = {
       sender: "popo",
@@ -122,27 +175,9 @@ const ChatBox = () => {
       time: getCurrentTime(),
     };
 
-    // Track PHQ-9 if a new question is asked
-    if (
-      typeof botReply.phq9_questionID === "number" &&
-      typeof botReply.phq9_question === "string"
-    ) {
-      const questionID = botReply.phq9_questionID as number;
-      const question = botReply.phq9_question as string;
-
-      setAskedPhq9Ids((prev) => [...prev, questionID]);
-      setLastPhq9({
-        id: questionID,
-        question: question,
-      });
-      setIsPhq9(true);
-    }
-
     await saveMessage(finalBotMsg.text, sessionID, "bot");
-
-    const finalMessages = [...formattedHistory, finalBotMsg];
-    setMessages(finalMessages);
-    setChatHistory(finalMessages);
+    setMessages((prev) => [...prev, finalBotMsg]);
+    setChatHistory((prev) => [...prev, finalBotMsg]);
     setLoading(false);
   };
 
@@ -168,10 +203,10 @@ const ChatBox = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "popo" : "you",
-        text: msg.message,
-        time: getCurrentTime(),
-      }))
+          sender: msg.sender === "bot" ? "popo" : "you",
+          text: msg.message,
+          time: getCurrentTime(),
+        }))
       : [];
 
     const context = formattedHistory
@@ -211,57 +246,67 @@ const ChatBox = () => {
     setLoading(false);
   };
 
-async function ClassifierResult() {
-  if (!sessionID) return; // session not ready yet
-  setDetecting(true);
-  try {
-    const updatedHistory = await fetchChatHistory(sessionID);
-    const formattedHistory: string[] = Array.isArray(updatedHistory)
-      ? updatedHistory.map((msg: any) =>
-          `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
-      : [];
-
-    const historyStr = formattedHistory.join("\n").trim();
-    if (!historyStr) return; // nothing to classify yet
-
-    const latestSummary: string | null =
-      sessionSummaries && sessionSummaries.length
-        ? sessionSummaries[sessionSummaries.length - 1]
-        : null;
-
-const res = await getClassifierResult(historyStr, sessionSummaries ?? []); 
-    setClassifier(res);
-    
-    console.log("Classifier:", res);
+  async function ClassifierResult() {
+    if (!sessionID) return; // session not ready yet
+    setDetecting(true);
     try {
-      await saveClassifierToServer(Number(sessionID), res);
-      console.log("Classifier result saved.");
-    } catch (err) {
-      console.error("Failed to persist classifier result:", err);
+      const updatedHistory = await fetchChatHistory(sessionID);
+      const formattedHistory: string[] = Array.isArray(updatedHistory)
+        ? updatedHistory.map(
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
+        : [];
+
+      const historyStr = formattedHistory.join("\n").trim();
+      if (!historyStr) return; // nothing to classify yet
+
+      const latestSummary: string | null =
+        sessionSummaries && sessionSummaries.length
+          ? sessionSummaries[sessionSummaries.length - 1]
+          : null;
+
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
+      setClassifier(res);
+
+      console.log("Classifier:", res);
+      try {
+        await saveClassifierToServer(Number(sessionID), res);
+        console.log("Classifier result saved.");
+      } catch (err) {
+        console.error("Failed to persist classifier result:", err);
+      }
+    } catch (e) {
+      console.error("getClassifierResult failed:", e);
+    } finally {
+      setDetecting(false);
     }
-  } catch (e) {
-    console.error("getClassifierResult failed:", e);
-  } finally {
-    setDetecting(false);
   }
-}
 
-async function runLevelDetection() {
-  try {
-    // 1) run your existing LLM classifier and persist it
-    await ClassifierResult();
+  async function runLevelDetection() {
+    try {
+      // 1) run your existing LLM classifier and persist it
+      await ClassifierResult();
 
-    // 2) compute composite index by userID (backend uses token->userID)
-    const resp = await getDepressionLevel();
-    if (!resp?.success) throw new Error("level API failed");
-    console.log("Depression Level Response:", resp);
-    setLevelResult(resp.data);
-setLevelOpen(true); // open modal to show results
-  } catch (e) {
-    console.error(e);
+      // 2) compute composite index by userID (backend uses token->userID)
+      const resp = await getDepressionLevel();
+      console.log("Depression Level API response:", resp);
+      if (!resp?.success) throw new Error("level API failed");
+      console.log("Depression Level Response:", resp);
+      setLevelResult(resp.data);
+      setLevelOpen(true);
+
+      const level = resp.data?.level?.toLowerCase();
+      console.log("level", level);
+      if (level === "minimal" || level === "moderate") {
+        setTherapyMode(true);
+      } else {
+        setTherapyMode(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
-}
 
   const phqOptions = [
     "Not at all",
@@ -272,6 +317,11 @@ setLevelOpen(true); // open modal to show results
 
   return (
     <div className="flex flex-col h-screen">
+      {therapyMode && (
+        <div className="absolute top-3 right-4 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-md shadow-sm border border-green-300">
+          🧘 Therapy Mode Active
+        </div>
+      )}
       <div className="flex items-center justify-center py-4">
         <img
           src={selectedCharacter?.imageUrl}
@@ -283,91 +333,109 @@ setLevelOpen(true); // open modal to show results
       <div className="px-4 -mt-2 mb-2 flex justify-center">
         <Button
           type="primary"
-          onClick={() => void runLevelDetection()} 
+          onClick={() => void runLevelDetection()}
           loading={detecting}
           disabled={!sessionID}
         >
-          Level Detection
+          Level kkk
         </Button>
       </div>
       <Modal
-  open={levelOpen}
-  onCancel={() => setLevelOpen(false)}
-  onOk={() => setLevelOpen(false)}
-  okText="OK"
-  title="Depression Level"
-  centered
-  destroyOnClose
->
-  {!levelResult ? (
-    <div className="flex items-center justify-center py-6">
-      <Spin />
-    </div>
-  ) : (
-    <>
-      <div className="flex items-center gap-2 mb-2">
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          {levelResult.level || "—"}
-        </Typography.Title>
-        <Tag color={levelColor(levelResult.level)}>{levelResult.level}</Tag>
-      </div>
+        open={levelOpen}
+        onCancel={() => setLevelOpen(false)}
+        onOk={() => setLevelOpen(false)}
+        okText="OK"
+        title="Depression Level"
+        centered
+        destroyOnClose
+      >
+        {!levelResult ? (
+          <div className="flex items-center justify-center py-6">
+            <Spin />
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 mb-2">
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                {levelResult.level || "—"}
+              </Typography.Title>
+              <Tag color={levelColor(levelResult.level)}>
+                {levelResult.level}
+              </Tag>
+            </div>
 
-      {/* R as a progress bar */}
-      <div style={{ marginBottom: 12 }}>
-        <Typography.Text strong>Composite Index (R)</Typography.Text>
-        <Progress
-          percent={Math.round((Number(levelResult.R_value || 0)) * 100)}
-          status="active"
-          strokeColor={
-            levelColor(levelResult.level) === "gold" ? "#faad14"
-            : levelColor(levelResult.level) === "red" ? "#ff4d4f"
-            : "#52c41a"
-          }
-          showInfo
-        />
-        <Typography.Text type="secondary">
-          R = {Number(levelResult.R_value || 0).toFixed(4)} &nbsp;|&nbsp;
-          Cutoffs:&nbsp;
-          {/* handle either string or numeric cutoffs */}
-          {typeof levelResult.cutoffs?.minimal_max === "number"
-            ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
-            : (levelResult.cutoffs
-                ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
-                : "—")}
-        </Typography.Text>
-      </div>
+            {/* R as a progress bar */}
+            <div style={{ marginBottom: 12 }}>
+              <Typography.Text strong>Composite Index (R)</Typography.Text>
+              <Progress
+                percent={Math.round(Number(levelResult.R_value || 0) * 100)}
+                status="active"
+                strokeColor={
+                  levelColor(levelResult.level) === "gold"
+                    ? "#faad14"
+                    : levelColor(levelResult.level) === "red"
+                    ? "#ff4d4f"
+                    : "#52c41a"
+                }
+                showInfo
+              />
+              <Typography.Text type="secondary">
+                R = {Number(levelResult.R_value || 0).toFixed(4)} &nbsp;|&nbsp;
+                Cutoffs:&nbsp;
+                {/* handle either string or numeric cutoffs */}
+                {typeof levelResult.cutoffs?.minimal_max === "number"
+                  ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
+                  : levelResult.cutoffs
+                  ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                  : "—"}
+              </Typography.Text>
+            </div>
 
-      {/* Key components */}
-      <Descriptions size="small" column={1} bordered>
-        <Descriptions.Item label="PHQ-9">
-          total: {levelResult.components?.phq9?.total ?? 0},
-          &nbsp;normalized: {(levelResult.components?.phq9?.normalized ?? 0).toFixed(4)},
-          &nbsp;answered: {levelResult.components?.phq9?.answered_count ?? 0}/9
-        </Descriptions.Item>
-        <Descriptions.Item label="Classifier">
-          label: {levelResult.components?.classifier?.label ?? "—"},
-          &nbsp;raw: {(levelResult.components?.classifier?.confidence_raw ?? levelResult.components?.classifier?.confidence ?? 0).toFixed(4)},
-          &nbsp;calibrated: {(levelResult.components?.classifier?.confidence_calibrated ?? levelResult.components?.classifier?.confidence ?? 0).toFixed(4)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Emotion">
-          {levelResult.components?.classifier?.emotion ?? "—"} (binary: {levelResult.components?.classifier?.emotion_binary ?? 0})
-        </Descriptions.Item>
-        <Descriptions.Item label="Weights">
-          PHQ9 {levelResult.weights?.phq9},&nbsp;
-          Classifier {levelResult.weights?.classifier},&nbsp;
-          Emotion {levelResult.weights?.emotion}
-        </Descriptions.Item>
-      </Descriptions>
-    </>
-  )}
-</Modal>
+            {/* Key components */}
+            <Descriptions size="small" column={1} bordered>
+              <Descriptions.Item label="PHQ-9">
+                total: {levelResult.components?.phq9?.total ?? 0},
+                &nbsp;normalized:{" "}
+                {(levelResult.components?.phq9?.normalized ?? 0).toFixed(4)},
+                &nbsp;answered:{" "}
+                {levelResult.components?.phq9?.answered_count ?? 0}/9
+              </Descriptions.Item>
+              <Descriptions.Item label="Classifier">
+                label: {levelResult.components?.classifier?.label ?? "—"},
+                &nbsp;raw:{" "}
+                {(
+                  levelResult.components?.classifier?.confidence_raw ??
+                  levelResult.components?.classifier?.confidence ??
+                  0
+                ).toFixed(4)}
+                , &nbsp;calibrated:{" "}
+                {(
+                  levelResult.components?.classifier?.confidence_calibrated ??
+                  levelResult.components?.classifier?.confidence ??
+                  0
+                ).toFixed(4)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Emotion">
+                {levelResult.components?.classifier?.emotion ?? "—"} (binary:{" "}
+                {levelResult.components?.classifier?.emotion_binary ?? 0})
+              </Descriptions.Item>
+              <Descriptions.Item label="Weights">
+                PHQ9 {levelResult.weights?.phq9},&nbsp; Classifier{" "}
+                {levelResult.weights?.classifier},&nbsp; Emotion{" "}
+                {levelResult.weights?.emotion}
+              </Descriptions.Item>
+            </Descriptions>
+          </>
+        )}
+      </Modal>
 
       <div className="flex-1 overflow-y-auto px-4 space-y-6">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
-              }`}
+            className={`flex flex-col ${
+              msg.sender === "you" ? "items-end" : "items-start"
+            }`}
           >
             <div className="flex gap-2 items-center">
               {msg.sender === "you" ? (
@@ -383,23 +451,25 @@ setLevelOpen(true); // open modal to show results
               )}
 
               {loading &&
-                msg.sender === "popo" &&
-                index === messages.length - 1 ? (
+              msg.sender === "popo" &&
+              index === messages.length - 1 ? (
                 <Spin size="small" />
               ) : (
                 <div
-                  className={`p-3 rounded-lg max-w-xs ${msg.sender === "you"
+                  className={`p-3 rounded-lg max-w-xs ${
+                    msg.sender === "you"
                       ? "bg-inputColorTwo text-left"
                       : "bg-inputColorOne text-left"
-                    }`}
+                  }`}
                 >
                   <Text className="text-sm">{msg.text}</Text>
                 </div>
               )}
             </div>
             <Text
-              className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-12"
-                }`}
+              className={`text-xs text-gray-500 mt-1 ${
+                msg.sender === "you" ? "" : "ml-12"
+              }`}
             >
               {msg.time}
             </Text>

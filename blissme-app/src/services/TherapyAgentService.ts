@@ -1,9 +1,9 @@
 const API_Python_URL = process.env.REACT_APP_Python_API_URL;
 
 export interface User {
-    id: string;
-    name?: string;
-    // add other fields if needed
+id?: string; 
+    userID?: number;
+  
 }
 
 export async function therapyAgentChat(
@@ -16,6 +16,8 @@ export async function therapyAgentChat(
     action?: string;
     therapy_id?: string;
     therapy_name?: string;
+    therapy_path?: string; 
+     isTherapySuggested?: boolean;
 }> {
     const res = await fetch(`${API_Python_URL}/therapy-agent/chat`, {
         method: "POST",

@@ -39,5 +39,6 @@ export async function getDepressionLevel() {
     const res = await fetch(`${API_BASE}/levelDetection/depression-index`, {
         headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("Response from getDepressionLevel:", res);
     return await res.json();
 }

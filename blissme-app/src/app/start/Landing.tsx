@@ -1,5 +1,5 @@
 import Bubble from '../../components/Background/Bubble';
-import bg from "../../assets/images/loading-bg.png";
+import bg from "../../assets/images/bk.png";
 import logo from "../../assets/images/logo.png";
 import { Button } from 'antd';
 import { useState } from 'react';

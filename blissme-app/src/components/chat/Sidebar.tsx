@@ -65,7 +65,10 @@ const Sidebar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (brainRef.current && !brainRef.current.contains(event.target as Node)) {
+      if (
+        brainRef.current &&
+        !brainRef.current.contains(event.target as Node)
+      ) {
         setShowBrainDropdown(false);
       }
       if (
@@ -157,7 +160,17 @@ const Sidebar: React.FC = () => {
           </button>
         </div>
 
-        <div className="relative space-y-6" ref={settingsRef}>
+        <Link to={chatRoute}>
+          <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
+            <MessageCircle className="w-6 h-6 text-emerald-600" />
+          </button>
+        </Link>
+
+        <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
+          <Home className="w-6 h-6 text-white" />
+        </button>
+
+        <div className="relative" ref={brainRef}>
           <button
             className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
             onClick={() => setShowSettings((prev) => !prev)}
@@ -195,6 +208,20 @@ const Sidebar: React.FC = () => {
             <LogOut className="w-6 h-6 text-white" />
           </button>
         </div>
+
+        <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+          <Calendar className="w-6 h-6 text-white" />
+        </button>
+        <Link to="/therapy/all-doctors">
+          <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+            <Heart className="w-6 h-6 text-white" />
+          </button>
+        </Link>
+        <Link to="/therapy/all-songs">
+          <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+            <Mic className="w-6 h-6 text-white" />
+          </button>
+        </Link>
       </div>
 
       {/* Mobile Topbar */}

@@ -103,7 +103,7 @@ const Sidebar: React.FC = () => {
             </button>
           </Link>
 
-          <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
+          {/* <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
             <Home className="w-6 h-6 text-white" />
           </button>
 
@@ -164,11 +164,11 @@ const Sidebar: React.FC = () => {
             <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
               <Mic className="w-6 h-6 text-white" />
             </button>
-          </Link>
+          </Link> */}
         </div>
 
         <div className="relative space-y-6" ref={brainRef}>
-          <button
+         {/*  <button
             className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
             onClick={() => setShowSettings((prev) => !prev)}
           >
@@ -196,7 +196,7 @@ const Sidebar: React.FC = () => {
                 Security Settings
               </Link>
             </div>
-          )}
+          )} */}
 
           <button
             onClick={handleLogout}
@@ -238,7 +238,7 @@ const Sidebar: React.FC = () => {
             >
               <MessageCircle className="w-5 h-5 text-emerald-600" /> Chat
             </Link>
-            <Link
+            {/* <Link
               to="/home"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2"
@@ -280,7 +280,7 @@ const Sidebar: React.FC = () => {
               className="flex items-center gap-2"
             >
               <Settings className="w-5 h-5 text-emerald-600" /> Settings
-            </Link>
+            </Link> */}
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 text-red-600"

@@ -187,7 +187,7 @@ const Login = () => {
                 </div>
               </Form.Item>
             </Form>
-            <div className="flex items-center justify-center mb-2">
+          {/*   <div className="flex items-center justify-center mb-2">
               <div className="w-20 h-px bg-gray-400"></div>
               <span className="px-3 text-sm text-black whitespace-nowrap">
                 Signin With Others
@@ -205,9 +205,9 @@ const Login = () => {
                 className="w-6 h-6"
               />
               Sign in with Face
-            </Button>
+            </Button> */}
             <Form>
-              <Form.Item>
+              {/* <Form.Item>
                 <div className="flex justify-center">
                   <Button
                     type="primary"
@@ -222,7 +222,7 @@ const Login = () => {
                     Sign in with Google
                   </Button>
                 </div>
-              </Form.Item>
+              </Form.Item> */}
 
               <Text className="block text-center text-sm md:text-base text-textColorOne mb-2">
                 Don’t have an account?{" "}

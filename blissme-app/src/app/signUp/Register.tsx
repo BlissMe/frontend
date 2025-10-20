@@ -193,7 +193,7 @@ const Register = () => {
                       className="w-full custom-input"
                     />
                   </Form.Item>
-                  <div className="flex justify-center">
+                  <div className="flex justify-center mb-2">
                     <Button
                       type="primary"
                       htmlType="submit"
@@ -312,7 +312,7 @@ const Register = () => {
             </Form>
 
             <Form>
-              <div className="flex justify-center mb-2">
+             {/*  <div className="flex justify-center mb-2">
                 <Text className="text-center text-black text-sm">or</Text>
               </div>
               <Form.Item>
@@ -330,7 +330,7 @@ const Register = () => {
                     Sign up with Google
                   </Button>
                 </div>
-              </Form.Item>
+              </Form.Item> */}
 
               <Text className="block text-center text-sm md:text-base text-textColorOne">
                 Already have an account?{" "}

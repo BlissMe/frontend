@@ -16,12 +16,19 @@ import {
   AudioOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import {
+  getClassifierResult,
+  ClassifierResult,
+  getDepressionLevel,
+} from "../../services/DetectionService";
 import { useNotification } from "../../app/context/notificationContext";
 import user from "../../assets/images/user.png";
 import {
   getLocalStoragedata,
   setLocalStorageData,
 } from "../../helpers/Storage";
+import { useNavigate } from "react-router-dom";
+import { saveClassifierToServer } from "../../services/ClassifierResults";
 
 const { Text } = Typography;
 interface Message {
@@ -59,7 +66,6 @@ const ViceChatInterface = () => {
   const [apiResult, setApiResult] = useState<ApiResult>({});
   const [emotionHistory, setEmotionHistory] = useState<string[]>([]);
   const { characters } = useCharacterContext();
-  console.log("ch", characters);
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -69,13 +75,12 @@ const ViceChatInterface = () => {
   const isCancelledRef = useRef(false);
   const { openNotification } = useNotification();
   const Python_URL = process.env.REACT_APP_Python_API_URL;
-
-  const phqOptions = [
-    "Not at all",
-    "Several days",
-    "More than half the days",
-    "Nearly every day",
-  ];
+  const [levelResult, setLevelResult] = useState<any>(null);
+  const [levelOpen, setLevelOpen] = useState(false);
+  const [detecting, setDetecting] = useState(false);
+  const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
+  const [isPhq9Complete, setIsPhq9Complete] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -93,6 +98,12 @@ const ViceChatInterface = () => {
       setSessionSummaries(allSummaries);
     })();
   }, []);
+
+  useEffect(() => {
+    if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {
+      setIsPhq9Complete(true);
+    }
+  }, [askedPhq9Ids]);
 
   useEffect(() => {
     const hasPlayed = getLocalStoragedata("greetingPlayed");
@@ -371,6 +382,62 @@ const ViceChatInterface = () => {
     setIsWaitingForBotResponse(false);
   };
 
+  async function ClassifierResult() {
+    if (!sessionID) return;
+    setDetecting(true);
+    try {
+      const updatedHistory = await fetchChatHistory(sessionID);
+      const formattedHistory: string[] = Array.isArray(updatedHistory)
+        ? updatedHistory.map(
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
+        : [];
+
+      const historyStr = formattedHistory.join("\n").trim();
+      if (!historyStr) return;
+
+      const latestSummary: string | null =
+        sessionSummaries && sessionSummaries.length
+          ? sessionSummaries[sessionSummaries.length - 1]
+          : null;
+
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
+      setClassifier(res);
+
+      try {
+        await saveClassifierToServer(Number(sessionID), res);
+      } catch (err) {
+        console.error("Failed to persist classifier result:", err);
+      }
+    } catch (e) {
+      console.error("getClassifierResult failed:", e);
+    } finally {
+      setDetecting(false);
+    }
+  }
+
+  async function runLevelDetection() {
+    try {
+      await ClassifierResult();
+
+      const resp = await getDepressionLevel();
+      if (!resp?.success) throw new Error("level API failed");
+
+      setLevelResult(resp.data);
+      setLevelOpen(true);
+      navigate("/home");
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  const phqOptions = [
+    "Not at all",
+    "Several days",
+    "More than half the days",
+    "Nearly every day",
+  ];
+
   return (
     <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">
       {/* Bear Image */}
@@ -564,6 +631,116 @@ const ViceChatInterface = () => {
             </Tooltip>
           )}
         </div>
+        {isPhq9Complete && (
+          <div className="mt-4 flex flex-col items-center">
+            <Button
+              type="primary"
+              onClick={() => void runLevelDetection()}
+              loading={detecting}
+              disabled={!sessionID}
+              className="bg-lime-500 hover:bg-lime-600 text-white"
+            >
+              End Session
+            </Button>
+
+            {/* <Modal
+                      open={levelOpen}
+                      onCancel={() => setLevelOpen(false)}
+                      onOk={() => setLevelOpen(false)}
+                      okText="OK"
+                      title="Depression Level"
+                      centered
+                      destroyOnClose
+                      className="z-10"
+                    >
+                      {!levelResult ? (
+                        <div className="flex items-center justify-center py-6">
+                          <Spin />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Typography.Title level={4} style={{ margin: 0 }}>
+                              {levelResult.level || "—"}
+                            </Typography.Title>
+                            <Tag color={levelColor(levelResult.level)}>
+                              {levelResult.level}
+                            </Tag>
+                          </div> */}
+
+            {/* R value progress bar */}
+            {/* <div style={{ marginBottom: 12 }}>
+                            <Typography.Text strong>
+                              Composite Index (R)
+                            </Typography.Text>
+                            <Progress
+                              percent={Math.round(
+                                Number(levelResult.R_value || 0) * 100
+                              )}
+                              status="active"
+                              strokeColor={
+                                levelColor(levelResult.level) === "gold"
+                                  ? "#faad14"
+                                  : levelColor(levelResult.level) === "red"
+                                  ? "#ff4d4f"
+                                  : "#52c41a"
+                              }
+                              showInfo
+                            />
+                            <Typography.Text type="secondary">
+                              R = {Number(levelResult.R_value || 0).toFixed(4)}{" "}
+                              &nbsp;|&nbsp; Cutoffs:&nbsp;
+                              {typeof levelResult.cutoffs?.minimal_max === "number"
+                                ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
+                                : levelResult.cutoffs
+                                ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                                : "—"}
+                            </Typography.Text>
+                          </div> */}
+
+            {/* Components Summary */}
+            {/* <Descriptions size="small" column={1} bordered>
+                            <Descriptions.Item label="PHQ-9">
+                              total: {levelResult.components?.phq9?.total ?? 0}, &nbsp;
+                              normalized:{" "}
+                              {(levelResult.components?.phq9?.normalized ?? 0).toFixed(
+                                4
+                              )}
+                              , &nbsp;answered:{" "}
+                              {levelResult.components?.phq9?.answered_count ?? 0}/9
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Classifier">
+                              label: {levelResult.components?.classifier?.label ?? "—"},
+                              &nbsp; raw:{" "}
+                              {(
+                                levelResult.components?.classifier?.confidence_raw ??
+                                levelResult.components?.classifier?.confidence ??
+                                0
+                              ).toFixed(4)}
+                              , &nbsp;calibrated:{" "}
+                              {(
+                                levelResult.components?.classifier
+                                  ?.confidence_calibrated ??
+                                levelResult.components?.classifier?.confidence ??
+                                0
+                              ).toFixed(4)}
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Emotion">
+                              {levelResult.components?.classifier?.emotion ?? "—"}{" "}
+                              (binary:{" "}
+                              {levelResult.components?.classifier?.emotion_binary ?? 0})
+                            </Descriptions.Item>
+                            <Descriptions.Item label="Weights">
+                              PHQ9 {levelResult.weights?.phq9}, &nbsp; Classifier{" "}
+                              {levelResult.weights?.classifier}, &nbsp; Emotion{" "}
+                              {levelResult.weights?.emotion}
+                            </Descriptions.Item>
+                          </Descriptions>
+                        </>
+                      )}
+                    </Modal> */}
+          </div>
+        )}
       </div>
     </div>
   );

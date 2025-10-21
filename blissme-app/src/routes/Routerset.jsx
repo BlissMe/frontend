@@ -39,6 +39,8 @@ import DashboardLayout from "../app/layouts/DashboardLayout";
 
 import Songs from "../app/features/Songs";
 import Doctors from "../app/features/Doctors";
+import Level from "../app/start/Level";
+import Medicine from "../app/start/Medicine";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -65,6 +67,8 @@ const Routerset = () => {
             <Route path="nick-name" element={<Nickname />} />
             <Route path="virtual-character" element={<VirtualCharacter />} />
             <Route path="input-mode" element={<InputMode />} />
+            <Route path="level" element={<Level />} />
+            <Route path="medicine" element={<Medicine />} />
 
             {/*<Route path="mood" element={<Mood />} />*/}
           </Route>

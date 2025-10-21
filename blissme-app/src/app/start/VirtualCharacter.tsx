@@ -59,9 +59,11 @@ const VirtualCharacter = () => {
   useEffect(() => {
     const fetchCharacters = async () => {
       try {
-        const response = await axios.get<Character[]>(`${url}/api/blissme/all-characters`);
+        const response = await axios.get<Character[]>(
+          `${url}/api/blissme/all-characters`
+        );
         console.log("Characters fetched:", response.data);
-        setLocalStorageData("selectedCharacterId",selectedCharacterId)
+        setLocalStorageData("selectedCharacterId", selectedCharacterId);
         setCharacters(response.data);
       } catch (error: any) {
         console.error("Error fetching characters:", error.message);
@@ -87,7 +89,7 @@ const VirtualCharacter = () => {
       })
     );
     openNotification("success", "Virtual character selected successfully");
-    navigate("/mode/input-mode");
+    navigate("/mode/level");
   };
 
   return (

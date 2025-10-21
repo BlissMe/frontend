@@ -116,246 +116,225 @@ const Register = () => {
 
   return (
     <div
-      className="relative z-0 min-h-screen w-full overflow-hidden bg-cover bg-center"
+      className="relative z-0 min-h-screen w-full flex items-center justify-center bg-cover bg-center px-4 sm:px-6 lg:px-8"
       style={{ backgroundImage: `url(${bg6})` }}
     >
-      <div className="fixed top-4 left-4 z-20">
+      {/* Logo */}
+      <div className="absolute top-4 left-4 z-20">
         <img
           onClick={handleLogoClick}
           src={logo}
           alt="Logo"
-          className="h-10 w-auto cursor-pointer"
+          className="h-8 sm:h-10 md:h-12 w-auto cursor-pointer"
         />
       </div>
 
-      <div className="fixed inset-0 z-10 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-2 w-full md:w-1/2 max-w-[500px] py-8 bg-white rounded-xl shadow-lg">
-          <MessageBubble />
+      {/* Main Content Card */}
+      <div className="z-10 flex flex-col items-center w-full max-w-[420px] sm:max-w-[500px] lg:max-w-[550px] p-6 sm:p-8 bg-white/40 rounded-xl shadow-xl backdrop-blur-md">
+        <MessageBubble />
 
-          <div className="flex flex-col items-center w-full ">
-            <div className="flex flex-col items-center w-full gap-1 mb-2">
-              <Text
-                className="text-black text-2xl md:text-3xl font-semibold"
-                style={{ fontFamily: "Merienda, cursive" }}
-              >
-                Register
-              </Text>
-              <Text
-                className="text-[15px] font-normal text-center"
-                style={{ fontFamily: "Merienda, cursive" }}
-              >
-                Let’s get you started with your friendly AI buddy!
-              </Text>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center w-full">
-            <Form
-              layout="vertical"
-              form={form}
-              className="w-[380px] sm:w-[400px]"
-              onFinish={onFinish}
-            >
-              {currentStep === 1 && (
-                <>
-                  <Form.Item
-                    name="username"
-                    label="Username"
-                    className="custom-label"
-                    rules={[
-                      { required: true, message: "Username is required!" },
-                      { validator: validateUsername },
-                    ]}
-                  >
-                    <Input
-                      prefix={<UserOutlined />}
-                      placeholder="username"
-                      size="large"
-                      maxLength={100}
-                      className="w-full custom-input rounded-none"
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="password"
-                    label="Password"
-                    className="custom-label"
-                    rules={[
-                      { required: true, message: "Password is required!" },
-                      { validator: passwordFieldValidation },
-                    ]}
-                  >
-                    <Input.Password
-                      prefix={<LockOutlined />}
-                      size="large"
-                      placeholder="Password"
-                      maxLength={60}
-                      className="w-full custom-input"
-                    />
-                  </Form.Item>
-                  <div className="flex justify-center mb-2">
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </>
-              )}
-              {currentStep === 2 && (
-                <>
-                  <Form.Item
-                    name="securityQuestion"
-                    label="Security Question"
-                    className="custom-label"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select a security question",
-                      },
-                    ]}
-                  >
-                    <Select
-                      placeholder="Select a security question"
-                      size="large"
-                    >
-                      <Select.Option value="first_school">
-                        What was your first school?
-                      </Select.Option>
-                      <Select.Option value="pet_name">
-                        What is your pet’s name?
-                      </Select.Option>
-                      <Select.Option value="birth_city">
-                        In which city were you born?
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-
-                  <Form.Item
-                    name="securityAnswer"
-                    label="Security Answer"
-                    className="custom-label"
-                    rules={[
-                      { required: true, message: "Please provide an answer" },
-                    ]}
-                  >
-                    <Input
-                      size="large"
-                      placeholder="Your Answer"
-                      maxLength={100}
-                      className="w-full custom-input"
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="scrolledToBottom"
-                    initialValue={false}
-                    hidden
-                  >
-                    <input type="hidden" />
-                  </Form.Item>
-
-                  <Form.Item
-                    name="agree"
-                    valuePropName="checked"
-                    rules={[
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value)
-                            return Promise.reject("You must agree to terms");
-                          if (!getFieldValue("scrolledToBottom"))
-                            return Promise.reject(
-                              "Please scroll and read all terms"
-                            );
-                          return Promise.resolve();
-                        },
-                      }),
-                    ]}
-                  >
-                    <div className="flex items-center justify-between">
-                      <Checkbox
-                        disabled={!form.getFieldValue("scrolledToBottom")}
-                      >
-                        I agree to the{" "}
-                        <span
-                          className="text-textColorTwo cursor-pointer underline"
-                          onClick={() => setModalVisible(true)}
-                        >
-                          Terms & Privacy Policy
-                        </span>
-                      </Checkbox>
-                      <span
-                        className="text-textColorTwo cursor-pointer hover:text-black text-sm md:text-base"
-                        onClick={prev}
-                      >
-                        ← Back
-                      </span>
-                    </div>
-                  </Form.Item>
-
-                  <Form.Item>
-                    <div className="flex justify-center">
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
-                        loading={loading}
-                      >
-                        Sign Up
-                      </Button>
-                    </div>
-                  </Form.Item>
-                </>
-              )}
-            </Form>
-
-            <Form>
-             {/*  <div className="flex justify-center mb-2">
-                <Text className="text-center text-black text-sm">or</Text>
-              </div>
-              <Form.Item>
-                <div className="flex justify-center">
-                  <Button
-                    type="primary"
-                    className="google_btn flex items-center gap-2"
-                    onClick={googleAuth}
-                  >
-                    <img
-                      src={assets.google}
-                      alt="google icon"
-                      className="w-5 h-5"
-                    />
-                    Sign up with Google
-                  </Button>
-                </div>
-              </Form.Item> */}
-
-              <Text className="block text-center text-sm md:text-base text-textColorOne">
-                Already have an account?{" "}
-                <span
-                  className="text-textColorTwo cursor-pointer"
-                  onClick={() => navigate("/sign-in")}
-                >
-                  Sign In
-                </span>
-              </Text>
-            </Form>
-          </div>
+        {/* Header */}
+        <div className="flex flex-col items-center mb-3 text-center">
+          <Text
+            className="text-xl sm:text-2xl md:text-3xl font-semibold text-black"
+            style={{ fontFamily: "Merienda, cursive" }}
+          >
+            Register
+          </Text>
+          <Text
+            className="text-sm sm:text-base text-gray-700 mt-1"
+            style={{ fontFamily: "Merienda, cursive" }}
+          >
+            Let’s get you started with your friendly AI buddy!
+          </Text>
         </div>
+
+        {/* Form */}
+        <Form
+          layout="vertical"
+          form={form}
+          className="w-full"
+          onFinish={onFinish}
+        >
+          {currentStep === 1 && (
+            <>
+              <Form.Item
+                name="username"
+                label="Username"
+                className="custom-label"
+                rules={[
+                  { required: true, message: "Username is required!" },
+                  { validator: validateUsername },
+                ]}
+              >
+                <Input
+                  prefix={<UserOutlined />}
+                  placeholder="username"
+                  size="large"
+                  maxLength={100}
+                  className="w-full rounded-md bg-gray-100 placeholder-lime-500"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="password"
+                label="Password"
+                className="custom-label"
+                rules={[
+                  { required: true, message: "Password is required!" },
+                  { validator: passwordFieldValidation },
+                ]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  size="large"
+                  placeholder="Password"
+                  maxLength={60}
+                  className="w-full rounded-md  bg-gray-100 placeholder-lime-500"
+                />
+              </Form.Item>
+
+              <div className="flex justify-center mt-4">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full sm:w-[80%] md:w-[70%] h-[42px] text-base md:text-lg rounded-xl text-white font-semibold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                >
+                  Next
+                </Button>
+              </div>
+            </>
+          )}
+
+          {currentStep === 2 && (
+            <>
+              <Form.Item
+                name="securityQuestion"
+                label="Security Question"
+                rules={[{ required: true, message: "Please select a question" }]}
+              >
+                <Select placeholder="Select a security question" size="large">
+                  <Select.Option value="first_school">
+                    What was your first school?
+                  </Select.Option>
+                  <Select.Option value="pet_name">
+                    What is your pet’s name?
+                  </Select.Option>
+                  <Select.Option value="birth_city">
+                    In which city were you born?
+                  </Select.Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="securityAnswer"
+                label="Security Answer"
+                rules={[{ required: true, message: "Please provide an answer" }]}
+              >
+                <Input
+                  size="large"
+                  placeholder="Your Answer"
+                  maxLength={100}
+                  className="w-full rounded-md"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="agree"
+                valuePropName="checked"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value)
+                        return Promise.reject("You must agree to terms");
+                      if (!getFieldValue("scrolledToBottom"))
+                        return Promise.reject("Scroll and read all terms");
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <Checkbox disabled={!form.getFieldValue("scrolledToBottom")}>
+                    I agree to the{" "}
+                    <span
+                      className="text-[#2CA58D] underline cursor-pointer"
+                      onClick={() => setModalVisible(true)}
+                    >
+                      Terms & Privacy Policy
+                    </span>
+                  </Checkbox>
+                  <span
+                    className="text-[#2CA58D] cursor-pointer hover:text-black text-sm"
+                    onClick={prev}
+                  >
+                    ← Back
+                  </span>
+                </div>
+              </Form.Item>
+
+              <div className="flex justify-center mt-3">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  className="w-full sm:w-[80%] md:w-[70%] h-[42px] text-base md:text-lg rounded-full text-white font-semibold bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                >
+                  Sign Up
+                </Button>
+              </div>
+            </>
+          )}
+        </Form>
+
+        {/* Divider */}
+       {/*  <div className="flex items-center justify-center my-3 w-full">
+          <div className="border-t border-gray-300 w-1/4"></div>
+          <Text className="mx-2 text-sm text-gray-600">or</Text>
+          <div className="border-t border-gray-300 w-1/4"></div>
+        </div> */}
+
+        {/* Google Sign Up */}
+       {/*  <Button
+          type="primary"
+          className="google_btn flex items-center justify-center gap-2 w-full sm:w-[80%] md:w-[70%] h-[42px] rounded-full font-medium"
+          onClick={googleAuth}
+        >
+          <img src={assets.google} alt="google icon" className="w-5 h-5" />
+          Sign up with Google
+        </Button> */}
+
+        <Text className="mt-3 text-center text-sm md:text-base text-gray-700">
+          Already have an account?{" "}
+          <span
+            className="text-[#2CA58D] cursor-pointer hover:underline"
+            onClick={() => navigate("/sign-in")}
+          >
+            Sign In
+          </span>
+        </Text>
       </div>
 
-      {/* Terms Modal */}
+      {/* Responsive Modal */}
       <Modal
         title="Terms & Conditions and Privacy Policy"
-        visible={modalVisible}
+        open={modalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={() => setModalVisible(false)}
         okButtonProps={{ disabled: !scrolledToBottom }}
-        bodyStyle={{ padding: 0 }} // remove default padding
+        bodyStyle={{
+          padding: 0,
+          maxHeight: "65vh",
+          overflowY: "auto",
+        }}
+        centered
       >
         <div
+          ref={contentRef}
+          onScroll={handleScroll}
+          className="px-6 py-4 bg-gray-50 text-gray-800 text-sm sm:text-base leading-relaxed"
+        >
+          <div
           ref={contentRef}
           onScroll={handleScroll}
           className="
@@ -488,8 +467,10 @@ const Register = () => {
             Scroll to the bottom to enable acceptance.
           </p>
         </div>
+        </div>
       </Modal>
     </div>
+
   );
 };
 

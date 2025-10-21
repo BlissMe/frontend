@@ -288,21 +288,21 @@ const Register = () => {
         </Form>
 
         {/* Divider */}
-        <div className="flex items-center justify-center my-3 w-full">
+       {/*  <div className="flex items-center justify-center my-3 w-full">
           <div className="border-t border-gray-300 w-1/4"></div>
           <Text className="mx-2 text-sm text-gray-600">or</Text>
           <div className="border-t border-gray-300 w-1/4"></div>
-        </div>
+        </div> */}
 
         {/* Google Sign Up */}
-        <Button
+       {/*  <Button
           type="primary"
           className="google_btn flex items-center justify-center gap-2 w-full sm:w-[80%] md:w-[70%] h-[42px] rounded-full font-medium"
           onClick={googleAuth}
         >
           <img src={assets.google} alt="google icon" className="w-5 h-5" />
           Sign up with Google
-        </Button>
+        </Button> */}
 
         <Text className="mt-3 text-center text-sm md:text-base text-gray-700">
           Already have an account?{" "}
@@ -334,7 +334,7 @@ const Register = () => {
           onScroll={handleScroll}
           className="px-6 py-4 bg-gray-50 text-gray-800 text-sm sm:text-base leading-relaxed"
         >
-          {/* (Terms content as before) */}
+          
         </div>
       </Modal>
     </div>

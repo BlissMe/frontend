@@ -29,14 +29,14 @@ export const passwordFieldValidation = (
 
   return Promise.resolve();
 };
-// Username validation function (numbers only)
+// Username validation function
 export const validateUsername = (_: any, value: string) => {
-  // Must be 6–10 digits, only numbers allowed
-  const usernameRegex = /^\d{6,10}$/;
+  // Must be 6–10 characters, include at least one uppercase, one lowercase, one number, and only contain letters or numbers
+  const usernameRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{6,10}$/;
 
   if (!usernameRegex.test(value)) {
     return Promise.reject(
-      "Username must be 6–10 digits long and contain only numbers."
+      "Username must be 6–10 characters long, include at least one uppercase letter, one lowercase letter, and one number. Only letters and numbers are allowed."
     );
   }
 

@@ -367,7 +367,7 @@ const ChatInterface = () => {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSend();
             }}
-            disabled={loading}
+            disabled={loading || isPhq9}
           />
 
           <Button
@@ -380,7 +380,7 @@ const ChatInterface = () => {
               />
             }
             onClick={handleSend}
-            disabled={loading}
+            disabled={loading || isPhq9}
           />
         </div>
 

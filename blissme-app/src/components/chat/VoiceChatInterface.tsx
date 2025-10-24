@@ -426,6 +426,7 @@ const ViceChatInterface = () => {
 
       setLevelResult(resp.data);
       setLevelOpen(true);
+      localStorage.clear();
       navigate("/home");
     } catch (e) {
       console.error(e);

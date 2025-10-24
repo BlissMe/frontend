@@ -247,6 +247,7 @@ const ChatInterface = () => {
       if (!resp?.success) throw new Error("level API failed");
       setLevelResult(resp.data);
       setLevelOpen(true);
+      localStorage.clear();
       navigate("/home");
     } catch (e) {
       console.error(e);

@@ -42,7 +42,7 @@ const levelColor = (lvl?: string) => {
 const { Text } = Typography;
 
 const ChatInterface = () => {
-  const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
+  const { sessionID, setSessionID, setMessages, setChatHistory, messages,handleLogout} =
     useContext(AuthContext);
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -247,8 +247,7 @@ const ChatInterface = () => {
       if (!resp?.success) throw new Error("level API failed");
       setLevelResult(resp.data);
       setLevelOpen(true);
-      localStorage.clear();
-      navigate("/home");
+      handleLogout();
     } catch (e) {
       console.error(e);
     }

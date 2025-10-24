@@ -55,7 +55,7 @@ const Sidebar: React.FC = () => {
     setChatHistory([]);
     setIsSessionEnded(true);
     localStorage.clear();
-    navigate("/login");
+    navigate("/home");
   };
 
   const storedUser = JSON.parse(getLocalStoragedata("reduxState") || "{}");

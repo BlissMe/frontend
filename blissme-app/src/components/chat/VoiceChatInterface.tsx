@@ -1,5 +1,5 @@
 import bearnew from "../../assets/images/bearnew.png";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Button, Typography, Tooltip } from "antd";
 import ReactBarsLoader from "../../components/loader/ReactBarLoader";
 import { getCurrentTime } from "../../helpers/Time";
@@ -29,6 +29,7 @@ import {
 } from "../../helpers/Storage";
 import { useNavigate } from "react-router-dom";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
+import { AuthContext } from "../../app/context/AuthContext";
 
 const { Text } = Typography;
 interface Message {
@@ -47,6 +48,7 @@ interface ApiResult {
 }
 
 const ViceChatInterface = () => {
+  const { handleLogout } = useContext(AuthContext);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -90,38 +92,34 @@ const ViceChatInterface = () => {
     scrollToBottom();
   }, [messages, isBotTyping]);
 
-  
-useEffect(() => {
-  (async () => {
-    let existingSession = getLocalStoragedata("sessionID");
-    if (!existingSession) {
-      const session = await createNewSession();
-      existingSession = session;
-      setLocalStorageData("sessionID", session);
-    }
+  useEffect(() => {
+    (async () => {
+      let existingSession = getLocalStoragedata("sessionID");
+      if (!existingSession) {
+        const session = await createNewSession();
+        existingSession = session;
+        setLocalStorageData("sessionID", session);
+      }
 
-    if (!existingSession) return; // sanity check
+      if (!existingSession) return;
 
-    setSessionID(existingSession); // now TS is happy
+      setSessionID(existingSession);
 
-    // Fetch chat history for this session
-    const updatedHistory = await fetchChatHistory(existingSession);
-    if (Array.isArray(updatedHistory)) {
-      const formattedMessages: Message[] = updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "bot" : "you",
-        text: msg.message,
-        time: msg.time || getCurrentTime(),
-      }));
-      setMessages(formattedMessages);
-    }
+      // Fetch chat history for this session
+      const updatedHistory = await fetchChatHistory(existingSession);
+      if (Array.isArray(updatedHistory)) {
+        const formattedMessages: Message[] = updatedHistory.map((msg: any) => ({
+          sender: msg.sender === "bot" ? "bot" : "you",
+          text: msg.message,
+          time: msg.time || getCurrentTime(),
+        }));
+        setMessages(formattedMessages);
+      }
 
-    // Fetch summaries
-    const allSummaries = await fetchAllSummaries();
-    setSessionSummaries(allSummaries);
-  })();
-}, []);
-
-
+      const allSummaries = await fetchAllSummaries();
+      setSessionSummaries(allSummaries);
+    })();
+  }, []);
 
   useEffect(() => {
     if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {
@@ -450,7 +448,7 @@ useEffect(() => {
 
       setLevelResult(resp.data);
       setLevelOpen(true);
-      navigate("/home");
+      handleLogout();
     } catch (e) {
       console.error(e);
     }

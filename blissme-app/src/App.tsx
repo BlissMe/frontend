@@ -4,7 +4,7 @@ import { useDisableDevTools } from "./helpers/useDisableDevTools";
 
 function App() {
   
-  useDisableDevTools();
+  //useDisableDevTools();
 
   return (
     <BrowserRouter>

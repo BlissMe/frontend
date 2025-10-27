@@ -48,7 +48,7 @@ interface ApiResult {
 }
 
 const ViceChatInterface = () => {
-  const { handleLogout} = useContext(AuthContext);
+  const { handleLogout } = useContext(AuthContext);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -94,8 +94,28 @@ const ViceChatInterface = () => {
 
   useEffect(() => {
     (async () => {
-      const session = await createNewSession();
-      setSessionID(session);
+      let existingSession = getLocalStoragedata("sessionID");
+      if (!existingSession) {
+        const session = await createNewSession();
+        existingSession = session;
+        setLocalStorageData("sessionID", session);
+      }
+
+      if (!existingSession) return;
+
+      setSessionID(existingSession);
+
+      // Fetch chat history for this session
+      const updatedHistory = await fetchChatHistory(existingSession);
+      if (Array.isArray(updatedHistory)) {
+        const formattedMessages: Message[] = updatedHistory.map((msg: any) => ({
+          sender: msg.sender === "bot" ? "bot" : "you",
+          text: msg.message,
+          time: msg.time || getCurrentTime(),
+        }));
+        setMessages(formattedMessages);
+      }
+
       const allSummaries = await fetchAllSummaries();
       setSessionSummaries(allSummaries);
     })();

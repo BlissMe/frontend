@@ -25,6 +25,10 @@ import { Modal, Tag, Progress, Descriptions } from "antd";
 import { ConsoleSqlOutlined } from "@ant-design/icons";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import {
+  getLocalStoragedata,
+  setLocalStorageData,
+} from "../../helpers/Storage";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -42,8 +46,14 @@ const levelColor = (lvl?: string) => {
 const { Text } = Typography;
 
 const ChatInterface = () => {
-  const { sessionID, setSessionID, setMessages, setChatHistory, messages,handleLogout} =
-    useContext(AuthContext);
+  const {
+    sessionID,
+    setSessionID,
+    setMessages,
+    setChatHistory,
+    messages,
+    handleLogout,
+  } = useContext(AuthContext);
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -63,8 +73,17 @@ const ChatInterface = () => {
 
   useEffect(() => {
     (async () => {
-      const session = await createNewSession();
-      setSessionID(session);
+      let existingSession = getLocalStoragedata("sessionID");
+      if (!existingSession) {
+        const session = await createNewSession();
+        existingSession = session;
+        setLocalStorageData("sessionID", session);
+      }
+
+      if (existingSession) {
+        setSessionID(existingSession);
+      }
+
       const allSummaries = await fetchAllSummaries();
       setSessionSummaries(allSummaries);
     })();

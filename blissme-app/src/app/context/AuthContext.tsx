@@ -70,7 +70,7 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
     setChatHistory([]);
     setIsSessionEnded(true);
     localStorage.clear();
-    window.location.href = "/sign-in"; 
+    window.location.href = "/home"; 
   };
 
   useEffect(() => {

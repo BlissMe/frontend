@@ -25,6 +25,7 @@ import { Modal, Tag, Progress, Descriptions } from "antd";
 import { ConsoleSqlOutlined } from "@ant-design/icons";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { getLocalStoragedata, setLocalStorageData } from "../../helpers/Storage";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -61,14 +62,25 @@ const ChatInterface = () => {
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
+useEffect(() => {
+  (async () => {
+    let existingSession = localStorage.getItem("sessionID");
+    if (!existingSession) {
       const session = await createNewSession();
-      setSessionID(session);
-      const allSummaries = await fetchAllSummaries();
-      setSessionSummaries(allSummaries);
-    })();
-  }, []);
+      existingSession = session;
+      localStorage.setItem("sessionID", session);
+    }
+
+    if (existingSession) {
+      setSessionID(existingSession);
+    }
+
+    const allSummaries = await fetchAllSummaries();
+    setSessionSummaries(allSummaries);
+  })();
+}, []);
+
+
 
   useEffect(() => {
     fetchCharacters();

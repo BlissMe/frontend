@@ -90,14 +90,24 @@ const ViceChatInterface = () => {
     scrollToBottom();
   }, [messages, isBotTyping]);
 
-  useEffect(() => {
-    (async () => {
+  
+useEffect(() => {
+  (async () => {
+    let existingSession = getLocalStoragedata("sessionID");
+    if (!existingSession) {
       const session = await createNewSession();
-      setSessionID(session);
-      const allSummaries = await fetchAllSummaries();
-      setSessionSummaries(allSummaries);
-    })();
-  }, []);
+      existingSession = session;
+      setLocalStorageData("sessionID", session);
+    }
+
+    if (existingSession) {
+      setSessionID(existingSession);
+    }
+
+    const allSummaries = await fetchAllSummaries();
+    setSessionSummaries(allSummaries);
+  })();
+}, []);
 
   useEffect(() => {
     if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {

@@ -64,11 +64,11 @@ const ChatInterface = () => {
 
 useEffect(() => {
   (async () => {
-    let existingSession = localStorage.getItem("sessionID");
+    let existingSession = getLocalStoragedata("sessionID");
     if (!existingSession) {
       const session = await createNewSession();
       existingSession = session;
-      localStorage.setItem("sessionID", session);
+      setLocalStorageData("sessionID", session);
     }
 
     if (existingSession) {

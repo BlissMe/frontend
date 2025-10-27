@@ -100,14 +100,28 @@ useEffect(() => {
       setLocalStorageData("sessionID", session);
     }
 
-    if (existingSession) {
-      setSessionID(existingSession);
+    if (!existingSession) return; // sanity check
+
+    setSessionID(existingSession); // now TS is happy
+
+    // Fetch chat history for this session
+    const updatedHistory = await fetchChatHistory(existingSession);
+    if (Array.isArray(updatedHistory)) {
+      const formattedMessages: Message[] = updatedHistory.map((msg: any) => ({
+        sender: msg.sender === "bot" ? "bot" : "you",
+        text: msg.message,
+        time: msg.time || getCurrentTime(),
+      }));
+      setMessages(formattedMessages);
     }
 
+    // Fetch summaries
     const allSummaries = await fetchAllSummaries();
     setSessionSummaries(allSummaries);
   })();
 }, []);
+
+
 
   useEffect(() => {
     if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {

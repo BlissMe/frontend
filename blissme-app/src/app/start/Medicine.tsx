@@ -43,7 +43,7 @@ const Medicine = () => {
         }
       );
 
-      openNotification("success", response.data.message);
+      //openNotification("success", response.data.message);
       setLocalStorageData("takesMedicine", choice || "skipped");
 
       // Navigate to next page (change route if needed)

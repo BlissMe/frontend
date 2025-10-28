@@ -217,13 +217,13 @@ const Register = () => {
               >
                 <Select placeholder="Select a security question" size="large">
                   <Select.Option value="first_school">
-                    What was your first school?
+                    What is your favourite color?
                   </Select.Option>
                   <Select.Option value="pet_name">
                     What is your pet’s name?
                   </Select.Option>
                   <Select.Option value="birth_city">
-                    In which city were you born?
+                    What is your favourite country?
                   </Select.Option>
                 </Select>
               </Form.Item>

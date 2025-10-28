@@ -114,7 +114,6 @@ const dispatch = useDispatch<AppDispatch>();
                   }}
                   size="large"
                   maxLength={100}
-                  autoComplete="off"
                 />
               </Form.Item>
 

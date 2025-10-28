@@ -5,6 +5,7 @@ const initialState: UserPreferencesState = {
   nickname: "",
   virtualCharacter: 1,
   inputMode: "",
+  languageMode: "",
   loading: false,
   error: null,
 };
@@ -23,12 +24,14 @@ const userSlice = createSlice({
         nickname: string;
         virtualCharacter: number;
         inputMode: string;
+        languageMode: string;
       }>
     ) {
       state.loading = false;
       state.nickname = action.payload.nickname;
       state.virtualCharacter = action.payload.virtualCharacter;
       state.inputMode = action.payload.inputMode;
+      state.languageMode = action.payload.languageMode;
       state.error = null;
     },
     setPreferencesFailure(state, action: PayloadAction<string>) {
@@ -45,12 +48,14 @@ const userSlice = createSlice({
         nickname: string;
         virtualCharacter: number;
         inputMode: string;
+        languageMode: string;
       }>
     ) {
       state.loading = false;
       state.nickname = action.payload.nickname;
       state.virtualCharacter = action.payload.virtualCharacter;
       state.inputMode = action.payload.inputMode;
+      state.languageMode = action.payload.languageMode;
       state.error = null;
     },
     getPreferencesFailure(state, action: PayloadAction<string>) {
@@ -67,12 +72,14 @@ const userSlice = createSlice({
         nickname: string;
         virtualCharacter: number;
         inputMode: string;
+        languageMode: string;
       }>
     ) {
       state.loading = false;
       state.nickname = action.payload.nickname;
       state.virtualCharacter = action.payload.virtualCharacter;
       state.inputMode = action.payload.inputMode;
+      state.languageMode = action.payload.languageMode;
       state.error = null;
     },
     updatePreferencesFailure(state, action: PayloadAction<string>) {

@@ -46,7 +46,7 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!localToken) return;
 
     try {
-      const response = await axios.get<Character[]>(`${url}/`, {
+      const response = await axios.get<Character[]>(`${url}`, {
         headers: { Authorization: `Bearer ${localToken}` },
       });
       setCharacters(response.data);
@@ -59,7 +59,7 @@ const CharacterProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     fetchCharacters();
-  }, [url]);
+  }, []);
 
   const selectedCharacter = characters.find(
     (char) => char.characterId === selectId

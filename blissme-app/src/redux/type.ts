@@ -10,6 +10,7 @@ export interface UserPreferencesState {
     nickname: string;
     virtualCharacter: number;
     inputMode: string;
+    languageMode: string;
     loading: boolean;
     error: string | null;
 }
@@ -28,6 +29,7 @@ interface SetPreferencesSuccess {
         nickname: string;
         virtualCharacter: string;
         inputMode: string;
+        languageMode: string;
     };
 }
 

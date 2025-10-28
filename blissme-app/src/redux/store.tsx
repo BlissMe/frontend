@@ -17,6 +17,7 @@ const loadState = (): { user: UserPreferencesState } | undefined => {
 const saveState = (state: { user: UserPreferencesState }) => {
   try {
     const serializedState = JSON.stringify(state);
+    console.log("userstate",serializedState)
     setLocalStorageData("reduxState", serializedState);
   } catch (err) {
     console.warn("Failed to save state to localStorage:", err);

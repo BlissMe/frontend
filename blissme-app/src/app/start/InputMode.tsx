@@ -43,6 +43,7 @@ const InputMode = () => {
   ];
 
   const [selectedMode, setSelectedMode] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("English"); 
   const [isSignedUp, setIsSignedUp] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -52,6 +53,7 @@ const InputMode = () => {
   const virtualCharacter = useSelector(
     (state: RootState) => state.user.virtualCharacter
   );
+
   useEffect(() => {
     const signedInFlag = getLocalStoragedata("isSignUp");
     setIsSignedUp(signedInFlag === "true");
@@ -68,18 +70,21 @@ const InputMode = () => {
           nickname,
           virtualCharacter,
           inputMode: selectedMode,
+          languageMode: selectedLanguage,
         })
       );
-      dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode));
+      dispatch(setUserPreferences(nickname, virtualCharacter, selectedMode, selectedLanguage));
     } else {
       dispatch(
         updatePreferencesSuccess({
           nickname,
           virtualCharacter,
           inputMode: selectedMode,
+          languageMode: selectedLanguage,
         })
       );
-      dispatch(updateUserPreferences(nickname, virtualCharacter, selectedMode));
+      dispatch(updateUserPreferences(nickname, virtualCharacter, selectedMode, selectedLanguage));
+      console.log("selectLanguage",selectedLanguage)
       setLocalStorageData("selectedCharacterId", virtualCharacter);
     }
     openNotification("success", "Input mode selected successfully!");
@@ -87,7 +92,9 @@ const InputMode = () => {
     if (selectedMode === "Voice") {
       navigate("/chat-new/voice", { replace: true });
     } else if (selectedMode === "Text") {
-      navigate("/chat-new/text", { replace: true });
+      navigate("/chat-new/text", {
+        replace: true,
+      });
     }
   };
 
@@ -118,6 +125,7 @@ const InputMode = () => {
             className="w-34 h-16 animate-wiggle animate-infinite"
           />
 
+          {/* Input Mode Selection */}
           <div className=" bottom-0 w-[90%] bg-[#DCF2DE] shadow-md rounded-lg px-4 py-3 translate-y-[-15%] items-center">
             <label className="text-gray-600 text-sm text-center block max-w-full mb-2">
               Choose input method
@@ -130,11 +138,11 @@ const InputMode = () => {
                     key={mode}
                     onClick={() => setSelectedMode(mode)}
                     className={`flex flex-col items-center justify-center w-20 h-10 bg-white bg-opacity-50 rounded-lg p-2 shadow-md transition-transform cursor-pointer hover:scale-105
-        ${selectedMode === mode
+                      ${selectedMode === mode
                         ? "border-2 border-[#1B5E3A]"
                         : "border border-transparent"
                       }
-      `}
+                    `}
                   >
                     <span className="text-sm font-medium text-gray-700">
                       {mode}
@@ -144,12 +152,38 @@ const InputMode = () => {
               </div>
             </div>
           </div>
+
+          {selectedMode === "Text" && (
+            <div className="mt-4 w-[90%] bg-[#DCF2DE] shadow-md rounded-lg px-4 py-3 items-center">
+              <label className="text-gray-600 text-sm text-center block mb-2">
+                Choose language
+              </label>
+              <div className="flex justify-center gap-4">
+                {["English", "Sinhala"].map((lang) => (
+                  <div
+                    key={lang}
+                    onClick={() => setSelectedLanguage(lang)}
+                    className={`flex items-center justify-center w-24 h-10 bg-white rounded-lg shadow-md cursor-pointer hover:scale-105 transition-transform
+                      ${selectedLanguage === lang
+                        ? "border-2 border-[#1B5E3A]"
+                        : "border border-transparent"
+                      }
+                    `}
+                  >
+                    <span className="text-sm font-medium text-gray-700">
+                      {lang}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <Button
           type="default"
           onClick={handleNext}
-          className="bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:bg-[#1B5E3A] text-white border-none shadow-md"
+          className="mt-4 bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:bg-[#1B5E3A] text-white border-none shadow-md"
         >
           Start
         </Button>

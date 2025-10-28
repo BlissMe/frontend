@@ -1,7 +1,8 @@
 import bearnew from "../../assets/images/bearnew.png";
-import { Button, Typography, Spin } from "antd";
+import { Button, Typography, Spin, Modal, Tag, Progress, Descriptions } from "antd";
 import { assets } from "../../assets/assets";
 import { useState, useEffect, useContext } from "react";
+import { useLocation } from "react-router-dom";   // ✅
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
 import {
@@ -15,12 +16,9 @@ import { useCharacterContext } from "../../app/context/CharacterContext";
 import { AuthContext } from "../../app/context/AuthContext";
 import { Message } from "../../app/context/AuthContext";
 import user from "../../assets/images/user.png";
-import { getClassifierResult, ClassifierResult, getDepressionLevel } from "../../services/DetectionService";
+import { getClassifierResult, getDepressionLevel } from "../../services/DetectionService";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
-import { Modal, Tag, Progress, Descriptions } from "antd";
 import { getLocalStoragedata } from "../../helpers/Storage";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -31,7 +29,6 @@ const levelColor = (lvl?: string) => {
   }
 };
 
-
 const { Text } = Typography;
 
 const ChatInterface = () => {
@@ -39,22 +36,20 @@ const ChatInterface = () => {
     useContext(AuthContext);
 
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
-  const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const [detecting, setDetecting] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [lastPhq9, setLastPhq9] = useState<{
-    id: number;
-    question: string;
-  } | null>(null);
+  const [lastPhq9, setLastPhq9] = useState<{ id: number; question: string } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
-  const { selectedCharacter, nickname, fetchCharacters } = useCharacterContext();
+  const { selectedCharacter, fetchCharacters } = useCharacterContext();
   const [levelResult, setLevelResult] = useState<any>(null);
   const [levelOpen, setLevelOpen] = useState(false);
 
-  const language = useSelector((state: RootState) => state.user.languageMode);
-  console.log("language", language);
+  // ✅ Language passed from InputMode.tsx
+  const storedUser = JSON.parse(getLocalStoragedata("reduxState") || "{}");
+
+  const language = storedUser?.user?.languageMode || "English";
 
   useEffect(() => {
     (async () => {
@@ -64,42 +59,27 @@ const ChatInterface = () => {
       const allSummaries = await fetchAllSummaries();
       setSessionSummaries(allSummaries);
     })();
-  }, []);
-  useEffect(() => {
-    fetchCharacters();
-  }, []);
-
+  }, [setSessionID]); 
 
   useEffect(() => {
     fetchCharacters();
-  }, []);
+  }, [fetchCharacters]);  
+
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
-    const userMessage = {
-      sender: "you",
-      text: inputValue,
-      time: getCurrentTime(),
-    };
-
+    const userMessage = { sender: "you", text: inputValue, time: getCurrentTime() };
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setLoading(true);
 
-    // Save user message to DB
     await saveMessage(inputValue, sessionID, "user");
 
     if (lastPhq9) {
-      await savePHQ9Answer(
-        sessionID,
-        lastPhq9.id,
-        lastPhq9.question,
-        inputValue // this is the user's answer
-      );
-      setLastPhq9(null); // clear it after saving
+      await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, inputValue);
+      setLastPhq9(null);
     }
 
-    // Get updated chat history
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
@@ -109,10 +89,9 @@ const ChatInterface = () => {
       }))
       : [];
 
-    const context = formattedHistory
-      .map((m) => `${m.sender}: ${m.text}`)
-      .join("\n");
+    const context = formattedHistory.map((m) => `${m.sender}: ${m.text}`).join("\n");
 
+    // ✅ Pass language
     const botReply = await chatBotService(
       context,
       inputValue,
@@ -121,51 +100,29 @@ const ChatInterface = () => {
       language
     );
 
-    const finalBotMsg = {
-      sender: "popo",
-      text: botReply.response,
-      time: getCurrentTime(),
-    };
+    const finalBotMsg = { sender: "popo", text: botReply.response, time: getCurrentTime() };
 
-    // Track PHQ-9 if a new question is asked
-    if (
-      typeof botReply.phq9_questionID === "number" &&
-      typeof botReply.phq9_question === "string"
-    ) {
-      const questionID = botReply.phq9_questionID as number;
-      const question = botReply.phq9_question as string;
-
-      setAskedPhq9Ids((prev) => [...prev, questionID]);
-      setLastPhq9({
-        id: questionID,
-        question: question,
-      });
+    if (typeof botReply.phq9_questionID === "number" && typeof botReply.phq9_question === "string") {
+      setAskedPhq9Ids((prev) => [...prev, botReply.phq9_questionID!]);
+      setLastPhq9({ id: botReply.phq9_questionID!, question: botReply.phq9_question! });
       setIsPhq9(true);
     }
 
     await saveMessage(finalBotMsg.text, sessionID, "bot");
-
-    const finalMessages = [...formattedHistory, finalBotMsg];
-    setMessages(finalMessages);
-    setChatHistory(finalMessages);
+    setMessages([...formattedHistory, finalBotMsg]);
+    setChatHistory([...formattedHistory, finalBotMsg]);
     setLoading(false);
   };
 
   const handlePhqAnswer = async (answer: string) => {
-    const answerMessage = {
-      sender: "you",
-      text: answer,
-      time: getCurrentTime(),
-    };
-
+    const answerMessage = { sender: "you", text: answer, time: getCurrentTime() };
     setMessages((prev: Message[]) => [...prev, answerMessage]);
-    setIsPhq9(false); // disable chit buttons
+    setIsPhq9(false);
     setLoading(true);
 
-    // Save PHQ9 answer
     if (lastPhq9) {
       await savePHQ9Answer(sessionID, lastPhq9.id, lastPhq9.question, answer);
-      setLastPhq9(null); // clear current PHQ9 question
+      setLastPhq9(null);
     }
 
     await saveMessage(answer, sessionID, "user");
@@ -179,10 +136,9 @@ const ChatInterface = () => {
       }))
       : [];
 
-    const context = formattedHistory
-      .map((m) => `${m.sender}: ${m.text}`)
-      .join("\n");
+    const context = formattedHistory.map((m) => `${m.sender}: ${m.text}`).join("\n");
 
+    // ✅ Pass language
     const botReply = await chatBotService(
       context,
       answer,
@@ -191,35 +147,21 @@ const ChatInterface = () => {
       language
     );
 
-    const finalBotMsg = {
-      sender: "popo",
-      text: botReply.response,
-      time: getCurrentTime(),
-    };
+    const finalBotMsg = { sender: "popo", text: botReply.response, time: getCurrentTime() };
 
-    if (
-      typeof botReply.phq9_questionID === "number" &&
-      typeof botReply.phq9_question === "string"
-    ) {
-      const questionID = botReply.phq9_questionID as number;
-      const question = botReply.phq9_question as string;
-
-      setAskedPhq9Ids((prev) => [...prev, questionID]);
-      setLastPhq9({ id: questionID, question: question });
+    if (typeof botReply.phq9_questionID === "number" && typeof botReply.phq9_question === "string") {
+      setAskedPhq9Ids((prev) => [...prev, botReply.phq9_questionID!]);
+      setLastPhq9({ id: botReply.phq9_questionID!, question: botReply.phq9_question! });
       setIsPhq9(true);
     }
 
     await saveMessage(finalBotMsg.text, sessionID, "bot");
-
-    const finalMessages = [...formattedHistory, finalBotMsg];
-    setMessages(finalMessages);
-    setChatHistory(finalMessages);
+    setMessages([...formattedHistory, finalBotMsg]);
+    setChatHistory([...formattedHistory, finalBotMsg]);
     setLoading(false);
   };
 
-  async function ClassifierResult() {
-    if (!sessionID) return; // session not ready yet
-    setDetecting(true);
+  async function runLevelDetection() {
     try {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
@@ -229,49 +171,25 @@ const ChatInterface = () => {
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
-      if (!historyStr) return; // nothing to classify yet
-
-      const latestSummary: string | null =
-        sessionSummaries && sessionSummaries.length
-          ? sessionSummaries[sessionSummaries.length - 1]
-          : null;
+      if (!historyStr) return;
 
       const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
-      setClassifier(res);
-
       try {
         await saveClassifierToServer(Number(sessionID), res);
       } catch (err) {
         console.error("Failed to persist classifier result:", err);
       }
-    } catch (e) {
-      console.error("getClassifierResult failed:", e);
-    } finally {
-      setDetecting(false);
-    }
-  }
 
-  async function runLevelDetection() {
-    try {
-      // 1) run your existing LLM classifier and persist it
-      await ClassifierResult();
-
-      // 2) compute composite index by userID (backend uses token->userID)
       const resp = await getDepressionLevel();
       if (!resp?.success) throw new Error("level API failed");
       setLevelResult(resp.data);
-      setLevelOpen(true); // open modal to show results
+      setLevelOpen(true);
     } catch (e) {
       console.error(e);
     }
   }
 
-  const phqOptions = [
-    "Not at all",
-    "Several days",
-    "More than half the days",
-    "Nearly every day",
-  ];
+  const phqOptions = ["Not at all", "Several days", "More than half the days", "Nearly every day"];
 
   return (
     <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">

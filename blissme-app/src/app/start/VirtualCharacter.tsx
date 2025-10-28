@@ -84,6 +84,7 @@ const VirtualCharacter = () => {
         nickname,
         virtualCharacter: selectedCharacterId,
         inputMode: "",
+        languageMode: "English",
       })
     );
     openNotification("success", "Virtual character selected successfully");

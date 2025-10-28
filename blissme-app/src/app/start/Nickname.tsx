@@ -22,7 +22,7 @@ const Nickname = () => {
     }
 
     dispatch(
-      setPreferencesSuccess({ nickname, virtualCharacter: 1, inputMode: "" })
+      setPreferencesSuccess({ nickname, virtualCharacter: 1, inputMode: "",languageMode: "" })
     );
     openNotification("success", "Nickname saved successfully");
     navigate("/mode/virtual-character");

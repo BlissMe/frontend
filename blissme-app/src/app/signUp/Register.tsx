@@ -6,7 +6,6 @@ import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
 import {
   passwordFieldValidation,
-  validateUsername,
 } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
@@ -164,7 +163,6 @@ const Register = () => {
                 className="custom-label"
                 rules={[
                   { required: true, message: "Username is required!" },
-                  { validator: validateUsername },
                 ]}
               >
                 <Input

@@ -64,6 +64,8 @@ const Routerset = () => {
       <Route path="/doctors" element={<Doctors />} />
       <Route path="/body-scan" element={<BodyScan />} />
 
+
+
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>

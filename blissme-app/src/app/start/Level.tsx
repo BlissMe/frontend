@@ -48,7 +48,7 @@ const Level = () => {
         }
       );
 
-      openNotification("success", response.data.message);
+      //openNotification("success", response.data.message);
       setLocalStorageData("depressionLevel", level || "unknown");
       setSelectedLevel(level);
 

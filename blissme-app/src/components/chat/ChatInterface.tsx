@@ -25,6 +25,7 @@ import { Modal, Tag, Progress, Descriptions } from "antd";
 import { ConsoleSqlOutlined } from "@ant-design/icons";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { getLocalStoragedata, setLocalStorageData } from "../../helpers/Storage";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -42,7 +43,7 @@ const levelColor = (lvl?: string) => {
 const { Text } = Typography;
 
 const ChatInterface = () => {
-  const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
+  const { sessionID, setSessionID, setMessages, setChatHistory, messages,handleLogout} =
     useContext(AuthContext);
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -61,14 +62,25 @@ const ChatInterface = () => {
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
+useEffect(() => {
+  (async () => {
+    let existingSession = getLocalStoragedata("sessionID");
+    if (!existingSession) {
       const session = await createNewSession();
-      setSessionID(session);
-      const allSummaries = await fetchAllSummaries();
-      setSessionSummaries(allSummaries);
-    })();
-  }, []);
+      existingSession = session;
+      setLocalStorageData("sessionID", session);
+    }
+
+    if (existingSession) {
+      setSessionID(existingSession);
+    }
+
+    const allSummaries = await fetchAllSummaries();
+    setSessionSummaries(allSummaries);
+  })();
+}, []);
+
+
 
   useEffect(() => {
     fetchCharacters();
@@ -247,7 +259,7 @@ const ChatInterface = () => {
       if (!resp?.success) throw new Error("level API failed");
       setLevelResult(resp.data);
       setLevelOpen(true);
-      navigate("/home");
+      handleLogout();
     } catch (e) {
       console.error(e);
     }
@@ -366,7 +378,7 @@ const ChatInterface = () => {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSend();
             }}
-            disabled={loading}
+            disabled={loading || isPhq9}
           />
 
           <Button
@@ -379,7 +391,7 @@ const ChatInterface = () => {
               />
             }
             onClick={handleSend}
-            disabled={loading}
+            disabled={loading || isPhq9}
           />
         </div>
 

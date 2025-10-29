@@ -6,7 +6,6 @@ import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
 import {
   passwordFieldValidation,
-  validateUsername,
 } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
@@ -164,7 +163,6 @@ const Register = () => {
                 className="custom-label"
                 rules={[
                   { required: true, message: "Username is required!" },
-                  { validator: validateUsername },
                 ]}
               >
                 <Input
@@ -217,13 +215,13 @@ const Register = () => {
               >
                 <Select placeholder="Select a security question" size="large">
                   <Select.Option value="first_school">
-                    What was your first school?
+                    What is your favourite color?
                   </Select.Option>
                   <Select.Option value="pet_name">
                     What is your pet’s name?
                   </Select.Option>
                   <Select.Option value="birth_city">
-                    In which city were you born?
+                    What is your favourite country?
                   </Select.Option>
                 </Select>
               </Form.Item>

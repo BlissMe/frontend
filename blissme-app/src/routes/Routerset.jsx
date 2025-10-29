@@ -115,7 +115,7 @@ const Routerset = () => {
           </Route>
         </>
       ) : (
-        <Route path="*" element={<Navigate to="/sign-in" />} />
+        <Route path="*" element={<Navigate to="/home" />} />
       )}
     </Routes>
   );

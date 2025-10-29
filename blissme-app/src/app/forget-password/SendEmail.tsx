@@ -144,9 +144,6 @@ const SendEmail: React.FC = () => {
                       required: true,
                       message: "Username is required!",
                     },
-                    {
-                      validator: validateUsername,
-                    },
                   ]}
                 >
                   <Input

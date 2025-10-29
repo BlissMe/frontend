@@ -1,7 +1,7 @@
 import bearnew from "../../assets/images/bearnew.png";
 import { Button, Typography, Spin } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
 import {
@@ -45,6 +45,8 @@ const levelColor = (lvl?: string) => {
 
 const { Text } = Typography;
 
+
+
 const ChatInterface = () => {
   const {
     sessionID,
@@ -71,6 +73,24 @@ const ChatInterface = () => {
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
   const navigate = useNavigate();
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // adjust to scroll height
+    }
+  }, [inputValue]);
+
+  // useEffect(() => {
+  //   const textarea = textareaRef.current;
+  //   if (textarea) {
+  //     textarea.style.height = "auto"; // reset height
+  //     textarea.style.height = `${textarea.scrollHeight}px`; // set to scroll height
+  //   }
+  // }, [inputValue]);
+
   useEffect(() => {
     (async () => {
       let existingSession = getLocalStoragedata("sessionID");
@@ -88,6 +108,8 @@ const ChatInterface = () => {
       setSessionSummaries(allSummaries);
     })();
   }, []);
+
+
 
   useEffect(() => {
     fetchCharacters();
@@ -184,10 +206,10 @@ const ChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+        sender: msg.sender === "bot" ? "popo" : "you",
+        text: msg.message,
+        time: getCurrentTime(),
+      }))
       : [];
 
     const context = formattedHistory
@@ -230,9 +252,9 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-            (msg: any) =>
-              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-          )
+          (msg: any) =>
+            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -279,7 +301,7 @@ const ChatInterface = () => {
   ];
 
   return (
-    <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-end w-full h-screen p-4 md:px-8 overflow-hidden">
+    <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-end w-full h-full p-2 md:p-4 overflow-hidden">
       {/* Bear Image - below on mobile, left on desktop */}
       {/* Bear Image (desktop) */}
       <div className="hidden md:block absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
@@ -292,24 +314,23 @@ const ChatInterface = () => {
 
       {/* Chat Box */}
       <div
-        className="relative z-10 w-full md:w-2/3 h-[80%] md:h-[90%] 
-    bg-green-100 bg-opacity-80 md:bg-opacity-100 
-    rounded-xl p-6 shadow-lg flex flex-col justify-between
-    mx-auto md:mx-0 md:mr-12 mt-12 md:mt-0 backdrop-blur-sm"
+        className="relative z-10 w-full md:w-3/4 lg:w-2/3 h-full 
+  bg-green-100/40 rounded-xl p-4 md:p-6 shadow-lg 
+  flex flex-col justify-between mx-auto md:mx-0 md:mr-10 
+  mt-4 md:mt-0 backdrop-blur-md overflow-hidden"
       >
+
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto px-2 md:px-4 space-y-6 pb-4">
+        <div className="flex-1 overflow-y-auto px-2 md:px-4 space-y-4 pb-2">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${
-                msg.sender === "you" ? "items-end" : "items-start"
-              }`}
+              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
+                }`}
             >
               <div
-                className={`flex gap-2 items-center ${
-                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                  }`}
               >
                 {msg.sender === "you" ? (
                   <img
@@ -375,18 +396,26 @@ const ChatInterface = () => {
 
         {/* Input Field */}
         {/* Input Field (Always Visible) */}
-        <div className="flex items-center justify-between gap-2 mt-3">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            className="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-xl border border-gray-300 focus:outline-none text-sm md:text-base"
+        <div className="flex items-end justify-between gap-2 mt-3">
+          <textarea
+            rows={1}
+            ref={textareaRef}
+            className="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-xl border border-gray-300 
+   focus:outline-none text-sm md:text-base resize-none overflow-hidden 
+   transition-all duration-150 leading-[1.5rem]"
+            style={{ maxHeight: "150px" }}
             value={inputValue}
+            placeholder="Type your message here..."
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleSend();
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
             }}
             disabled={loading || isPhq9}
           />
+
 
           <Button
             type="text"
@@ -401,6 +430,7 @@ const ChatInterface = () => {
             disabled={loading || isPhq9}
           />
         </div>
+
 
         {/* End Session Button + Modal (Only show when PHQ-9 complete) */}
         {isPhq9Complete && (

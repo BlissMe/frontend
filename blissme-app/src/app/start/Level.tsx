@@ -105,10 +105,24 @@ const Level = () => {
           How would you describe your depression level?
         </h2>
         <p className="text-gray-600 mb-8 text-sm">
-          (You can skip if you’re not sure)
+          (You can skip if you’re prefer not to answer)
         </p>
 
         <div className="flex flex-col gap-4">
+          <Button
+            type={selectedLevel === "noIdea" ? "primary" : "default"}
+            size="large"
+            loading={isLoading}
+            onClick={() => handleLevelSelection("noIdea", true)}
+            className={`rounded-xl py-5 font-medium transition-all ${
+              selectedLevel === "noIdea"
+                ? "bg-gray-400 text-white border-none"
+                : "hover:bg-gray-200"
+            }`}
+          >
+            No Idea
+          </Button>
+
           <Button
             type={selectedLevel === "mild" ? "primary" : "default"}
             size="large"

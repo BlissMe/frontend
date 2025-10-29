@@ -212,7 +212,7 @@ const Home = () => {
 
 
             {/* ABOUT */}
-            <section
+           {/*  <section
                 id="about"
                 className="h-screen flex flex-col items-center justify-center px-6 text-center bg-gray-100"
             >
@@ -221,10 +221,10 @@ const Home = () => {
                     BlissMe provides AI-driven mental wellness support with therapy,
                     personalized games, and interactive conversations.
                 </p>
-            </section>
+            </section> */}
 
             {/* FEATURES */}
-            <section
+          {/*   <section
                 id="features"
                 className="h-screen flex flex-col items-center justify-center px-6 text-center bg-blue-100"
             >
@@ -234,10 +234,10 @@ const Home = () => {
                     <li>✔ Voice & Text Chat Support</li>
                     <li>✔ Gamified Mental Health Tools</li>
                 </ul>
-            </section>
+            </section> */}
 
             {/* CONTACT */}
-            <section
+            {/* <section
                 id="contact"
                 className="h-screen flex flex-col items-center justify-center px-6 text-center bg-green-100"
             >
@@ -248,7 +248,7 @@ const Home = () => {
                 <button className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
                     Get in Touch
                 </button>
-            </section>
+            </section> */}
         </div>
     );
 };

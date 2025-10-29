@@ -4,9 +4,7 @@ import { Form, Input, Button, Checkbox, Typography, Modal, Select } from "antd";
 import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
-import {
-  passwordFieldValidation,
-} from "../../helpers/PasswordValidation";
+import { passwordFieldValidation } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import "../../index.css";
@@ -161,9 +159,7 @@ const Register = () => {
                 name="username"
                 label="Username"
                 className="custom-label"
-                rules={[
-                  { required: true, message: "Username is required!" },
-                ]}
+                rules={[{ required: true, message: "Username is required!" }]}
               >
                 <Input
                   prefix={<UserOutlined />}
@@ -240,7 +236,10 @@ const Register = () => {
                   className="w-full rounded-md"
                 />
               </Form.Item>
-
+              <p className="text-sm text-yellow-700 mb-2 italic">
+                ⚠️ Please scroll through the Terms & Privacy Policy before
+                agreeing.
+              </p>
               <Form.Item
                 name="agree"
                 valuePropName="checked"
@@ -260,7 +259,7 @@ const Register = () => {
                   <Checkbox disabled={!form.getFieldValue("scrolledToBottom")}>
                     I agree to the{" "}
                     <span
-                      className="text-[#2CA58D] underline cursor-pointer"
+                      className="text-[#01201a] underline cursor-pointer"
                       onClick={() => setModalVisible(true)}
                     >
                       Terms & Privacy Policy

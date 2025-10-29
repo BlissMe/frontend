@@ -31,7 +31,7 @@ const Chat = () => {
             </div>
 
             {/* Chat Interface */}
-            <div className="flex-1 flex justify-center items-center">
+            <div className="flex-1 flex justify-center items-center h-full overflow-hidden">
                 <ChatInterface />
             </div>
         </div>

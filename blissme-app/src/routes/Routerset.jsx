@@ -36,6 +36,7 @@ import NumberGuessingGame from "../app/therapy/Game/guessing_f/NumberGuessingGam
 import GameLayout from "../app/layouts/GameLayout";
 import DoctorDashboard from "../app/dashboard/DoctorDashboard";
 import DashboardLayout from "../app/layouts/DashboardLayout";
+import BodyScan from "../app/features/BodyScan";
 
 import Songs from "../app/features/Songs";
 import Doctors from "../app/features/Doctors";
@@ -61,6 +62,11 @@ const Routerset = () => {
       <Route path="/face-auth" element={<FaceSignin />} />
       <Route path="/songs" element={<Songs />} />
       <Route path="/doctors" element={<Doctors />} />
+      <Route path="/body-scan" element={<BodyScan />} />
+
+      <Route path="chat-new/voice" element={<VoiceChat />} />
+
+
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>
@@ -81,7 +87,7 @@ const Routerset = () => {
             <Route path="setting/security" element={<SecuritySetting />} /> */}
           </Route>
           <Route path="chat-new/text" element={<Chat />} />
-          <Route path="chat-new/voice" element={<VoiceChat />} />
+          {/* <Route path="chat-new/voice" element={<VoiceChat />} /> */}
 
           <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />

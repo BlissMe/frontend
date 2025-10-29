@@ -240,6 +240,9 @@ const Register = () => {
                   className="w-full rounded-md"
                 />
               </Form.Item>
+<p className="text-sm text-yellow-700 mb-2 italic">
+  ⚠️ Please scroll through the Terms & Privacy Policy before agreeing.
+</p>
 
               <Form.Item
                 name="agree"
@@ -260,7 +263,7 @@ const Register = () => {
                   <Checkbox disabled={!form.getFieldValue("scrolledToBottom")}>
                     I agree to the{" "}
                     <span
-                      className="text-[#2CA58D] underline cursor-pointer"
+                      className="text-[#01201a] underline cursor-pointer"
                       onClick={() => setModalVisible(true)}
                     >
                       Terms & Privacy Policy

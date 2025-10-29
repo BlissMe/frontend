@@ -64,9 +64,6 @@ const Routerset = () => {
       <Route path="/doctors" element={<Doctors />} />
       <Route path="/body-scan" element={<BodyScan />} />
 
-      <Route path="chat-new/voice" element={<VoiceChat />} />
-
-
       {token !== null && token !== "" ? (
         <>
           <Route path="/mode" element={<ModelLayout />}>
@@ -87,7 +84,7 @@ const Routerset = () => {
             <Route path="setting/security" element={<SecuritySetting />} /> */}
           </Route>
           <Route path="chat-new/text" element={<Chat />} />
-          {/* <Route path="chat-new/voice" element={<VoiceChat />} /> */}
+          <Route path="chat-new/voice" element={<VoiceChat />} />
 
           <Route path="/chat" element={<SettingsLayout />}>
             <Route path="setting/profile" element={<ProfileSetting />} />

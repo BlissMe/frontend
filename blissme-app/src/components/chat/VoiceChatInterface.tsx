@@ -152,8 +152,8 @@ const ViceChatInterface = () => {
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
         : MediaRecorder.isTypeSupported("audio/webm")
-        ? "audio/webm"
-        : "";
+          ? "audio/webm"
+          : "";
 
       if (!mimeType) {
         openNotification(
@@ -218,9 +218,9 @@ const ViceChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-            sender: msg.sender === "bot" ? "Bot" : "User",
-            text: msg.message,
-          }))
+          sender: msg.sender === "bot" ? "Bot" : "User",
+          text: msg.message,
+        }))
         : [];
 
       const historyText = formattedHistory
@@ -326,9 +326,9 @@ const ViceChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "Bot" : "User",
-          text: msg.message,
-        }))
+        sender: msg.sender === "bot" ? "Bot" : "User",
+        text: msg.message,
+      }))
       : [];
 
     // Prepare text history for sending to backend
@@ -411,9 +411,9 @@ const ViceChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-            (msg: any) =>
-              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-          )
+          (msg: any) =>
+            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -461,33 +461,32 @@ const ViceChatInterface = () => {
   ];
 
   return (
-    <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">
+    <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-end w-full h-full p-2 md:p-4 overflow-hidden">
       {/* Bear Image */}
-      <div className="absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
-        <img
-          src={bearnew}
-          alt="Bear"
-          className="w-full h-full object-contain"
-        />
+      <div className="hidden md:block absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
+        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
       </div>
 
       {/* Chat Box */}
-      <div className="relative z-10 w-2/3 h-[90%] bg-green-100 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+      <div
+        className="relative z-10 w-full md:w-3/4 lg:w-2/3 h-full 
+  bg-green-100/40 rounded-xl p-4 md:p-6 shadow-lg 
+  flex flex-col justify-between mx-auto md:mx-0 md:mr-10 
+  mt-4 md:mt-0 backdrop-blur-md overflow-hidden"
+      >
         <div
-          className="flex-1 overflow-y-auto px-4 space-y-6"
+          className="flex-1 overflow-y-auto px-2 md:px-4 space-y-4 pb-2"
           id="message-container"
         >
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${
-                msg.sender === "you" ? "items-end" : "items-start"
-              }`}
+              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
+                }`}
             >
               <div
-                className={`flex gap-2 items-center ${
-                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                  }`}
               >
                 {msg.sender === "you" ? (
                   <img
@@ -504,7 +503,7 @@ const ViceChatInterface = () => {
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 )}
-                <div className="relative max-w-xs">
+                <div className="relative max-w-[80%] md:max-w-md">
                   {msg.sender === "you" ? (
                     <div className="relative px-5 py-3 bg-gradient-to-br from-red-100 to-red-300 rounded-[40px] shadow text-gray-800 text-sm leading-relaxed">
                       {/* Cloud tail for user (right side) */}
@@ -523,9 +522,8 @@ const ViceChatInterface = () => {
                 </div>
               </div>
               <Text
-                className={`text-xs text-gray-500 mt-1 ${
-                  msg.sender === "you" ? "" : "ml-10"
-                }`}
+                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-10"
+                  }`}
               >
                 {msg.time}
               </Text>

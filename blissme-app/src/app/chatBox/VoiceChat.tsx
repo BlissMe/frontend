@@ -15,7 +15,7 @@ const VoiceChat = () => {
 
     return (
         <div
-            className="w-screen h-screen flex overflow-hidden relative"
+            className="w-screen h-screen flex flex-col md:flex-row overflow-hidden relative"
             style={{
                 backgroundImage: `url(${bg})`,
                 backgroundSize: "cover",
@@ -28,14 +28,16 @@ const VoiceChat = () => {
             {/* Logo positioned at top, right side of sidebar */}
             <div
                 onClick={handleLogoClick}
-                className="absolute top-4 left-20 cursor-pointer z-20"
-                style={{ width: 'auto', height: '40px' }}
+                className="absolute top-4 left-8 md:left-20 cursor-pointer z-20"
+                style={{ width: "auto", height: "40px" }}
             >
                 <img src={logo} alt="Logo" className="h-10 w-auto" />
             </div>
-
             {/* Chat Interface fills remaining space */}
-            <VoiceChatInterface />
+            <div className="flex-1 flex justify-center items-center h-full overflow-hidden">
+
+                <VoiceChatInterface />
+            </div>
         </div>
     );
 };

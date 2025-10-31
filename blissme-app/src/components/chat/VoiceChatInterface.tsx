@@ -152,8 +152,8 @@ const ViceChatInterface = () => {
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
         : MediaRecorder.isTypeSupported("audio/webm")
-          ? "audio/webm"
-          : "";
+        ? "audio/webm"
+        : "";
 
       if (!mimeType) {
         openNotification(
@@ -171,22 +171,27 @@ const ViceChatInterface = () => {
           chunks.current.push(e.data);
         }
       };
-      recorder.onstop = async () => {
-        if (isCancelledRef.current) {
-          // If cancelled, just reset and do nothing
-          isCancelledRef.current = false;
-          return;
-        }
-        const blob = new Blob(chunks.current, { type: "audio/webm" });
-        if (blob.size < 1000) {
-          openNotification(
-            "error",
-            "Recording is too short or empty. Please try again."
-          );
-          return;
-        }
-        await handleSendAudio(blob);
-      };
+     recorder.onstop = async () => {
+  if (isCancelledRef.current) {
+    isCancelledRef.current = false;
+    chunks.current = [];
+    return;
+  }
+
+  const blob = new Blob(chunks.current, { type: "audio/webm" });
+
+  if (!blob || blob.size < 1000) {
+    openNotification(
+      "error",
+      "Recording is too short or empty. Please speak something before sending."
+    );
+    chunks.current = [];
+    return;
+  }
+
+  setIsWaitingForBotResponse(true); // set here only if sending valid audio
+  await handleSendAudio(blob);
+};
 
       recorder.start();
       setMediaRecorder(recorder);
@@ -218,9 +223,9 @@ const ViceChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "Bot" : "User",
-          text: msg.message,
-        }))
+            sender: msg.sender === "bot" ? "Bot" : "User",
+            text: msg.message,
+          }))
         : [];
 
       const historyText = formattedHistory
@@ -326,9 +331,9 @@ const ViceChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "Bot" : "User",
-        text: msg.message,
-      }))
+          sender: msg.sender === "bot" ? "Bot" : "User",
+          text: msg.message,
+        }))
       : [];
 
     // Prepare text history for sending to backend
@@ -411,9 +416,9 @@ const ViceChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-          (msg: any) =>
-            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -464,7 +469,11 @@ const ViceChatInterface = () => {
     <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-end w-full h-full p-2 md:p-4 overflow-hidden">
       {/* Bear Image */}
       <div className="hidden md:block absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
-        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
+        <img
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Chat Box */}
@@ -481,12 +490,14 @@ const ViceChatInterface = () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
-                }`}
+              className={`flex flex-col ${
+                msg.sender === "you" ? "items-end" : "items-start"
+              }`}
             >
               <div
-                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                  }`}
+                className={`flex gap-2 items-center ${
+                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                }`}
               >
                 {msg.sender === "you" ? (
                   <img
@@ -522,8 +533,9 @@ const ViceChatInterface = () => {
                 </div>
               </div>
               <Text
-                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-10"
-                  }`}
+                className={`text-xs text-gray-500 mt-1 ${
+                  msg.sender === "you" ? "" : "ml-10"
+                }`}
               >
                 {msg.time}
               </Text>
@@ -598,11 +610,14 @@ const ViceChatInterface = () => {
                   type="primary"
                   shape="circle"
                   size="large"
-                  onClick={() => {
-                    handleStopRecording();
-                    setRecording(false);
-                    setIsWaitingForBotResponse(true);
-                  }}
+              onClick={() => {
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    mediaRecorder.stop(); // triggers onstop
+  }
+  setRecording(false);
+  // do NOT set isWaitingForBotResponse here
+}}
+
                   className="bg-red-600 hover:bg-red-700 text-white"
                   aria-label="Stop microphone and send"
                   style={{ width: 50, height: 50, fontSize: 24 }}

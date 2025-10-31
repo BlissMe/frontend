@@ -438,8 +438,7 @@ const Register = () => {
                 <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
                   <li>The app will not attempt therapy</li>
                   <li>
-                    The app will not attempt therapy; You will be given
-                    immediate options to contact a licensed consultant or
+                    You will be given immediate options to contact a licensed consultant or
                     emergency helpline for professional help.
                   </li>
                 </ul>

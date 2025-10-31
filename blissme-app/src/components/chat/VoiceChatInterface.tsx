@@ -113,7 +113,8 @@ const ViceChatInterface = () => {
           text: msg.message,
           time: msg.time || getCurrentTime(),
         }));
-        setMessages(formattedMessages);
+
+        setMessages((prev) => [...prev, ...formattedMessages]);
       }
 
       const allSummaries = await fetchAllSummaries();
@@ -464,7 +465,11 @@ const ViceChatInterface = () => {
     <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-end w-full h-full p-2 md:p-4 overflow-hidden">
       {/* Bear Image */}
       <div className="hidden md:block absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
-        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
+        <img
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Chat Box */}

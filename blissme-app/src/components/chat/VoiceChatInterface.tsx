@@ -105,7 +105,6 @@ const ViceChatInterface = () => {
 
       setSessionID(existingSession);
 
-      // Fetch chat history for this session
       const updatedHistory = await fetchChatHistory(existingSession);
       if (Array.isArray(updatedHistory)) {
         const formattedMessages: Message[] = updatedHistory.map((msg: any) => ({
@@ -113,7 +112,8 @@ const ViceChatInterface = () => {
           text: msg.message,
           time: msg.time || getCurrentTime(),
         }));
-        setMessages(formattedMessages);
+
+        setMessages((prev) => [...prev, ...formattedMessages]);
       }
 
       const allSummaries = await fetchAllSummaries();
@@ -464,7 +464,11 @@ const ViceChatInterface = () => {
     <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-end w-full h-full p-2 md:p-4 overflow-hidden">
       {/* Bear Image */}
       <div className="hidden md:block absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
-        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
+        <img
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Chat Box */}
@@ -481,12 +485,14 @@ const ViceChatInterface = () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
-                }`}
+              className={`flex flex-col ${
+                msg.sender === "you" ? "items-end" : "items-start"
+              }`}
             >
               <div
-                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                  }`}
+                className={`flex gap-2 items-center ${
+                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                }`}
               >
                 {msg.sender === "you" ? (
                   <img
@@ -522,8 +528,9 @@ const ViceChatInterface = () => {
                 </div>
               </div>
               <Text
-                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-10"
-                  }`}
+                className={`text-xs text-gray-500 mt-1 ${
+                  msg.sender === "you" ? "" : "ml-10"
+                }`}
               >
                 {msg.time}
               </Text>

@@ -135,6 +135,7 @@ const ChatBox = () => {
       const userID = user?.id || "guest";
 
       botReply = await therapyAgentChat(
+        sessionSummaries,
         inputValue,
         levelResult.level,
         userID, // pass correct user ID

@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const API_URL = "http://127.0.0.1:8000";
 
 export default function NumberGuessingGame() {
-  const [feedback, setFeedback] = useState<string>("Click \"New Game\" to start!");
+  const [feedback, setFeedback] = useState<string>(
+    'Click "New Game" to start!'
+  );
   const [guess, setGuess] = useState<number | "">("");
   const [gameActive, setGameActive] = useState<boolean>(false);
   const [inputRef, setInputRef] = useState<HTMLInputElement | null>(null);
-
+  const navigate = useNavigate();
   const setInputsDisabled = (disabled: boolean) => {
     if (inputRef) inputRef.disabled = disabled;
   };
@@ -63,62 +66,76 @@ export default function NumberGuessingGame() {
   }, [gameActive, guess]);
 
   return (
-    <div
-      className="
+    <div className="relative">
+      <button
+        onClick={() => navigate("/chat-new/text")}
+        className="
+          fixed top-4 right-8 z-50 
+          bg-white/10 backdrop-blur-md border border-white/20
+          text-white text-sm font-medium px-4 py-2 rounded-xl shadow-lg
+          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+        "
+      >
+        ← Back to Chat
+      </button>
+
+      <div
+        className="
         font-poppins text-center w-[90%] max-w-[400px] 
         bg-white/10 p-10 rounded-2xl 
         shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] 
         backdrop-blur-md border border-white/20
       "
-    >
-      <h1 className="mt-0 font-semibold text-2xl">Guess the Number!</h1>
-      <p className="min-h-[24px] my-5 text-lg font-semibold">{feedback}</p>
+      >
+        <h1 className="mt-0 font-semibold text-2xl">Guess the Number!</h1>
+        <p className="min-h-[24px] my-5 text-lg font-semibold">{feedback}</p>
 
-      <div className="flex gap-2 mb-5">
-        <input
-          type="number"
-          placeholder="Enter your guess"
-          min={1}
-          max={100}
-          value={guess}
-          onChange={(e) =>
-            setGuess(e.target.value === "" ? "" : Number(e.target.value))
-          }
-          disabled={!gameActive}
-          ref={setInputRef}
-          className="
+        <div className="flex gap-2 mb-5">
+          <input
+            type="number"
+            placeholder="Enter your guess"
+            min={1}
+            max={100}
+            value={guess}
+            onChange={(e) =>
+              setGuess(e.target.value === "" ? "" : Number(e.target.value))
+            }
+            disabled={!gameActive}
+            ref={setInputRef}
+            className="
             flex-grow px-3 py-3 rounded-lg text-base outline-none
             bg-[rgba(98,92,92,0.2)] text-white 
             placeholder-white/70
           "
-        />
-        <button
-          onClick={handleGuess}
-          disabled={!gameActive}
-          className="
+          />
+          <button
+            onClick={handleGuess}
+            disabled={!gameActive}
+            className="
             px-5 py-3 rounded-lg text-base font-semibold cursor-pointer
             transition-transform duration-200 ease-in-out
             bg-[#d86f13] text-white font-poppins
             hover:-translate-y-0.5 hover:shadow-[0_4px_15px_rgba(0,0,0,0.2)]
             disabled:bg-[#555] disabled:cursor-not-allowed disabled:opacity-60
           "
-        >
-          Guess
-        </button>
-      </div>
+          >
+            Guess
+          </button>
+        </div>
 
-      <button
-        onClick={startNewGame}
-        className="
+        <button
+          onClick={startNewGame}
+          className="
           w-full px-5 py-3 rounded-lg text-base font-semibold cursor-pointer
           transition-transform duration-200 ease-in-out
           bg-[#a72b2b] text-white font-poppins
           hover:-translate-y-0.5 hover:shadow-[0_4px_15px_rgba(0,0,0,0.2)]
           disabled:bg-[#555] disabled:cursor-not-allowed disabled:opacity-60
         "
-      >
-        New Game
-      </button>
+        >
+          New Game
+        </button>
+      </div>
     </div>
   );
 }

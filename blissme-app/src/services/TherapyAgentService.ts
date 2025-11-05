@@ -7,6 +7,7 @@ id?: string;
 }
 
 export async function therapyAgentChat(
+    sessionSummaries: string[],
     userQuery: string,
     depressionLevel: string,
     userID: string,
@@ -23,10 +24,12 @@ export async function therapyAgentChat(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+            session_summaries: sessionSummaries,
             user_query: userQuery,
             depression_level: depressionLevel,
             user_id: userID,
-            session_id: sessionID
+            session_id: sessionID,
+           
         }),
     });
     return await res.json();

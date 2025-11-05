@@ -94,21 +94,28 @@ const ChatInterface = () => {
   }, []);
 
   useEffect(() => {
-    // Check if we just came back from a therapy session
-    if (location.pathname === "/chat-new/text" && therapyInfo.path) {
-      // Show feedback question only once
-      setAwaitingFeedback(true);
+    if (location.pathname === "/chat-new/text") {
+      // ✅ Check if user just returned from therapy
+      const storedTherapy = localStorage.getItem("therapyInProgress");
+      if (storedTherapy) {
+        const info = JSON.parse(storedTherapy);
 
-      // Add bot message asking for feedback
-      const feedbackMsg = {
-        sender: "popo",
-        text: "How was your therapy session? Please share your feedback.",
-        time: getCurrentTime(),
-      };
+        setTherapyInfo(info);
+        setAwaitingFeedback(true);
 
-      setMessages((prev) => [...prev, feedbackMsg]);
-      setChatHistory((prev) => [...prev, feedbackMsg]);
-      saveMessage(feedbackMsg.text, sessionID, "bot");
+        // Add feedback question once
+        const feedbackMsg = {
+          sender: "popo",
+          text: "How was your therapy session? Please share your feedback.",
+          time: getCurrentTime(),
+        };
+        setMessages((prev) => [...prev, feedbackMsg]);
+        setChatHistory((prev) => [...prev, feedbackMsg]);
+        saveMessage(feedbackMsg.text, sessionID, "bot");
+
+        //  Clear it so it's only asked once
+        localStorage.removeItem("therapyInProgress");
+      }
     }
   }, [location.pathname]);
 
@@ -182,6 +189,7 @@ const ChatInterface = () => {
       console.log("userID in therapy mode:", userID);
 
       botReply = await therapyAgentChat(
+        sessionSummaries,
         inputValue,
         levelResult.level,
         userID,
@@ -261,6 +269,7 @@ const ChatInterface = () => {
     if (choice === "yes") {
       // Show therapy card (Step 3)
       setShowTherapyCard(true);
+      setAwaitingFeedback(true);
     } else {
       // Step 4: Gentle bot message and continue chat
       const gentleText =
@@ -393,13 +402,32 @@ const ChatInterface = () => {
     setChatHistory((prev) => [...prev, userFeedbackMsg]);
     await saveMessage(feedback, sessionID, "user");
 
-    // Optionally send feedback to server
-    console.log("User feedback saved:", feedback);
+    console.log("userFeedback", userFeedbackMsg);
+    // Optional: Send to backend to store therapy feedback
+    try {
+      // await fetch(`${API_Python_URL}/therapy-agent/feedback`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     user_id: getLocalStoragedata("userId")?.toString() || "guest",
+      //     session_id: sessionID,
+      //     feedback: feedback,
+      //     timestamp: new Date().toISOString(),
+      //   }),
+      // });
+    } catch (err) {
+      console.error("Failed to save feedback:", err);
+    }
 
-    // Bot responds after feedback
+    // Bot’s acknowledgment
     const botReply = {
       sender: "popo",
-      text: "Thank you for your feedback! Let's continue chatting. Tell me, how are you feeling now?",
+      text:
+        feedback === "Felt Good"
+          ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
+          : feedback === "No Change"
+          ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
+          : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
       time: getCurrentTime(),
     };
 
@@ -407,8 +435,9 @@ const ChatInterface = () => {
     setChatHistory((prev) => [...prev, botReply]);
     await saveMessage(botReply.text, sessionID, "bot");
 
-    // Stop showing feedback buttons
     setAwaitingFeedback(false);
+    setTherapyInfo({});
+    localStorage.removeItem("therapyInProgress");
   };
 
   async function runLevelDetection() {
@@ -569,35 +598,22 @@ const ChatInterface = () => {
                 msg.sender === "popo" &&
                 index === messages.length - 1 && (
                   <div className="flex flex-wrap gap-2 mt-2 ml-10">
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => handleFeedback("Excellent")}
-                      className="bg-green-500 hover:bg-green-600 text-white rounded-full"
-                    >
-                      Excellent
-                    </Button>
-                    <Button
-                      size="small"
-                      onClick={() => handleFeedback("Good")}
-                      className="bg-blue-100 hover:bg-blue-200 border-blue-300 rounded-full"
-                    >
-                      Good
-                    </Button>
-                    <Button
-                      size="small"
-                      onClick={() => handleFeedback("Okay")}
-                      className="bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
-                    >
-                      Okay
-                    </Button>
-                    <Button
-                      size="small"
-                      onClick={() => handleFeedback("Not Helpful")}
-                      className="bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
-                    >
-                      Not Helpful
-                    </Button>
+                    {["Felt Good", "No Change", "Didn’t Help"].map((option) => (
+                      <Button
+                        key={option}
+                        size="small"
+                        onClick={() => handleFeedback(option)}
+                        className={
+                          option === "Felt Good"
+                            ? "bg-green-500 hover:bg-green-600 text-white rounded-full"
+                            : option === "No Change"
+                            ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                            : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                        }
+                      >
+                        {option}
+                      </Button>
+                    ))}
                   </div>
                 )}
             </div>
@@ -633,6 +649,10 @@ const ChatInterface = () => {
                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
                     onClick={() => {
                       setShowTherapyCard(false);
+                      localStorage.setItem(
+                        "therapyInProgress",
+                        JSON.stringify(therapyInfo)
+                      );
                       navigate(therapyInfo.path || "/therapy");
                     }}
                   >

@@ -125,7 +125,7 @@ const Sidebar: React.FC = () => {
                   Breathing Therapy
                 </Link>
                 <Link
-                  to="/therapy/meditation"
+                  to="/therapy/medication"
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
                   Meditation

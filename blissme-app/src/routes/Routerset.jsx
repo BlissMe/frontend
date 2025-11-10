@@ -42,6 +42,11 @@ import Songs from "../app/features/Songs";
 import Doctors from "../app/features/Doctors";
 import Level from "../app/start/Level";
 import Medicine from "../app/start/Medicine";
+import { ZenGarden } from "../app/therapy/zen-garden";
+import ForestLayout from "../app/layouts/ForestLAyout";
+import { ForestGame } from "../app/therapy/forest-game";
+import { OceanWaves } from "../app/therapy/ocean-waves";
+import OceanLayout from "../app/layouts/OceanLayout";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -103,6 +108,13 @@ const Routerset = () => {
           </Route>
           <Route path="/dash" element={<AnxietyLayout />}>
             <Route path="anxiety" element={<AnxietyGames />} />
+            <Route path="zen" element={<ZenGarden />} />
+          </Route>
+          <Route path="/dash" element={<ForestLayout />}>
+            <Route path="forest" element={<ForestGame />} />
+          </Route>
+           <Route path="/dash" element={<OceanLayout />}>
+            <Route path="ocean" element={<OceanWaves />} />
           </Route>
           <Route path="/dash" element={<DashLayout />}>
             <Route path="mood-tracker" element={<MoodTracker />} />

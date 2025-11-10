@@ -1,12 +1,16 @@
 import Sidebar from "../../components/chat/Sidebar";
-import bg from "../../assets/images/bg-zen.jpg";
-import { Outlet, useNavigate } from "react-router-dom";
+import bg from "../../assets/images/forest.jpg";
+import { Outlet } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 import { motion } from "framer-motion";
 
-const flowers = ["🌸", "🌺", "🌼", "💮"];
+const ForestLayout = () => {
+  const leaves = [
+    { icon: "🍃", color: "text-green-400" },
+    { icon: "🌿", color: "text-green-500" },
+    { icon: "🍃", color: "text-green-600" },
+  ];
 
-const AnxietyLayout = () => {
   return (
     <div
       className="w-screen h-screen flex overflow-hidden relative bg-[#0D1A1A]"
@@ -18,20 +22,19 @@ const AnxietyLayout = () => {
     >
       <Sidebar />
 
-      {/* Floating flowers */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => {
-          const size = Math.random() * 30 + 20; // 20-50px
-          const left = Math.random() * 100; // % of screen width
-          const duration = Math.random() * 8 + 5; // 5-13s
-          const delay = Math.random() * 5; // staggered start
-          const flower = flowers[Math.floor(Math.random() * flowers.length)];
+        {Array.from({ length: 25 }).map((_, i) => {
+          const size = Math.random() * 25 + 15; // 15-40px
+          const left = Math.random() * 100; // % horizontal
+          const duration = Math.random() * 15 + 20; // 20-35s slower float
+          const delay = Math.random() * 5;
+          const leaf = leaves[Math.floor(Math.random() * leaves.length)];
 
           return (
             <motion.div
               key={i}
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: "-10%", opacity: 1 }}
+              initial={{ y: window.innerHeight, opacity: 0, rotate: 0 }}
+              animate={{ y: -50, opacity: 1, rotate: Math.random() * 360 }}
               transition={{
                 duration,
                 delay,
@@ -39,13 +42,13 @@ const AnxietyLayout = () => {
                 repeatType: "loop",
                 ease: "linear",
               }}
-              className="absolute"
+              className={`absolute ${leaf.color}`}
               style={{
                 left: `${left}%`,
                 fontSize: `${size}px`,
               }}
             >
-              {flower}
+              {leaf.icon}
             </motion.div>
           );
         })}
@@ -58,4 +61,4 @@ const AnxietyLayout = () => {
   );
 };
 
-export default AnxietyLayout;
+export default ForestLayout;

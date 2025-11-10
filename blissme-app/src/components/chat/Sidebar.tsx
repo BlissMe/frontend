@@ -11,7 +11,6 @@ import {
   LogOut,
   Menu,
   X,
-  User,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../app/context/AuthContext";
@@ -65,10 +64,7 @@ const Sidebar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        brainRef.current &&
-        !brainRef.current.contains(event.target as Node)
-      ) {
+      if (brainRef.current && !brainRef.current.contains(event.target as Node)) {
         setShowBrainDropdown(false);
       }
       if (
@@ -87,7 +83,7 @@ const Sidebar: React.FC = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-16 bg-green-300 bg-opacity-50 flex-col items-center py-4 space-y-6 shadow-md">
+      <div className="hidden md:flex w-16 bg-green-300 bg-opacity-50 flex-col items-center py-4 space-y-6 shadow-md overflow-visible">
         <div className="flex flex-col items-center space-y-6 flex-grow">
           <div className="w-10 h-10 rounded-full bg-white overflow-hidden">
             <img
@@ -103,11 +99,14 @@ const Sidebar: React.FC = () => {
             </button>
           </Link>
 
-          {/* <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-            <Home className="w-6 h-6 text-white" />
-          </button>
+          <Link to="/home">
+            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
+              <Home className="w-6 h-6 text-white" />
+            </button>
+          </Link>
 
-          <div className="relative" ref={brainRef}>
+          {/* Brain Dropdown */}
+          <div className="relative z-50" ref={brainRef}>
             <button
               className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
               onClick={() => setShowBrainDropdown((prev) => !prev)}
@@ -116,7 +115,7 @@ const Sidebar: React.FC = () => {
             </button>
 
             {showBrainDropdown && (
-              <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-50 w-48 text-sm">
+              <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-[9999] w-52 text-sm">
                 <Link
                   to="/therapy/breathing"
                   className="block px-4 py-2 hover:bg-gray-100"
@@ -134,6 +133,24 @@ const Sidebar: React.FC = () => {
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
                   Anxiety Games
+                </Link>
+                 <Link
+                  to="/dash/zen"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  BloomMind
+                </Link>
+                 <Link
+                  to="/dash/forest"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  Mindful Forest
+                </Link>
+                 <Link
+                  to="/dash/ocean"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                 oce
                 </Link>
                 <Link
                   to="/therapy/mood-tracker-home"
@@ -160,15 +177,17 @@ const Sidebar: React.FC = () => {
               <Heart className="w-6 h-6 text-white" />
             </button>
           </Link>
+
           <Link to="/therapy/all-songs">
             <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
               <Mic className="w-6 h-6 text-white" />
             </button>
-          </Link> */}
+          </Link>
         </div>
 
-        <div className="relative space-y-6" ref={brainRef}>
-         {/*  <button
+        {/* Settings & Logout */}
+        <div className="relative space-y-6 z-50" ref={settingsRef}>
+          <button
             className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
             onClick={() => setShowSettings((prev) => !prev)}
           >
@@ -176,7 +195,7 @@ const Sidebar: React.FC = () => {
           </button>
 
           {showSettings && (
-            <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-50 w-48 text-sm">
+            <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-[9999] w-48 text-sm">
               <Link
                 to="/chat/setting/profile"
                 className="block px-4 py-2 hover:bg-gray-100"
@@ -196,7 +215,7 @@ const Sidebar: React.FC = () => {
                 Security Settings
               </Link>
             </div>
-          )} */}
+          )}
 
           <button
             onClick={handleLogout}
@@ -218,8 +237,7 @@ const Sidebar: React.FC = () => {
 
         {/* Mobile dropdown menu */}
         {menuOpen && (
-          <div className="absolute top-14 right-4 bg-white border rounded-md shadow-lg py-3 px-4 z-50 w-56 flex flex-col space-y-3 text-sm">
-            {/* Profile */}
+          <div className="absolute top-14 right-4 bg-white border rounded-md shadow-lg py-3 px-4 z-[9999] w-56 flex flex-col space-y-3 text-sm">
             <div className="flex items-center gap-3 pb-2 border-b border-gray-200 mb-2">
               <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
                 <img
@@ -238,13 +256,15 @@ const Sidebar: React.FC = () => {
             >
               <MessageCircle className="w-5 h-5 text-emerald-600" /> Chat
             </Link>
-            {/* <Link
+
+            <Link
               to="/home"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2"
             >
               <Home className="w-5 h-5 text-emerald-600" /> Home
             </Link>
+
             <Link
               to="/therapy/breathing"
               onClick={() => setMenuOpen(false)}
@@ -252,6 +272,7 @@ const Sidebar: React.FC = () => {
             >
               <Brain className="w-5 h-5 text-emerald-600" /> Brain Therapy
             </Link>
+
             <Link
               to="/therapy/mood-tracker-home"
               onClick={() => setMenuOpen(false)}
@@ -259,6 +280,7 @@ const Sidebar: React.FC = () => {
             >
               <Heart className="w-5 h-5 text-emerald-600" /> Mood Tracker
             </Link>
+
             <Link
               to="/calendar"
               onClick={() => setMenuOpen(false)}
@@ -266,21 +288,25 @@ const Sidebar: React.FC = () => {
             >
               <Calendar className="w-5 h-5 text-emerald-600" /> Calendar
             </Link>
+
             <Link
-              to="/mic"
+              to="/therapy/all-songs"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2"
             >
               <Mic className="w-5 h-5 text-emerald-600" /> Voice
             </Link>
+
             <hr />
+
             <Link
               to="/chat/setting/profile"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2"
             >
               <Settings className="w-5 h-5 text-emerald-600" /> Settings
-            </Link> */}
+            </Link>
+
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 text-red-600"

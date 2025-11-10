@@ -64,7 +64,10 @@ const Sidebar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (brainRef.current && !brainRef.current.contains(event.target as Node)) {
+      if (
+        brainRef.current &&
+        !brainRef.current.contains(event.target as Node)
+      ) {
         setShowBrainDropdown(false);
       }
       if (
@@ -105,7 +108,6 @@ const Sidebar: React.FC = () => {
             </button>
           </Link>
 
-          {/* Brain Dropdown */}
           <div className="relative z-50" ref={brainRef}>
             <button
               className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
@@ -115,7 +117,7 @@ const Sidebar: React.FC = () => {
             </button>
 
             {showBrainDropdown && (
-              <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-[9999] w-52 text-sm">
+              <div className="absolute left-14 top-0 mt-10 bg-white border rounded-md shadow-lg py-2 z-[9999] w-52 text-sm max-h-80 overflow-y-auto">
                 <Link
                   to="/therapy/breathing"
                   className="block px-4 py-2 hover:bg-gray-100"
@@ -123,7 +125,7 @@ const Sidebar: React.FC = () => {
                   Breathing Therapy
                 </Link>
                 <Link
-                  to="/therapy/medication"
+                  to="/therapy/meditation"
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
                   Meditation
@@ -134,23 +136,23 @@ const Sidebar: React.FC = () => {
                 >
                   Anxiety Games
                 </Link>
-                 <Link
+                <Link
                   to="/dash/zen"
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
                   BloomMind
                 </Link>
-                 <Link
+                <Link
                   to="/dash/forest"
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
                   Mindful Forest
                 </Link>
-                 <Link
+                <Link
                   to="/dash/ocean"
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
-                 oce
+                  WaveMind
                 </Link>
                 <Link
                   to="/therapy/mood-tracker-home"

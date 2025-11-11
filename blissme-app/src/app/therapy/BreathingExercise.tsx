@@ -9,6 +9,7 @@ import {
   BreathingProtocol,
   PROTOCOLS,
 } from "../../components/therapy/protocols";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   protocolId?: string;
@@ -23,7 +24,6 @@ const prefersReducedMotion =
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const API_URL = process.env.REACT_APP_API_URL;
-
 const AdvancedBreathing: React.FC<Props> = ({
   protocolId = "resonance-6bpm",
   durationMinutes = 5,
@@ -34,8 +34,7 @@ const AdvancedBreathing: React.FC<Props> = ({
     () => PROTOCOLS.find((p) => p.id === protocolId) || PROTOCOLS[0],
     [protocolId]
   );
-
-  
+  const navigate = useNavigate();
   const [running, setRunning] = useState(false);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [elapsedMsInPhase, setElapsedMsInPhase] = useState(0);
@@ -63,8 +62,7 @@ const AdvancedBreathing: React.FC<Props> = ({
       g.gain.exponentialRampToValueAtTime(0.03, ctx.currentTime + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
       o.stop(ctx.currentTime + 0.2);
-    } catch {
-    }
+    } catch {}
   }, []);
 
   // Haptic cue
@@ -99,7 +97,7 @@ const AdvancedBreathing: React.FC<Props> = ({
     announce(label);
     if (phase.audioCue) cue();
     if (phase.hapticCue) haptic();
-  }, [phaseIndex]); 
+  }, [phaseIndex]);
 
   const tick = useCallback(
     (now: number) => {
@@ -164,7 +162,7 @@ const AdvancedBreathing: React.FC<Props> = ({
 
   const minR = 70,
     maxR = 110;
-  const ease = (t: number) => 0.5 - Math.cos(Math.PI * t) / 2; 
+  const ease = (t: number) => 0.5 - Math.cos(Math.PI * t) / 2;
   const sizeT =
     phase.name === "inhale"
       ? ease(phaseProgress)
@@ -178,6 +176,12 @@ const AdvancedBreathing: React.FC<Props> = ({
   return (
     <div className="flex-1 flex items-center justify-center p-6">
       <div className="w-full max-w-3xl bg-green-100 rounded-2xl shadow-md p-8 relative">
+        <button
+          onClick={() => navigate("/chat-new/text")}
+          className="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+        >
+          ← Back to Chat
+        </button>
         {/* Header row */}
         <div className="flex flex-col items-center gap-4 p-6">
           <div className="flex justify-between mb-6 w-full">

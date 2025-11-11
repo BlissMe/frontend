@@ -1,6 +1,6 @@
 import { Button, Divider, Input, Typography, Spin } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, use } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
@@ -19,6 +19,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Message } from "../context/AuthContext";
 import Nickname from "../start/Nickname";
 import { Modal, Tag, Progress, Descriptions } from "antd";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 const { Text } = Typography;
 const levelColor = (lvl?: string) => {
@@ -49,8 +50,8 @@ const ChatBox = () => {
   const { selectedCharacter,nickname ,fetchCharacters } = useCharacterContext();
   console.log(selectedCharacter)
   const [levelResult, setLevelResult] = useState<any>(null);
-  const [levelOpen, setLevelOpen] = useState(false); 
-
+  const [levelOpen, setLevelOpen] = useState(false);
+  const user_id = getLocalStoragedata("userId") || "";
   useEffect(() => {
     (async () => {
       const session = await createNewSession();
@@ -113,7 +114,9 @@ const ChatBox = () => {
       context,
       inputValue,
       sessionSummaries,
-      askedPhq9Ids
+      askedPhq9Ids,
+      Number(user_id),
+      Number(sessionID)
     );
 
     const finalBotMsg = {
@@ -182,7 +185,9 @@ const ChatBox = () => {
       context,
       answer,
       sessionSummaries,
-      askedPhq9Ids
+      askedPhq9Ids,
+      Number(user_id),
+      Number(sessionID)
     );
 
     const finalBotMsg = {

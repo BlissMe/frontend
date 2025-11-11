@@ -63,7 +63,7 @@ const ChatInterface = () => {
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
   const navigate = useNavigate();
-
+  const user_id = getLocalStoragedata("userId") || "";
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
@@ -151,7 +151,9 @@ const ChatInterface = () => {
       context,
       inputValue,
       sessionSummaries,
-      askedPhq9Ids
+      askedPhq9Ids,
+      Number(user_id),
+      Number(sessionID)
     );
 
     const finalBotMsg = {
@@ -210,7 +212,9 @@ const ChatInterface = () => {
       context,
       answer,
       sessionSummaries,
-      askedPhq9Ids
+      askedPhq9Ids,
+      Number(user_id),
+      Number(sessionID)
     );
     const finalBotMsg = {
       sender: "popo",

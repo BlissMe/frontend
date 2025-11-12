@@ -1,7 +1,7 @@
 import bearnew from "../../assets/images/bearnew.png";
 import { Button, Typography, Spin, Input, Divider } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
 import {
@@ -42,8 +42,6 @@ const levelColor = (lvl?: string) => {
 
 const { Text } = Typography;
 
-
-
 const ChatInterface = () => {
   const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
     useContext(AuthContext);
@@ -82,6 +80,7 @@ const ChatInterface = () => {
   const [awaitingFeedback, setAwaitingFeedback] = useState(false);
   const location = useLocation();
   const user_id = getLocalStoragedata("userId")|| "";
+
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
   console.log("location.pathname", location.pathname);
@@ -159,9 +158,6 @@ const ChatInterface = () => {
         localStorage.removeItem("therapyMode");
       }
     };
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-    setLoading(true);
 
     initTherapyMode();
   }, []);
@@ -244,7 +240,7 @@ const ChatInterface = () => {
         inputValue,
         sessionSummaries,
         askedPhq9Ids,
-        Number(user_id), 
+        Number(user_id),
         Number(sessionID)
       );
       console.log("botReply:", botReply);
@@ -336,7 +332,8 @@ const ChatInterface = () => {
       answer,
       sessionSummaries,
       askedPhq9Ids,
-      Number(user_id), Number(sessionID)
+      Number(user_id),
+      Number(sessionID)
     );
 
     const finalBotMsg = {
@@ -471,6 +468,7 @@ const ChatInterface = () => {
       console.error(e);
     }
   }
+
   const phqOptions = [
     "Not at all",
     "Several days",

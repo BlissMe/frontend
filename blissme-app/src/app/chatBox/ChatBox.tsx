@@ -1,6 +1,6 @@
 import { Button, Divider, Input, Typography, Spin } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect, useContext, use } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
@@ -23,6 +23,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Message } from "../context/AuthContext";
 import Nickname from "../start/Nickname";
 import { Modal, Tag, Progress, Descriptions } from "antd";
+import { therapyAgentChat, User } from "../../services/TherapyAgentService";
 import { getLocalStoragedata } from "../../helpers/Storage";
 
 const { Text } = Typography;
@@ -62,6 +63,7 @@ const ChatBox = () => {
   const [levelOpen, setLevelOpen] = useState(false);
   const [therapyMode, setTherapyMode] = useState(false);
   const navigate = useNavigate();
+  const user_id = getLocalStoragedata("userId")|| "";
   console.log("therapyMode", therapyMode);
   console.log("sessionSummaries", sessionSummaries);
   useEffect(() => {
@@ -164,7 +166,9 @@ const ChatBox = () => {
         context,
         inputValue,
         sessionSummaries,
-        askedPhq9Ids
+        askedPhq9Ids,
+        Number(user_id),
+        Number(sessionID)
       );
       console.log("botReply:", botReply);
     }

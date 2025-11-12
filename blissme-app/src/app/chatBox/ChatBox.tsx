@@ -540,7 +540,7 @@ const user_id = getLocalStoragedata("user_id") || "";
         )}
       </div>
     </div>
-  );change
+  )
 };
 
 export default ChatInterface;

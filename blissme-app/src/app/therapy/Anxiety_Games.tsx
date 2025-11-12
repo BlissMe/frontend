@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -66,7 +67,7 @@ interface AnxietyGamesProps {
 export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [showGame, setShowGame] = useState(false);
-
+  const navigate = useNavigate();
   const handleGameStart = async (gameId: string) => {
     setSelectedGame(gameId);
     setShowGame(true);
@@ -101,59 +102,66 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
 
   return (
     <>
-      <Card className="border-slate-300/20">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold flex items-center gap-2 text-white">
-            <Gamepad2 className="h-5 w-5 text-white" />
-            Anxiety Relief Activities
-          </CardTitle>
-          <CardDescription className="text-white">
-            Interactive exercises to help reduce stress and anxiety
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {games.map((game) => (
-              <motion.div
-                key={game.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Card
-                  className={`border-slate-300/20transition-colors cursor-pointer ${
-                    selectedGame === game.id ? "ring-2 ring-slate-400" : ""
-                  }`}
-                  onClick={() => handleGameStart(game.id)}
+      <div className="relative min-h-screen bg-[#01090b] p-6">
+        <Card className="relative border-slate-300/20">
+          <button
+            onClick={() => navigate("/chat-new/text")}
+            className="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+          >
+            ← Back to Chat
+          </button>
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold flex items-center gap-2 text-white">
+              <Gamepad2 className="h-5 w-5 text-white" />
+              Anxiety Relief Activities
+            </CardTitle>
+            <CardDescription className="text-white">
+              Interactive exercises to help reduce stress and anxiety
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {games.map((game) => (
+                <motion.div
+                  key={game.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-4">
-                      <div
-                        className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}
-                      >
-                        <game.icon className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-white">
-                          {game.title}
-                        </h4>
-                        <p className="text-sm text-white mt-1">
-                          {game.description}
-                        </p>
-                        <div className="flex items-center gap-2 mt-3">
-                          <Music2 className="h-4 w-4 text-slate-500" />
-                          <span className="text-sm text-slate-500">
-                            {game.duration}
-                          </span>
+                  <Card
+                    className={`border-slate-300/20transition-colors cursor-pointer ${
+                      selectedGame === game.id ? "ring-2 ring-slate-400" : ""
+                    }`}
+                    onClick={() => handleGameStart(game.id)}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-4">
+                        <div
+                          className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}
+                        >
+                          <game.icon className="h-6 w-6" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-white">
+                            {game.title}
+                          </h4>
+                          <p className="text-sm text-white mt-1">
+                            {game.description}
+                          </p>
+                          <div className="flex items-center gap-2 mt-3">
+                            <Music2 className="h-4 w-4 text-slate-500" />
+                            <span className="text-sm text-slate-500">
+                              {game.duration}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
 
-         {/*  {selectedGame && (
+            {/*  {selectedGame && (
             <div className="mt-6 text-center">
               <Button
                 className="gap-2 bg-slate-700 text-white hover:bg-slate-600"
@@ -164,19 +172,20 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
               </Button>
             </div>
           )} */}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Dialog open={showGame} onOpenChange={setShowGame}>
-        <DialogContent className="sm:max-w-[600px] bg-[#01090b]">
-          <DialogHeader>
-            <DialogTitle>
-              {games.find((g) => g.id === selectedGame)?.title}
-            </DialogTitle>
-          </DialogHeader>
-          {renderGame()}
-        </DialogContent>
-      </Dialog>
+        <Dialog open={showGame} onOpenChange={setShowGame}>
+          <DialogContent className="sm:max-w-[600px] bg-[#01090b]">
+            <DialogHeader>
+              <DialogTitle>
+                {games.find((g) => g.id === selectedGame)?.title}
+              </DialogTitle>
+            </DialogHeader>
+            {renderGame()}
+          </DialogContent>
+        </Dialog>
+      </div>
     </>
   );
 };

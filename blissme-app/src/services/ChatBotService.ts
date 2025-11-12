@@ -4,7 +4,9 @@ export async function chatBotService(
   history: string,
   userQuery: string,
   sessionSummaries: string[],
-  askedPhqIds: number[]
+  askedPhqIds: number[],
+  user_id: number,  
+  session_id: number
 ): Promise<{
   response: string;
   phq9_questionID: number | null;
@@ -18,7 +20,9 @@ export async function chatBotService(
         user_query: userQuery,
         history: history,
         summaries: sessionSummaries,
-        asked_phq_ids: askedPhqIds
+        asked_phq_ids: askedPhqIds,
+        user_id: user_id,
+        session_id: session_id
       }),
     });
 

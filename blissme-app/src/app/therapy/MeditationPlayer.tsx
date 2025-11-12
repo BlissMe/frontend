@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MeditationApp: React.FC = () => {
   const songRef = useRef<HTMLAudioElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const outlineRef = useRef<SVGCircleElement | null>(null);
-
+  const navigate = useNavigate();
   const outlineLength = 1360;
   const [isPlaying, setIsPlaying] = useState(false);
   const [fakeDuration, setFakeDuration] = useState(600);
@@ -76,6 +77,12 @@ const MeditationApp: React.FC = () => {
 
   return (
     <div className="relative">
+      <button
+        onClick={() => navigate("/chat-new/text")}
+        className="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow z-50"
+      >
+        ← Back to Chat
+      </button>
       <h1 className="text-center text-white text-4xl font-montserrat pt-8">
         MEDITATION WEB APP
       </h1>

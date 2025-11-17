@@ -113,7 +113,7 @@ const Level = () => {
             type={selectedLevel === "noidea" ? "primary" : "default"}
             size="large"
             loading={isLoading}
-            onClick={() => handleLevelSelection("i", true)}
+            onClick={() => handleLevelSelection("noidea", true)}
             className={`rounded-xl py-5 font-medium transition-all ${
               selectedLevel === "noidea"
                 ? "bg-gray-400 text-white border-none"

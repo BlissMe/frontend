@@ -86,7 +86,7 @@ const Sidebar: React.FC = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-16 bg-green-300 bg-opacity-50 flex-col items-center py-4 space-y-6 shadow-md overflow-visible">
+      <div className="hidden md:flex w-16 bg-emerald-800  flex-col items-center py-4 space-y-6 shadow-md overflow-visible">
         <div className="flex flex-col items-center space-y-6 flex-grow">
           <div className="w-10 h-10 rounded-full bg-white overflow-hidden">
             <img

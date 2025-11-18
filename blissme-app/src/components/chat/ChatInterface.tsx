@@ -63,9 +63,9 @@ const ChatInterface = () => {
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
   const navigate = useNavigate();
-const user_id = getLocalStoragedata("user_id") || "";
+const user_id = getLocalStoragedata("userId") || "";
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
+console.log("d",user_id)
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -260,7 +260,7 @@ const user_id = getLocalStoragedata("user_id") || "";
           ? sessionSummaries[sessionSummaries.length - 1]
           : null;
 
-      const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? [],Number(user_id),Number(sessionID));
       setClassifier(res);
       try {
         await saveClassifierToServer(Number(sessionID), res);

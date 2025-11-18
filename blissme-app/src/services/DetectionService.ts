@@ -15,12 +15,14 @@ export interface ClassifierResult {
 }
 export async function getClassifierResult(
     history: string,
-    summaries: string[]
+    summaries: string[],
+    user_id:number,
+    session_id:number
 ): Promise<ClassifierResult> {
     const res = await fetch(`${metadataServiceURL}detect`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ history, summaries }),
+        body: JSON.stringify({ history, summaries ,user_id,session_id}),
     });
 
     if (!res.ok) {

@@ -114,11 +114,10 @@ const Level = () => {
             size="large"
             loading={isLoading}
             onClick={() => handleLevelSelection("noIdea", true)}
-            className={`rounded-xl py-5 font-medium transition-all ${
-              selectedLevel === "noIdea"
-                ? "bg-gray-400 text-white border-none"
-                : "hover:bg-gray-200"
-            }`}
+            className={`rounded-xl py-5 font-medium transition-all ${selectedLevel === "noIdea"
+              ? "bg-gray-400 text-white border-none"
+              : "hover:bg-gray-200"
+              }`}
           >
             No Idea
           </Button>
@@ -128,11 +127,10 @@ const Level = () => {
             size="large"
             loading={isLoading}
             onClick={() => handleLevelSelection("mild", true)}
-            className={`rounded-xl py-5 font-medium transition-all ${
-              selectedLevel === "mild"
-                ? "bg-green-500 text-white border-none"
-                : "hover:bg-green-100"
-            }`}
+            className={`rounded-xl py-5 font-medium transition-all ${selectedLevel === "mild"
+              ? "bg-green-500 text-white border-none"
+              : "hover:bg-green-100"
+              }`}
           >
             Mild
           </Button>
@@ -142,11 +140,10 @@ const Level = () => {
             size="large"
             loading={isLoading}
             onClick={() => handleLevelSelection("moderate", true)}
-            className={`rounded-xl py-5 font-medium transition-all ${
-              selectedLevel === "moderate"
-                ? "bg-yellow-400 text-white border-none"
-                : "hover:bg-yellow-100"
-            }`}
+            className={`rounded-xl py-5 font-medium transition-all ${selectedLevel === "moderate"
+              ? "bg-yellow-400 text-white border-none"
+              : "hover:bg-yellow-100"
+              }`}
           >
             Moderate
           </Button>
@@ -156,11 +153,10 @@ const Level = () => {
             size="large"
             loading={isLoading}
             onClick={() => handleLevelSelection("severe", true)}
-            className={`rounded-xl py-5 font-medium transition-all ${
-              selectedLevel === "severe"
-                ? "bg-red-500 text-white border-none"
-                : "hover:bg-red-100"
-            }`}
+            className={`rounded-xl py-5 font-medium transition-all ${selectedLevel === "severe"
+              ? "bg-red-500 text-white border-none"
+              : "hover:bg-red-100"
+              }`}
           >
             Severe
           </Button>
@@ -174,12 +170,12 @@ const Level = () => {
           </Button>
         </div>
 
-        <div className="flex justify-end mt-10 text-sm text-gray-600">
+        <div className="flex justify-end mt-6 text-sm text-gray-600">
           <button
             onClick={handleContinue}
-            className="underline hover:text-gray-800 transition"
+            className="hover:text-gray-800 transition"
           >
-            <span className="text-black font-semibold text-base cursor-pointer">
+            <span className="hover:text-blue-400 transition text-blue-700 font-small cursor-pointer">
               Continue →
             </span>
           </button>
@@ -188,7 +184,7 @@ const Level = () => {
         <img
           src={heart}
           alt="Heart"
-          className="absolute bottom-5 right-5 w-10 opacity-70 animate-pulse"
+          className="absolute bottom-2 right-5 w-10 opacity-70 animate-pulse"
         />
       </div>
     </div>

@@ -94,11 +94,10 @@ const Medicine = () => {
             size="large"
             loading={isLoading}
             onClick={() => handleMedicineSelection("yes")}
-            className={`rounded-xl py-5 font-medium transition-all ${
-              selectedOption === "yes"
-                ? "bg-green-500 text-white border-none"
-                : "hover:bg-green-100"
-            }`}
+            className={`rounded-xl py-5 font-medium transition-all ${selectedOption === "yes"
+              ? "bg-green-500 text-white border-none"
+              : "hover:bg-green-100"
+              }`}
           >
             Yes, I do
           </Button>
@@ -108,11 +107,10 @@ const Medicine = () => {
             size="large"
             loading={isLoading}
             onClick={() => handleMedicineSelection("no")}
-            className={`rounded-xl py-5 font-medium transition-all ${
-              selectedOption === "no"
-                ? "bg-red-400 text-white border-none"
-                : "hover:bg-red-100"
-            }`}
+            className={`rounded-xl py-5 font-medium transition-all ${selectedOption === "no"
+              ? "bg-red-400 text-white border-none"
+              : "hover:bg-red-100"
+              }`}
           >
             No, I don’t
           </Button>
@@ -126,20 +124,20 @@ const Medicine = () => {
           </Button>
         </div>
 
-        <div className="flex justify-between mt-10 text-sm text-gray-600">
+        <div className="flex justify-between mt-6 text-sm text-gray-600">
           <button
             onClick={() => navigate("/mode/level")}
-            className="underline hover:text-gray-800 transition"
+            className="hover:text-gray-800 transition"
           >
-            <span className="text-black font-semibold text-base cursor-pointer">
+            <span className="text-blue-700  font-small hover:text-blue-400 cursor-pointer">
               ← Back
             </span>
           </button>
           <button
             onClick={() => handleMedicineSelection(null)}
-            className="underline hover:text-gray-800 transition"
+            className=" hover:text-blue-400 transition text-blue-700 font-small "
           >
-            <span className="text-black font-semibold text-base cursor-pointer">
+            <span className=" hover:text-blue-400 transition text-blue-700 font-small cursor-pointer">
               Continue →
             </span>
           </button>
@@ -148,7 +146,7 @@ const Medicine = () => {
         <img
           src={heart}
           alt="Heart"
-          className="absolute bottom-5 right-5 w-10 opacity-70 animate-pulse"
+          className="absolute bottom-2 right-5 w-10 opacity-70 animate-pulse"
         />
       </div>
     </div>

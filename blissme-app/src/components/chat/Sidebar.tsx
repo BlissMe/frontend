@@ -166,6 +166,12 @@ const Sidebar: React.FC = () => {
                 >
                   Number Guessing Game
                 </Link>
+                <Link
+                  to="/therapy/body-scan"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  Body Scan Therapy
+                </Link>
               </div>
             )}
           </div>

@@ -27,7 +27,6 @@ const BodyScan: React.FC = () => {
             className="h-screen w-full bg-cover bg-center flex flex-col text-white relative"
             style={{ backgroundImage: `url(${bg})` }}
         >
-            <div className="absolute inset-0 bg-black/40"></div>
 
             <div className="z-10 flex flex-col items-center text-center px-4">
                 <h1 className="text-3xl md:text-4xl font-semibold mb-6 drop-shadow-lg">

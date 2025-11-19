@@ -10,7 +10,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 const images = [home, home2, home3];
-const sections = ["home", "about", "features", "contact"];
+const sections = ["home", "about", "features"];
 
 const Home = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -145,7 +145,7 @@ const Home = () => {
                     </button>
                     <button
                         onClick={handleStartChat}
-                        className="bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base"
+                        className="bg-emerald-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-emerald-400 transition text-sm md:text-base"
                     >
                         Start Chat
                     </button>
@@ -192,7 +192,7 @@ const Home = () => {
                     </button>
                     <button
                         onClick={handleStartChat}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-400 transition"
                     >
                         Start Chat
                     </button>
@@ -241,7 +241,7 @@ const Home = () => {
                     <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 mt-6">
                         <button
                             onClick={handleStartChat}
-                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                            className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-400 transition"
                         >
                             Start Chat
                         </button>
@@ -259,17 +259,32 @@ const Home = () => {
             {/* ABOUT */}
             <section
                 id="about"
-                className="h-screen w-full flex items-center justify-center px-6 bg-cover bg-center relative"
-                style={{ backgroundImage: `url(${about})` }}
+                className="h-screen w-full flex items-center justify-center px-6 bg-cover bg-center relative bg-green-100"
+            // style={{ backgroundImage: `url(${about})` }}
             >
-
-
+                {/* Background blobs */}
+                <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
+                <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-teal-400 rounded-full opacity-25 blur-2xl animate-pulse"></div>
+                <div className="absolute bottom-40 left-1/4 w-56 h-56 bg-green-300 rounded-full opacity-25 blur-2xl animate-pulse"></div>
+                <div className="absolute top-20 right-1/3 w-44 h-44 bg-emerald-300 rounded-full opacity-20 blur-2xl animate-pulse"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-6xl">
 
                     <div
                         className="md:w-1/2 text-center md:text-left"
                         data-aos="fade-right"
                     >
+                        <h1 className="text-3xl md:text-4xl font-bold text-green-700"
+                            style={{ fontFamily: 'Merienda, cursive' }}
+                        >
+                            About BlissMe
+                        </h1>
+
+                        <p className="mt-4 text-gray-700 text-base md:text-lg max-w-lg">
+                            BlissMe is an AI-powered multi-agent depression detection and therapy
+                            system designed to support mental wellness through personalized therapy,
+                            emotional analysis, and healing-focused experiences.
+                        </p>
 
                     </div>
 
@@ -326,17 +341,30 @@ const Home = () => {
             {/* FEATURES */}
             <section
                 id="features"
-                className="min-h-screen flex flex-col items-center px-6 py-20 bg-gray-50 relative"
+                className="min-h-screen flex flex-col items-center px-6 py-20 bg-gray-100 relative overflow-hidden"
             >
+                {/* Background blobs */}
+                <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
+                <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-teal-400 rounded-full opacity-25 blur-2xl animate-pulse"></div>
+                <div className="absolute bottom-40 left-1/4 w-56 h-56 bg-green-300 rounded-full opacity-25 blur-2xl animate-pulse"></div>
+                <div className="absolute top-20 right-1/3 w-44 h-44 bg-emerald-300 rounded-full opacity-20 blur-2xl animate-pulse"></div>
+
+                {/* Background leaves */}
+                {/* <div className="absolute top-10 left-1/3 w-32 h-32 rotate-12 bg-green-200 opacity-30 rounded-full clip-[polygon(50%_0%,_61%_35%,_98%_35%,_68%_57%,_79%_91%,_50%_70%,_21%_91%,_32%_57%,_2%_35%,_39%_35%)] animate-pulse"></div>
+                <div className="absolute bottom-20 right-1/4 w-28 h-28 rotate-[-15deg] bg-emerald-200 opacity-25 rounded-full clip-[polygon(50%_0%,_61%_35%,_98%_35%,_68%_57%,_79%_91%,_50%_70%,_21%_91%,_32%_57%,_2%_35%,_39%_35%)] animate-pulse"></div>
+                <div className="absolute top-1/2 left-10 w-24 h-24 rotate-6 bg-teal-200 opacity-25 rounded-full clip-[polygon(50%_0%,_61%_35%,_98%_35%,_68%_57%,_79%_91%,_50%_70%,_21%_91%,_32%_57%,_2%_35%,_39%_35%)] animate-pulse"></div> */}
+
+                {/* Section title */}
                 <h1
-                    className="text-3xl md:text-4xl font-bold text-green-700 mb-12"
+                    className="text-3xl md:text-4xl font-bold text-green-700 mb-12 relative z-10"
                     data-aos="fade-down"
                     style={{ fontFamily: 'Merienda, cursive' }}
                 >
                     Features
                 </h1>
 
-                <div className="relative w-full max-w-4xl">
+                <div className="relative w-full max-w-4xl z-10">
                     {/* Timeline vertical line */}
                     <div className="absolute left-1/2 transform -translate-x-1/2 h-full border-l-2 border-gray-300"></div>
 
@@ -346,8 +374,7 @@ const Home = () => {
                             return (
                                 <div
                                     key={idx}
-                                    className={`flex items-center w-full ${isLeft ? "justify-start" : "justify-end"
-                                        }`}
+                                    className={`flex items-center w-full ${isLeft ? "justify-start" : "justify-end"}`}
                                     data-aos={isLeft ? "fade-right" : "fade-left"}
                                 >
                                     {/* Connector Flower Emoji */}
@@ -372,6 +399,35 @@ const Home = () => {
                 </div>
             </section>
 
+
+            <footer className="bg-emerald-700 text-white py-6">
+                <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-center md:text-left">
+                    <p className="text-sm">
+                        &copy; {new Date().getFullYear()} BlissMe. All rights reserved.
+                    </p>
+
+                    <div className="flex gap-4 mt-2 md:mt-0 justify-center md:justify-end">
+                        <a
+                            href="#"
+                            className="hover:text-green-300 transition-colors duration-300 text-sm"
+                        >
+                            Privacy Policy
+                        </a>
+                        <a
+                            href="#"
+                            className="hover:text-green-300 transition-colors duration-300 text-sm"
+                        >
+                            Terms of Service
+                        </a>
+                        <a
+                            href="#"
+                            className="hover:text-green-300 transition-colors duration-300 text-sm"
+                        >
+                            Contact
+                        </a>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };

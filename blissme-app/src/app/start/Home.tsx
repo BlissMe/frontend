@@ -222,8 +222,10 @@ const Home = () => {
                 {/* Content */}
                 <div className="relative z-10 max-w-lg text-center md:text-left mt-20 md:mt-32 md:ml-4 lg:ml-12">
                     <h1
-                        className="text-3xl md:text-5xl font-bold text-green-900 hover:animate-bounce hover:drop-shadow-[0_0_10px_#22c55e]"
+                        className="text-3xl md:text-5xl font-bold text-green-900 hover:drop-shadow-[0_0_10px_#22c55e]"
                         style={{ fontFamily: 'Merienda, cursive' }}
+                        data-aos="fade-right"
+
                     >
                         Your journey to mental wellness starts here
                     </h1>
@@ -231,6 +233,8 @@ const Home = () => {
                     <p
                         className="mt-4 text-green-800 text-base md:text-lg"
                         style={{ fontFamily: 'Merienda, cursive' }}
+                        data-aos="fade-right"
+
                     >
                         BlissMe is an AI-based mental health companion that combines therapy,
                         games, and intelligent agents to support your emotional well-being.

@@ -1,5 +1,5 @@
 import Sidebar from "../../components/chat/Sidebar";
-import bg from "../../assets/images/forest.jpg";
+import bg from "../../assets/images/b6.jpeg";
 import { Outlet } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 import { motion } from "framer-motion";

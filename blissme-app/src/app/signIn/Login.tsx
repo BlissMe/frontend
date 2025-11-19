@@ -158,26 +158,26 @@ const Login = () => {
           </div>
 
           <div className="flex justify-center mt-2">
-            <Button
-              type="primary"
-              htmlType="submit"
+            <button
+              // type="primary"
+              // htmlType="submit"
               className="w-full sm:w-[80%] md:w-[70%] h-[42px] text-base md:text-lg rounded-xl text-white font-semibold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
-              loading={loading}
+            // loading={loading}
             >
               Sign In
-            </Button>
+            </button>
           </div>
         </Form>
 
         {/* Divider */}
-       {/*  <div className="flex items-center justify-center my-3 w-full">
+        {/*  <div className="flex items-center justify-center my-3 w-full">
           <div className="border-t border-gray-300 w-1/4"></div>
           <Text className="mx-2 text-sm text-gray-600">or</Text>
           <div className="border-t border-gray-300 w-1/4"></div>
         </div> */}
 
         {/* Google and Face Sign In */}
-       {/*  {<Button
+        {/*  {<Button
           type="primary"
           className="google_btn flex items-center justify-center gap-2 w-full sm:w-[80%] md:w-[70%] h-[42px] rounded-full font-medium"
           onClick={() => navigate("/face-auth")}

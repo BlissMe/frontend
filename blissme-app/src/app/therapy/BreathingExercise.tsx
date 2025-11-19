@@ -11,6 +11,7 @@ import {
 } from "../../components/therapy/protocols";
 import { useNavigate } from "react-router-dom";
 
+
 type Props = {
   protocolId?: string;
   durationMinutes?: number;
@@ -62,7 +63,7 @@ const AdvancedBreathing: React.FC<Props> = ({
       g.gain.exponentialRampToValueAtTime(0.03, ctx.currentTime + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
       o.stop(ctx.currentTime + 0.2);
-    } catch {}
+    } catch { }
   }, []);
 
   // Haptic cue
@@ -92,8 +93,8 @@ const AdvancedBreathing: React.FC<Props> = ({
       phase.name === "inhale"
         ? "Inhale"
         : phase.name === "exhale"
-        ? "Exhale"
-        : "Hold";
+          ? "Exhale"
+          : "Hold";
     announce(label);
     if (phase.audioCue) cue();
     if (phase.hapticCue) haptic();
@@ -150,7 +151,7 @@ const AdvancedBreathing: React.FC<Props> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(summary),
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }, [running]);
 
@@ -167,112 +168,118 @@ const AdvancedBreathing: React.FC<Props> = ({
     phase.name === "inhale"
       ? ease(phaseProgress)
       : phase.name === "exhale"
-      ? 1 - ease(phaseProgress)
-      : 0.5; // hold
+        ? 1 - ease(phaseProgress)
+        : 0.5; // hold
   const radius = prefersReducedMotion
     ? (minR + maxR) / 2
     : minR + (maxR - minR) * sizeT;
 
   return (
-    <div className="flex-1 flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl bg-green-100 rounded-2xl shadow-md p-8 relative">
-        <button
-          onClick={() => navigate("/chat-new/text")}
-          className="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+    <div className="flex items-center justify-center min-h-screen p-4 ">
+
+      <div className="w-full max-w-xl bg-emerald-400/30 rounded-2xl shadow-md p-6 relative flex flex-col items-center">
+
+        {/* Heading centered */}
+        <h2 className="text-2xl font-bold text-emerald-900 text-center mb-4" style={{ fontFamily: 'Merienda, cursive' }}
         >
-          ← Back to Chat
-        </button>
-        {/* Header row */}
-        <div className="flex flex-col items-center gap-4 p-6">
-          <div className="flex justify-between mb-6 w-full">
-            <h2 className="text-2xl font-bold text-green-600">
-              Mindful Breathing
-            </h2>
-            <span className="px-3 py-1 rounded-md bg-green-500 text-white font-mono text-sm">
-              {String(remainingMin).padStart(2, "0")}:
-              {String(remainingSec).padStart(2, "0")}
-            </span>
-          </div>
-          <div className="relative">
-            <svg width="320" height="320" viewBox="0 0 320 320">
+          Mindful Breathing
+        </h2>
+
+        {/* Timer */}
+        <span className="px-3 py-1 rounded-md bg-emerald-500 text-white font-mono text-sm mb-4">
+          {String(remainingMin).padStart(2, "0")}:
+          {String(remainingSec).padStart(2, "0")}
+        </span>
+
+        {/* Breathing animation */}
+        <div className="relative mb-4">
+          <svg width="260" height="260" viewBox="0 0 320 320">
+            <circle
+              cx="160"
+              cy="160"
+              r="130"
+              fill="none"
+              strokeWidth="10"
+              strokeOpacity="0.1"
+              stroke="currentColor"
+            />
+
+            <g transform="rotate(-90 160 160)">
               <circle
                 cx="160"
                 cy="160"
                 r="130"
                 fill="none"
                 strokeWidth="10"
-                strokeOpacity="0.1"
+                strokeDasharray={`${phaseProgress * 2 * Math.PI * 130} ${2 * Math.PI * 130}`}
+                strokeLinecap="round"
                 stroke="currentColor"
               />
+            </g>
 
-              <g transform="rotate(-90 160 160)">
-                <circle
-                  cx="160"
-                  cy="160"
-                  r="130"
-                  fill="none"
-                  strokeWidth="10"
-                  strokeDasharray={`${phaseProgress * 2 * Math.PI * 130} ${
-                    2 * Math.PI * 130
-                  }`}
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                />
-              </g>
-              <circle
-                cx="160"
-                cy="160"
-                r={radius}
-                fill="currentColor"
-                opacity="0.2"
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-xl font-medium">
-              {phase.name.charAt(0).toUpperCase() + phase.name.slice(1)}
-            </div>
+            <circle cx="160" cy="160" r={radius} fill="currentColor" opacity="0.2" />
+          </svg>
+
+          <div className="absolute inset-0 flex items-center justify-center text-xl font-medium">
+            {phase.name.charAt(0).toUpperCase() + phase.name.slice(1)}
           </div>
-
-          <div className="text-sm opacity-70">
-            Time remaining: {String(remainingMin).padStart(2, "0")}:
-            {String(remainingSec).padStart(2, "0")} · Cycles: {cyclesCompleted}
-          </div>
-
-          <div className="mt-6 flex justify-center gap-4">
-            <button
-              className="px-6 py-2 rounded-xl bg-green-500 text-white font-medium shadow hover:bg-green-600"
-              onClick={() => {
-                setPhaseIndex(0);
-                setElapsedMsInPhase(0);
-                setCyclesCompleted(0);
-                startTimeRef.current = null;
-                lastTickRef.current = null;
-                setRunning(true);
-              }}
-            >
-              ▶ Start
-            </button>
-            <button
-              className="px-6 py-2 rounded-xl bg-gray-100 text-gray-800 font-medium shadow hover:bg-gray-200"
-              onClick={() => setRunning(false)}
-            >
-              ⏸ Pause
-            </button>
-            <button
-              className="px-6 py-2 rounded-xl bg-red-500 text-white font-medium shadow hover:bg-red-600"
-              onClick={() => setRunning(false)}
-            >
-              ⏹ Stop
-            </button>
-          </div>
-
-          <p className="text-xs text-center max-w-prose opacity-70">
-            This feature guides evidence-based slow/paced breathing. Stop if you
-            feel dizzy, light-headed, or unwell.
-          </p>
         </div>
+
+        {/* Cycles + Remaining time */}
+        <div className="text-sm opacity-70 mb-4">
+          Time remaining: {String(remainingMin).padStart(2, "0")}:
+          {String(remainingSec).padStart(2, "0")}
+          · Cycles: {cyclesCompleted}
+        </div>
+
+        {/* Control buttons */}
+        <div className="mt-4 mb-4 flex justify-center gap-4">
+          <button
+            className="px-6 py-2 rounded-xl bg-emerald-500 text-white font-medium shadow hover:bg-emerald-600"
+            onClick={() => {
+              setPhaseIndex(0);
+              setElapsedMsInPhase(0);
+              setCyclesCompleted(0);
+              startTimeRef.current = null;
+              lastTickRef.current = null;
+              setRunning(true);
+            }}
+          >
+            ▶ Start
+          </button>
+
+          <button
+            className="px-6 py-2 rounded-xl bg-gray-100 text-gray-800 font-medium shadow hover:bg-gray-200"
+            onClick={() => setRunning(false)}
+          >
+            ⏸ Pause
+          </button>
+
+          <button
+            className="px-6 py-2 rounded-xl bg-red-500 text-white font-medium shadow hover:bg-red-600"
+            onClick={() => setRunning(false)}
+          >
+            ⏹ Stop
+          </button>
+        </div>
+
+        {/* Warning */}
+        <p className="text-xs text-center max-w-prose opacity-70 mb-10">
+          This feature guides evidence-based slow/paced breathing. Stop if you feel dizzy, light-headed, or unwell.
+        </p>
+
+        {/* Back button at bottom-left */}
+        <button
+          onClick={() => navigate("/chat-new/text")}
+          className="absolute bottom-4 left-4 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+        >
+          ← Back to Chat
+        </button>
       </div>
+
     </div>
   );
+
 };
 
 export default AdvancedBreathing;

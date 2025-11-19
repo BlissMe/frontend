@@ -189,13 +189,13 @@ const Register = () => {
               </Form.Item>
 
               <div className="flex justify-center mt-4">
-                <Button
-                  type="primary"
-                  htmlType="submit"
+                <button
+                  // type="primary"
+                  // htmlType="submit"
                   className="w-full sm:w-[80%] md:w-[70%] h-[42px] text-base md:text-lg rounded-xl text-white font-semibold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
                 >
                   Next
-                </Button>
+                </button>
               </div>
             </>
           )}
@@ -233,9 +233,10 @@ const Register = () => {
                   size="large"
                   placeholder="Your Answer"
                   maxLength={100}
-                  className="w-full rounded-md"
+                  className="w-full !rounded-md"
                 />
               </Form.Item>
+
               <p className="text-sm text-yellow-700 mb-2 italic">
                 ⚠️ Please scroll through the Terms & Privacy Policy before
                 agreeing.
@@ -275,14 +276,14 @@ const Register = () => {
               </Form.Item>
 
               <div className="flex justify-center mt-3">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  className="w-full sm:w-[80%] md:w-[70%] h-[42px] text-base md:text-lg rounded-full text-white font-semibold bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                <button
+                  // type="primary"
+                  // htmlType="submit"
+                  // loading={loading}
+                  className="w-full sm:w-[80%] md:w-[70%] h-[42px] text-base md:text-lg rounded-xl text-white font-semibold bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
                 >
                   Sign Up
-                </Button>
+                </button>
               </div>
             </>
           )}

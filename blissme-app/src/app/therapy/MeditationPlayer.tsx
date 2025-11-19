@@ -19,7 +19,6 @@ const MeditationApp: React.FC = () => {
     }
   }, []);
 
-  // Handle play / pause
   const togglePlay = () => {
     const song = songRef.current;
     const video = videoRef.current;
@@ -36,14 +35,6 @@ const MeditationApp: React.FC = () => {
     }
   };
 
-  // Restart song
-  const restartSong = () => {
-    if (songRef.current) {
-      songRef.current.currentTime = 0;
-    }
-  };
-
-  // Update timer + stroke
   useEffect(() => {
     const song = songRef.current;
     if (!song) return;
@@ -76,119 +67,113 @@ const MeditationApp: React.FC = () => {
   };
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => navigate("/chat-new/text")}
-        className="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow z-50"
-      >
-        ← Back to Chat
-      </button>
-      <h1 className="text-center text-white text-4xl font-montserrat pt-8">
-        MEDITATION WEB APP
-      </h1>
+    <div className="flex min-h-screen items-center justify-center">
 
-      <video
-        ref={videoRef}
-        loop
-        autoPlay={false}
-        muted
-        className="fixed top-0 left-0 w-full h-full object-cover z-0"
-      >
-        <source src="/videos/rain.mp4" type="video/mp4" />
-      </video>
+      <div className="relative w-full max-w-4xl rounded-3xl bg-white shadow-xl overflow-hidden flex flex-col ">
 
-      <div className="app relative z-10 h-[80vh] flex justify-evenly items-center font-montserrat">
-        <div className="time-select flex flex-col justify-evenly items-center h-[80%] flex-1 text-white">
-          <button onClick={() => setFakeDuration(120)}>2 Minutes</button>
-          <button onClick={() => setFakeDuration(300)}>5 Minutes</button>
-          <button onClick={() => setFakeDuration(600)}>10 Minutes</button>
-        </div>
+        {/* Video background */}
+        <video
+          ref={videoRef}
+          loop
+          muted
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src="/videos/rain.mp4" type="video/mp4" />
+        </video>
 
-        <div className="player-container relative flex flex-col justify-evenly items-center h-[80%] flex-1 text-white">
-          <audio ref={songRef} className="song">
-            <source src="/sounds/rain.mp3" />
-          </audio>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/40 z-0"></div>
 
-          <div>
-            <img
-              src={isPlaying ? "/svg/pause.svg" : "/svg/play.svg"}
-              className="play w-[70px] cursor-pointer"
-              alt="image"
-              onClick={togglePlay}
-            />
-            <br />
-            <img
-              src="/svg/replay.svg"
-              className="replay w-[30px] cursor-pointer mt-6"
-              onClick={restartSong}
-              alt="replay"
-            />
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center p-6">
+
+          {/* Header */}
+          <h1 className="text-3xl font-bold mb-12" style={{ fontFamily: 'Merienda, cursive' }}>
+            Meditation Session
+          </h1>
+
+          {/* Main row: Time buttons, Player, Sound pickers */}
+          <div className="flex md:flex-row items-start w-full justify-around mb-24 flex-col gap-8">
+
+            {/* Time Buttons */}
+            <div className="flex md:flex-col gap-4">
+              <button className="px-3 py-1 bg-white/60 rounded-lg" onClick={() => setFakeDuration(120)}>2 Min</button>
+              <button className="px-3 py-1 bg-white/60 rounded-lg" onClick={() => setFakeDuration(300)}>5 Min</button>
+              <button className="px-3 py-1 bg-white/60 rounded-lg" onClick={() => setFakeDuration(600)}>10 Min</button>
+            </div>
+
+            {/* Player */}
+            <div className="relative flex flex-col items-center gap-2">
+              {/* Timer on top */}
+              <div className="absolute -top-6 text-white text-sm font-bold">
+                {formatTime(fakeDuration - currentTime)}
+              </div>
+
+              {/* Player */}
+              <div className="relative flex items-center justify-center w-[120px] h-[120px]">
+                <audio ref={songRef}>
+                  <source src="/sounds/rain.mp3" />
+                </audio>
+
+                {/* Background circle */}
+                <svg width="120" height="120" className="absolute">
+                  <circle cx="60" cy="60" r="55" stroke="white" strokeWidth="6" fill="none" opacity={0.1} />
+                </svg>
+
+                {/* Progress circle */}
+                <svg width="120" height="120" className="absolute">
+                  <circle ref={outlineRef} cx="60" cy="60" r="55" stroke="#0ea5e9" strokeWidth="6" fill="none" strokeLinecap="round" />
+                </svg>
+
+                {/* Play/Pause button */}
+                <img
+                  src={isPlaying ? "/svg/pause.svg" : "/svg/play.svg"}
+                  className="w-10 h-10 cursor-pointer z-10"
+                  onClick={togglePlay}
+                  alt="play/pause"
+                />
+              </div>
+            </div>
+
+
+            {/* Sound pickers */}
+            <div className="flex flex-row md:flex-col gap-4">
+              <button
+                className="rounded-full bg-[#4972a1] h-16 w-16 flex items-center justify-center"
+                onClick={() => {
+                  if (songRef.current && videoRef.current) {
+                    songRef.current.src = "/sounds/rain.mp3";
+                    videoRef.current.src = "/videos/rain.mp4";
+                    togglePlay();
+                  }
+                }}
+              >
+                <img src="/svg/rain.svg" alt="rain" className="w-10 h-10" />
+              </button>
+              <button
+                className="rounded-full bg-[#a14f49] h-16 w-16 flex items-center justify-center"
+                onClick={() => {
+                  if (songRef.current && videoRef.current) {
+                    songRef.current.src = "/sounds/beach.mp3";
+                    videoRef.current.src = "/videos/beach.mp4";
+                    togglePlay();
+                  }
+                }}
+              >
+                <img src="/svg/beach.svg" alt="beach" className="w-10 h-10" />
+              </button>
+            </div>
+
           </div>
 
-          <svg
-            className="track-outline absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] pointer-events-none"
-            width="453"
-            height="453"
-            viewBox="0 0 453 453"
-          >
-            <circle
-              cx="226.5"
-              cy="226.5"
-              r="216.5"
-              stroke="white"
-              strokeWidth="20"
-              fill="none"
-            />
-          </svg>
-
-          <svg
-            className="moving-outline absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] pointer-events-none"
-            width="453"
-            height="453"
-            viewBox="0 0 453 453"
-          >
-            <circle
-              ref={outlineRef}
-              cx="226.5"
-              cy="226.5"
-              r="216.5"
-              stroke="#018EBA"
-              strokeWidth="20"
-              fill="none"
-            />
-          </svg>
-
-          <h3 className="time-display absolute text-white text-5xl bottom-[10%]">
-            {formatTime(fakeDuration - currentTime)}
-          </h3>
-        </div>
-
-        {/* Sound Picker */}
-        <div className="sound-picker flex flex-col justify-evenly items-center h-[80%] flex-1">
+          {/* Back to chat button at bottom-left */}
           <button
-            className="rounded-full bg-[#4972a1] h-[120px] w-[120px] flex items-center justify-center"
-            onClick={() => {
-              if (songRef.current && videoRef.current) {
-                songRef.current.src = "/sounds/rain.mp3";
-                videoRef.current.src = "/videos/rain.mp4";
-                togglePlay();
-              }
-            }}
+            onClick={() => navigate("/chat-new/text")}
+            className="absolute bottom-4 left-4 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow z-20"
           >
-            <img src="/svg/rain.svg" alt="rain" />
+            ← Back to Chat
           </button>
-          <button
-            className="rounded-full bg-[#a14f49] h-[120px] w-[120px] flex items-center justify-center"
-            onClick={() => {
-              if (songRef.current && videoRef.current) {
-                songRef.current.src = "/sounds/beach.mp3";
-                videoRef.current.src = "/videos/beach.mp4";
-                togglePlay();
-              }
-            }}
-          >
-            <img src="/svg/beach.svg" alt="beach" />
-          </button>
+
         </div>
       </div>
     </div>

@@ -114,7 +114,8 @@ const ViceChatInterface = () => {
           text: msg.message,
           time: msg.time || getCurrentTime(),
         }));
-        setMessages(formattedMessages);
+
+        setMessages((prev) => [...prev, ...formattedMessages]);
       }
 
       const allSummaries = await fetchAllSummaries();

@@ -98,7 +98,7 @@ const Sidebar: React.FC = () => {
 
           <Link to={chatRoute}>
             <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-              <MessageCircle className="w-6 h-6 text-emerald-600" />
+              <MessageCircle className="w-6 h-6 text-white" />
             </button>
           </Link>
 
@@ -110,7 +110,7 @@ const Sidebar: React.FC = () => {
 
           <div className="relative z-50" ref={brainRef}>
             <button
-              className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
+              className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110"
               onClick={() => setShowBrainDropdown((prev) => !prev)}
             >
               <Brain className="w-6 h-6 text-white" />
@@ -176,18 +176,18 @@ const Sidebar: React.FC = () => {
             )}
           </div>
 
-          <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+          <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
             <Calendar className="w-6 h-6 text-white" />
           </button>
 
           <Link to="/therapy/all-doctors">
-            <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
               <Heart className="w-6 h-6 text-white" />
             </button>
           </Link>
 
           <Link to="/therapy/all-songs">
-            <button className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110">
+            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
               <Mic className="w-6 h-6 text-white" />
             </button>
           </Link>
@@ -196,7 +196,7 @@ const Sidebar: React.FC = () => {
         {/* Settings & Logout */}
         <div className="relative space-y-6 z-50" ref={settingsRef}>
           <button
-            className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-500 transition-all duration-200 hover:scale-110"
+            className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110"
             onClick={() => setShowSettings((prev) => !prev)}
           >
             <Settings className="w-6 h-6 text-white" />
@@ -227,7 +227,7 @@ const Sidebar: React.FC = () => {
 
           <button
             onClick={handleLogout}
-            className="w-10 h-10 bg-emerald-600/70 rounded-xl flex items-center justify-center shadow-md hover:bg-red-400 transition-all duration-200 hover:scale-110"
+            className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-red-400 transition-all duration-200 hover:scale-110"
           >
             <LogOut className="w-6 h-6 text-white" />
           </button>

@@ -343,7 +343,7 @@ const Settings: React.FC = () => {
       const result = await response.json();
       if (response.ok) {
         message.success(result.message || "Face signup successful!");
-        setIsWebcamOn(false); 
+        setIsWebcamOn(false);
       } else {
         message.error(result.detail || "Signup failed.");
       }
@@ -370,20 +370,20 @@ const Settings: React.FC = () => {
                 email: email,
                 name: originalCharacterName,
               }}
-              /*  onValuesChange={(_, values) => {
-                const isNicknameChanged = values.nickname !== nickname;
-                const isEmailChanged = values.email !== email;
-                const isCharacterNameChanged =
-                  values.name !== originalCharacterName;
-                const isImageChanged = !!file;
+            /*  onValuesChange={(_, values) => {
+              const isNicknameChanged = values.nickname !== nickname;
+              const isEmailChanged = values.email !== email;
+              const isCharacterNameChanged =
+                values.name !== originalCharacterName;
+              const isImageChanged = !!file;
 
-                const characterChanged =
-                  isCharacterNameChanged && isImageChanged;
+              const characterChanged =
+                isCharacterNameChanged && isImageChanged;
 
-                setIsFormChanged(
-                  isNicknameChanged || isEmailChanged || characterChanged
-                );
-              }} */
+              setIsFormChanged(
+                isNicknameChanged || isEmailChanged || characterChanged
+              );
+            }} */
             >
               <Form.Item
                 name="name"
@@ -432,7 +432,7 @@ const Settings: React.FC = () => {
                     maxCount={1}
                     accept="image/*"
                   >
-                    <Button icon={<UploadOutlined />}>
+                    <Button icon={<UploadOutlined />} className="bg-emerald-500 text-white">
                       Change Virual Character
                     </Button>
                   </Upload>

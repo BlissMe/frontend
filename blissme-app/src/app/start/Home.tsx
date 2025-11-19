@@ -5,6 +5,9 @@ import home3 from '../../assets/images/home3.png';
 import logo from '../../assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { getLocalStoragedata } from '../../helpers/Storage';
+import about from '../../assets/images/about1.png';
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const images = [home, home2, home3];
 const sections = ["home", "about", "features", "contact"];
@@ -14,6 +17,10 @@ const Home = () => {
     const [activeSection, setActiveSection] = useState<string>("home");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        AOS.init({ duration: 1200, once: true });
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -212,19 +219,77 @@ const Home = () => {
 
 
             {/* ABOUT */}
-           {/*  <section
+            <section
                 id="about"
-                className="h-screen flex flex-col items-center justify-center px-6 text-center bg-gray-100"
+                className="h-screen w-full flex items-center justify-center px-6 bg-cover bg-center relative"
+                style={{ backgroundImage: `url(${about})` }}
             >
-                <h1 className="text-3xl md:text-4xl font-bold text-green-700">About BlissMe</h1>
-                <p className="mt-4 max-w-2xl text-gray-700 text-base md:text-lg">
-                    BlissMe provides AI-driven mental wellness support with therapy,
-                    personalized games, and interactive conversations.
-                </p>
-            </section> */}
+                {/* Overlay for better readability */}
+                {/* <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div> */}
+
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-6xl">
+
+                    {/* LEFT SECTION — About Text */}
+                    <div
+                        className="md:w-1/2 text-center md:text-left"
+                        data-aos="fade-right"
+                    >
+
+                    </div>
+
+                    {/* RIGHT SECTION — 3 Cards */}
+                    <div className="mt-10 md:mt-0 md:w-1/2 flex flex-col gap-6">
+
+                        {/* Card 1 */}
+                        <div
+                            className="p-6 rounded-xl shadow-lg bg-emerald-100 border-l-4 border-emerald-500"
+                            data-aos="fade-left"
+                        >
+                            <h3 className="text-lg font-bold text-emerald-700">
+                                AI Depression Detection
+                            </h3>
+                            <p className="text-sm text-gray-700 mt-2">
+                                Multi-agent emotional analyzers detect signs of depression through voice
+                                tone, text patterns, and behavior recognition.
+                            </p>
+                        </div>
+
+                        {/* Card 2 */}
+                        <div
+                            className="p-6 rounded-xl shadow-lg bg-green-100 border-l-4 border-green-600"
+                            data-aos="fade-left"
+                            data-aos-delay="200"
+                        >
+                            <h3 className="text-lg font-bold text-green-700">
+                                Personalized Therapy
+                            </h3>
+                            <p className="text-sm text-gray-700 mt-2">
+                                BlissMe provides calm-guided therapy sessions, journaling support, and
+                                mindfulness routines tailored to you.
+                            </p>
+                        </div>
+
+                        {/* Card 3 */}
+                        <div
+                            className="p-6 rounded-xl shadow-lg bg-teal-100 border-l-4 border-teal-600"
+                            data-aos="fade-left"
+                            data-aos-delay="400"
+                        >
+                            <h3 className="text-lg font-bold text-teal-700">
+                                Multi-Agent Support System
+                            </h3>
+                            <p className="text-sm text-gray-700 mt-2">
+                                Each agent plays a role emotional detection, therapy guidance,
+                                mood tracking, and recovery planning.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
 
             {/* FEATURES */}
-          {/*   <section
+            {/*   <section
                 id="features"
                 className="h-screen flex flex-col items-center justify-center px-6 text-center bg-blue-100"
             >

@@ -110,14 +110,15 @@ const Level = () => {
 
         <div className="flex flex-col gap-4">
           <Button
-            type={selectedLevel === "noIdea" ? "primary" : "default"}
+            type={selectedLevel === "noidea" ? "primary" : "default"}
             size="large"
             loading={isLoading}
-            onClick={() => handleLevelSelection("noIdea", true)}
-            className={`rounded-xl py-5 font-medium transition-all ${selectedLevel === "noIdea"
-              ? "bg-gray-400 text-white border-none"
-              : "hover:bg-gray-200"
-              }`}
+            onClick={() => handleLevelSelection("noidea", true)}
+            className={`rounded-xl py-5 font-medium transition-all ${
+              selectedLevel === "noidea"
+                ? "bg-gray-400 text-white border-none"
+                : "hover:bg-gray-200"
+            }`}
           >
             No Idea
           </Button>

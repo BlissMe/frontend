@@ -18,6 +18,44 @@ const Home = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
 
+    const featuresData = [
+        {
+            title: "User-Friendly Chatbot",
+            description:
+                "Chat with BlissMe using **text or voice messages** in a simple and interactive interface.",
+            color: "bg-green-100",
+            border: "border-green-500",
+        },
+        {
+            title: "Multi-Agent AI System",
+            description:
+                "Our system has multiple AI agents working together to **analyze emotional state** and provide support.",
+            color: "bg-emerald-100",
+            border: "border-emerald-500",
+        },
+        {
+            title: "Therapy Suggestions",
+            description:
+                "Receive **personalized therapy sessions**, mindfulness exercises, and emotional guidance.",
+            color: "bg-teal-100",
+            border: "border-teal-500",
+        },
+        {
+            title: "Gamified Mental Health Tools",
+            description:
+                "Engage with interactive **games** and exercises to improve mood and mental resilience.",
+            color: "bg-blue-100",
+            border: "border-blue-500",
+        },
+        {
+            title: "Journaling & Mood Tracking",
+            description:
+                "Keep a personal journal and **track your mood** over time to identify patterns and improvements.",
+            color: "bg-purple-100",
+            border: "border-purple-500",
+        },
+    ];
+
     useEffect(() => {
         AOS.init({ duration: 1200, once: true });
     }, []);
@@ -224,12 +262,10 @@ const Home = () => {
                 className="h-screen w-full flex items-center justify-center px-6 bg-cover bg-center relative"
                 style={{ backgroundImage: `url(${about})` }}
             >
-                {/* Overlay for better readability */}
-                {/* <div className="absolute inset-0 bg-white/40 backdrop-blur-sm"></div> */}
+
 
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-6xl">
 
-                    {/* LEFT SECTION — About Text */}
                     <div
                         className="md:w-1/2 text-center md:text-left"
                         data-aos="fade-right"
@@ -237,7 +273,6 @@ const Home = () => {
 
                     </div>
 
-                    {/* RIGHT SECTION — 3 Cards */}
                     <div className="mt-10 md:mt-0 md:w-1/2 flex flex-col gap-6">
 
                         {/* Card 1 */}
@@ -289,31 +324,54 @@ const Home = () => {
             </section>
 
             {/* FEATURES */}
-            {/*   <section
+            <section
                 id="features"
-                className="h-screen flex flex-col items-center justify-center px-6 text-center bg-blue-100"
+                className="min-h-screen flex flex-col items-center px-6 py-20 bg-gray-50 relative"
             >
-                <h1 className="text-3xl md:text-4xl font-bold text-blue-700">Features</h1>
-                <ul className="mt-6 space-y-3 text-gray-700 text-base md:text-lg">
-                    <li>✔ Personalized Therapy Sessions</li>
-                    <li>✔ Voice & Text Chat Support</li>
-                    <li>✔ Gamified Mental Health Tools</li>
-                </ul>
-            </section> */}
+                <h1
+                    className="text-3xl md:text-4xl font-bold text-green-700 mb-12"
+                    data-aos="fade-down"
+                    style={{ fontFamily: 'Merienda, cursive' }}
+                >
+                    Features
+                </h1>
 
-            {/* CONTACT */}
-            {/* <section
-                id="contact"
-                className="h-screen flex flex-col items-center justify-center px-6 text-center bg-green-100"
-            >
-                <h1 className="text-3xl md:text-4xl font-bold text-green-700">Contact Us</h1>
-                <p className="mt-4 text-gray-700 text-base md:text-lg">
-                    Have questions? Reach out to us anytime.
-                </p>
-                <button className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
-                    Get in Touch
-                </button>
-            </section> */}
+                <div className="relative w-full max-w-4xl">
+                    {/* Timeline vertical line */}
+                    <div className="absolute left-1/2 transform -translate-x-1/2 h-full border-l-2 border-gray-300"></div>
+
+                    <div className="flex flex-col space-y-12">
+                        {featuresData.map((feature, idx) => {
+                            const isLeft = idx % 2 === 0;
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`flex items-center w-full ${isLeft ? "justify-start" : "justify-end"
+                                        }`}
+                                    data-aos={isLeft ? "fade-right" : "fade-left"}
+                                >
+                                    {/* Connector Flower Emoji */}
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 top-6 text-2xl">
+                                        🌸
+                                    </div>
+
+                                    <div
+                                        className={`relative w-5/12 p-6 rounded-xl shadow-lg ${feature.color} border-l-4 ${feature.border}`}
+                                    >
+                                        <h3 className="text-lg font-bold text-gray-800">
+                                            {feature.title}
+                                        </h3>
+                                        <p className="text-sm text-gray-700 mt-2">
+                                            {feature.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </section>
+
         </div>
     );
 };

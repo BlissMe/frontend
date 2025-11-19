@@ -67,7 +67,6 @@ const Routerset = () => {
       <Route path="/face-auth" element={<FaceSignin />} />
       <Route path="/songs" element={<Songs />} />
       <Route path="/doctors" element={<Doctors />} />
-      <Route path="/body-scan" element={<BodyScan />} />
 
       {token !== null && token !== "" ? (
         <>
@@ -102,6 +101,8 @@ const Routerset = () => {
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
             <Route path="all-songs" element={<Songs />} />
             <Route path="all-doctors" element={<Doctors />} />
+            <Route path="body-scan" element={<BodyScan />} />
+
           </Route>
           <Route path="/game" element={<GameLayout />}>
             <Route path="therapy_game" element={<NumberGuessingGame />} />
@@ -113,7 +114,7 @@ const Routerset = () => {
           <Route path="/dash" element={<ForestLayout />}>
             <Route path="forest" element={<ForestGame />} />
           </Route>
-           <Route path="/dash" element={<OceanLayout />}>
+          <Route path="/dash" element={<OceanLayout />}>
             <Route path="ocean" element={<OceanWaves />} />
           </Route>
           <Route path="/dash" element={<DashLayout />}>

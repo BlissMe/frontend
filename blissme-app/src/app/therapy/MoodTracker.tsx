@@ -61,15 +61,14 @@ const MoodTracker = () => {
             </svg>
           </button>
 
-          <div className="text-2xl font-semibold text-green-800 text-center">
+          <div className="text-2xl font-semibold text-green-800 text-center" style={{ fontFamily: 'Merienda, cursive' }}>
             My Mood Tracker
           </div>
         </div>
         <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] flex flex-col items-center">
           <div
-            className={`${
-              todayMood ? "grid" : "hidden"
-            } w-full grid-cols-1 gap-5 mt-6 mb-8 lg:grid lg:grid-cols-3`}
+            className={`${todayMood ? "grid" : "hidden"
+              } w-full grid-cols-1 gap-5 mt-6 mb-8 lg:grid lg:grid-cols-3`}
           >
             <TodayMood todayRecord={todayMood} />
             <TodaySleep todayRecord={todayMood} />

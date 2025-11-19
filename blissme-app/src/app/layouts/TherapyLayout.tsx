@@ -1,5 +1,5 @@
 import Sidebar from "../../components/chat/Sidebar";
-import backgroundImage from "../../assets/images/bgnew.jpeg";
+import backgroundImage from "../../assets/images/br.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { Content } from "antd/es/layout/layout";
@@ -26,7 +26,7 @@ const TherapyLayout = () => {
         <img src={logo} alt="Logo" className="h-10 w-auto" />
       </div>
 
-      <Content className="w-full h-full p-2 overflow-scroll">
+      <Content className="w-full h-full p-2">
         <Outlet />
       </Content>
     </div>

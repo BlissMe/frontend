@@ -97,7 +97,7 @@ const ChatInterface = () => {
 
   useEffect(() => {
     if (location.pathname === "/chat-new/text") {
-      // ✅ Check if user just returned from therapy
+      // Check if user just returned from therapy
       const storedTherapy = localStorage.getItem("therapyInProgress");
       if (storedTherapy) {
         const info = JSON.parse(storedTherapy);
@@ -137,7 +137,7 @@ const ChatInterface = () => {
 
         if (resp?.success && resp.data) {
           setLevelResult(resp.data);
-          setLevelOpen(true);
+          //  setLevelOpen(true);
 
           if (resp.data.level) {
             setTherapyMode(true);
@@ -197,6 +197,7 @@ const ChatInterface = () => {
         userID,
         String(sessionID)
       );
+
       if (botReply.isTherapySuggested) {
         setTherapySuggestion({
           therapy_id: botReply.therapy_id,
@@ -208,16 +209,16 @@ const ChatInterface = () => {
         setTherapyInfo({
           name: botReply.therapy_name,
           description:
-            //  botReply.therapy_description ||
+            botReply.therapy_description ||
             "A guided reflection to improve your emotional well-being.",
-          duration:
-            // botReply.therapy_duration ||
-            "10–15 minutes",
+          // duration:
+          //   // botReply.therapy_duration ||
+          //   "10–15 minutes",
           path: botReply.therapy_path,
         });
       }
       if (botReply.action === "START_THERAPY") {
-        navigate(`/therapy/${botReply.therapy_id}`);
+        navigate(`${botReply.therapy_path}`);
         setLoading(false);
         return;
       }
@@ -679,6 +680,7 @@ const ChatInterface = () => {
                 onClick={() => void runLevelDetection()}
                 loading={detecting}
                 disabled={!sessionID}
+                hidden={true || therapyMode}
                 className="bg-lime-500 hover:bg-lime-600 text-white"
               >
                 Level Detection

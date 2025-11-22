@@ -73,13 +73,16 @@ const ChatInterface = () => {
   const [showTherapyCard, setShowTherapyCard] = useState(false);
   const [therapyInfo, setTherapyInfo] = useState<{
     name?: string;
+    id?: string;
     description?: string;
     duration?: string;
     path?: string;
   }>({});
+  console.log("therapyInfo:", therapyInfo);
   const [awaitingFeedback, setAwaitingFeedback] = useState(false);
   const location = useLocation();
-  const user_id = getLocalStoragedata("userId")|| "";
+  const user_id = getLocalStoragedata("userId") || "";
+  const API_Python_URL = process.env.REACT_APP_Python_API_URL;
 
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
@@ -104,6 +107,23 @@ const ChatInterface = () => {
 
         setTherapyInfo(info);
         setAwaitingFeedback(true);
+
+        const startTime = Number(localStorage.getItem("therapyStartTime"));
+        const endTime = Date.now();
+
+        const durationInMinutes = ((endTime - startTime) / 1000 / 60).toFixed(
+          1
+        );
+
+        console.log("Therapy Duration:", durationInMinutes, "minutes");
+
+        // Store duration inside therapyInfo so feedback sending can use it
+        setTherapyInfo((prev) => ({
+          ...prev,
+          duration: durationInMinutes,
+        }));
+
+        localStorage.removeItem("therapyStartTime");
 
         // Add feedback question once
         const feedbackMsg = {
@@ -208,6 +228,7 @@ const ChatInterface = () => {
 
         setTherapyInfo({
           name: botReply.therapy_name,
+          id: botReply.therapy_id,
           description:
             botReply.therapy_description ||
             "A guided reflection to improve your emotional well-being.",
@@ -422,6 +443,18 @@ const ChatInterface = () => {
       //     timestamp: new Date().toISOString(),
       //   }),
       // });
+      await fetch(`${API_Python_URL}/therapy-agent/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user_id,
+          session_id: sessionID,
+          therapy_id: therapyInfo?.id, // FIXED
+          duration: Number(therapyInfo?.duration) || 0, // FIXED
+          feedback: feedback,
+        }),
+      });
+      console.log("Feedback saved successfully");
     } catch (err) {
       console.error("Failed to save feedback:", err);
     }
@@ -656,6 +689,8 @@ const ChatInterface = () => {
                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
                     onClick={() => {
                       setShowTherapyCard(false);
+                      const now = Date.now();
+                      localStorage.setItem("therapyStartTime", now.toString());
                       localStorage.setItem(
                         "therapyInProgress",
                         JSON.stringify(therapyInfo)

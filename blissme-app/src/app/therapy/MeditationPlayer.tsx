@@ -68,9 +68,18 @@ const MeditationApp: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-
+      <button
+        onClick={() => navigate("/chat-new/text")}
+        className="
+          fixed top-4 right-8 z-50 
+          bg-white/15 backdrop-blur-md border border-white/22
+        text-black text-sm font-medium px-4 py-2 rounded-xl shadow-lg
+          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+        "
+      >
+        ← Back to Chat
+      </button>
       <div className="relative w-full max-w-4xl rounded-3xl bg-white shadow-xl overflow-hidden flex flex-col ">
-
         {/* Video background */}
         <video
           ref={videoRef}
@@ -86,20 +95,36 @@ const MeditationApp: React.FC = () => {
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center p-6">
-
           {/* Header */}
-          <h1 className="text-3xl font-bold mb-12" style={{ fontFamily: 'Merienda, cursive' }}>
+          <h1
+            className="text-3xl font-bold mb-12"
+            style={{ fontFamily: "Merienda, cursive" }}
+          >
             Meditation Session
           </h1>
 
           {/* Main row: Time buttons, Player, Sound pickers */}
           <div className="flex md:flex-row items-start w-full justify-around mb-24 flex-col gap-8">
-
             {/* Time Buttons */}
             <div className="flex md:flex-col gap-4">
-              <button className="px-3 py-1 bg-white/60 rounded-lg" onClick={() => setFakeDuration(120)}>2 Min</button>
-              <button className="px-3 py-1 bg-white/60 rounded-lg" onClick={() => setFakeDuration(300)}>5 Min</button>
-              <button className="px-3 py-1 bg-white/60 rounded-lg" onClick={() => setFakeDuration(600)}>10 Min</button>
+              <button
+                className="px-3 py-1 bg-white/60 rounded-lg"
+                onClick={() => setFakeDuration(120)}
+              >
+                2 Min
+              </button>
+              <button
+                className="px-3 py-1 bg-white/60 rounded-lg"
+                onClick={() => setFakeDuration(300)}
+              >
+                5 Min
+              </button>
+              <button
+                className="px-3 py-1 bg-white/60 rounded-lg"
+                onClick={() => setFakeDuration(600)}
+              >
+                10 Min
+              </button>
             </div>
 
             {/* Player */}
@@ -117,12 +142,29 @@ const MeditationApp: React.FC = () => {
 
                 {/* Background circle */}
                 <svg width="120" height="120" className="absolute">
-                  <circle cx="60" cy="60" r="55" stroke="white" strokeWidth="6" fill="none" opacity={0.1} />
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="55"
+                    stroke="white"
+                    strokeWidth="6"
+                    fill="none"
+                    opacity={0.1}
+                  />
                 </svg>
 
                 {/* Progress circle */}
                 <svg width="120" height="120" className="absolute">
-                  <circle ref={outlineRef} cx="60" cy="60" r="55" stroke="#0ea5e9" strokeWidth="6" fill="none" strokeLinecap="round" />
+                  <circle
+                    ref={outlineRef}
+                    cx="60"
+                    cy="60"
+                    r="55"
+                    stroke="#0ea5e9"
+                    strokeWidth="6"
+                    fill="none"
+                    strokeLinecap="round"
+                  />
                 </svg>
 
                 {/* Play/Pause button */}
@@ -134,7 +176,6 @@ const MeditationApp: React.FC = () => {
                 />
               </div>
             </div>
-
 
             {/* Sound pickers */}
             <div className="flex flex-row md:flex-col gap-4">
@@ -163,7 +204,6 @@ const MeditationApp: React.FC = () => {
                 <img src="/svg/beach.svg" alt="beach" className="w-10 h-10" />
               </button>
             </div>
-
           </div>
 
           {/* Back to chat button at bottom-left */}
@@ -173,7 +213,6 @@ const MeditationApp: React.FC = () => {
           >
             ← Back to Chat
           </button>
-
         </div>
       </div>
     </div>

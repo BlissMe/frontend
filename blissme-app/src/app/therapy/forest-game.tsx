@@ -11,6 +11,7 @@ import {
   CardTitle,
   CardDescription,
 } from "../../components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const MEDITATION_DURATION = 5 * 60; // 5 minutes in seconds
 
@@ -24,6 +25,7 @@ export function ForestGame() {
     wind: new Audio("/sounds/wind.mp3"),
     leaves: new Audio("/sounds/leaves.mp3"),
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     Object.values(audioElements).forEach((audio) => {
@@ -80,6 +82,17 @@ export function ForestGame() {
 
   return (
     <div className="flex justify-center items-center min-h-[70vh] mt-20">
+      <button
+        onClick={() => navigate("/chat-new/text")}
+        className="
+          fixed top-4 right-8 z-50 
+          bg-white/15 backdrop-blur-md border border-white/22
+        text-black text-sm font-medium px-4 py-2 rounded-xl shadow-lg
+          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+        "
+      >
+        ← Back to Chat
+      </button>
       <Card className="border-slate-300/20 bg-[#0b1213] text-white w-full max-w-md shadow-xl rounded-2xl">
         {/* Card Header */}
         <CardHeader className="text-center">
@@ -142,7 +155,9 @@ export function ForestGame() {
 
             {/* Play / Pause and Timer */}
             <div className="flex items-center justify-between w-full">
-              <span className="text-sm text-[#f9fbfc]">{formatTime(timeLeft)}</span>
+              <span className="text-sm text-[#f9fbfc]">
+                {formatTime(timeLeft)}
+              </span>
               <Button
                 variant="outline"
                 size="icon"
@@ -155,7 +170,9 @@ export function ForestGame() {
                   <Play className="h-4 w-4 text-[#f9fbfc]" />
                 )}
               </Button>
-              <span className="text-sm text-[#f9fbfc]">{formatTime(MEDITATION_DURATION)}</span>
+              <span className="text-sm text-[#f9fbfc]">
+                {formatTime(MEDITATION_DURATION)}
+              </span>
             </div>
           </div>
         </CardContent>

@@ -18,6 +18,7 @@ export async function therapyAgentChat(
     therapy_id?: string;
     therapy_name?: string;
     therapy_path?: string; 
+    therapy_description?: string;
      isTherapySuggested?: boolean;
 }> {
     const res = await fetch(`${API_Python_URL}/therapy-agent/chat`, {

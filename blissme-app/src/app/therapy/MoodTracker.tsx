@@ -41,6 +41,17 @@ const MoodTracker = () => {
       <div className="w-full bg-white/20 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center">
         <div className="relative w-full flex items-center justify-center mb-4">
           <button
+            onClick={() => navigate("/chat-new/text")}
+            className="
+          fixed top-4 right-8 z-50 
+          bg-white/15 backdrop-blur-md border border-white/22
+        text-black text-sm font-medium px-4 py-2 rounded-xl shadow-lg
+          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+        "
+          >
+            ← Back to Chat
+          </button>
+          <button
             onClick={() => navigate("/dash/mood-tracker")}
             className="p-2 rounded-full  absolute left-36 bg-green-200 text-green-900 hover:bg-green-300 transition"
             aria-label="Back to Home"
@@ -61,14 +72,18 @@ const MoodTracker = () => {
             </svg>
           </button>
 
-          <div className="text-2xl font-semibold text-green-800 text-center" style={{ fontFamily: 'Merienda, cursive' }}>
+          <div
+            className="text-2xl font-semibold text-green-800 text-center"
+            style={{ fontFamily: "Merienda, cursive" }}
+          >
             My Mood Tracker
           </div>
         </div>
         <main className="w-[91.47%] md:w-[91.665%] max-w-[73.125rem] flex flex-col items-center">
           <div
-            className={`${todayMood ? "grid" : "hidden"
-              } w-full grid-cols-1 gap-5 mt-6 mb-8 lg:grid lg:grid-cols-3`}
+            className={`${
+              todayMood ? "grid" : "hidden"
+            } w-full grid-cols-1 gap-5 mt-6 mb-8 lg:grid lg:grid-cols-3`}
           >
             <TodayMood todayRecord={todayMood} />
             <TodaySleep todayRecord={todayMood} />

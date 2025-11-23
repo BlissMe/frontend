@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Wind, Check } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Progress } from "../../components/ui/progress";
+import { useNavigate } from "react-router-dom";
 
 const TOTAL_ROUNDS = 5;
 
@@ -12,6 +13,7 @@ export function BreathingGame() {
   const [round, setRound] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isComplete || isPaused) return;
@@ -69,6 +71,17 @@ export function BreathingGame() {
   if (isComplete) {
     return (
       <div className="flex flex-col items-center justify-center h-[400px] space-y-6">
+        <button
+          onClick={() => navigate("/chat-new/text")}
+          className="
+          fixed top-4 right-8 z-50 
+          bg-white/15 backdrop-blur-md border border-white/22
+        text-black text-sm font-medium px-4 py-2 rounded-xl shadow-lg
+          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+        "
+        >
+          ← Back to Chat
+        </button>
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}

@@ -44,3 +44,13 @@ export async function getDepressionLevel() {
     console.log("Response from getDepressionLevel:", res);
     return await res.json();
 }
+
+
+export async function getDepressionLevelByUserID() {
+    const token = getLocalStoragedata("token");
+    const res = await fetch(`${API_BASE}/levelDetection/depression-index/latest`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("Response from getDepressionLevelByUserID:", res);
+    return await res.json();
+}

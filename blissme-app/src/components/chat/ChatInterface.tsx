@@ -19,6 +19,7 @@ import {
   getClassifierResult,
   ClassifierResult,
   getDepressionLevel,
+  getDepressionLevelByUserID,
 } from "../../services/DetectionService";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
 import { Modal, Tag, Progress, Descriptions } from "antd";
@@ -57,6 +58,7 @@ const ChatInterface = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
+  console.log("isPhq9", isPhq9);
   const { selectedCharacter, nickname, fetchCharacters } =
     useCharacterContext();
   const [levelResult, setLevelResult] = useState<any>(null);
@@ -73,13 +75,16 @@ const ChatInterface = () => {
   const [showTherapyCard, setShowTherapyCard] = useState(false);
   const [therapyInfo, setTherapyInfo] = useState<{
     name?: string;
+    id?: string;
     description?: string;
     duration?: string;
     path?: string;
   }>({});
+  console.log("therapyInfo:", therapyInfo);
   const [awaitingFeedback, setAwaitingFeedback] = useState(false);
   const location = useLocation();
-  const user_id = getLocalStoragedata("userId")|| "";
+  const user_id = getLocalStoragedata("userId") || "";
+  const API_Python_URL = process.env.REACT_APP_Python_API_URL;
 
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
@@ -104,6 +109,23 @@ const ChatInterface = () => {
 
         setTherapyInfo(info);
         setAwaitingFeedback(true);
+
+        const startTime = Number(localStorage.getItem("therapyStartTime"));
+        const endTime = Date.now();
+
+        const durationInMinutes = ((endTime - startTime) / 1000 / 60).toFixed(
+          1
+        );
+
+        console.log("Therapy Duration:", durationInMinutes, "minutes");
+
+        // Store duration inside therapyInfo so feedback sending can use it
+        setTherapyInfo((prev) => ({
+          ...prev,
+          duration: durationInMinutes,
+        }));
+
+        localStorage.removeItem("therapyStartTime");
 
         // Add feedback question once
         const feedbackMsg = {
@@ -132,10 +154,15 @@ const ChatInterface = () => {
       // if (!user?.id) return;
 
       try {
-        const resp = await getDepressionLevel();
+        const resp = await getDepressionLevelByUserID();
         console.log("Depression Level API response:", resp);
 
-        if (resp?.success && resp.data) {
+        if (
+          resp?.success &&
+          resp.data &&
+          resp.data.components.phq9.answered_count == 9 &&
+          (resp.data.R_value != 0 || resp.data.level != null)
+        ) {
           setLevelResult(resp.data);
           //  setLevelOpen(true);
 
@@ -208,6 +235,7 @@ const ChatInterface = () => {
 
         setTherapyInfo({
           name: botReply.therapy_name,
+          id: botReply.therapy_id,
           description:
             botReply.therapy_description ||
             "A guided reflection to improve your emotional well-being.",
@@ -223,6 +251,15 @@ const ChatInterface = () => {
         return;
       }
     } else {
+      if (lastPhq9) {
+        await savePHQ9Answer(
+          sessionID,
+          lastPhq9.id,
+          lastPhq9.question,
+          inputValue
+        );
+        setLastPhq9(null);
+      }
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
@@ -245,6 +282,16 @@ const ChatInterface = () => {
         Number(sessionID)
       );
       console.log("botReply:", botReply);
+      if (
+        typeof botReply.phq9_questionID === "number" &&
+        typeof botReply.phq9_question === "string"
+      ) {
+        const questionID = botReply.phq9_questionID;
+        const question = botReply.phq9_question;
+        setAskedPhq9Ids((prev) => [...prev, questionID]);
+        setLastPhq9({ id: questionID, question });
+        setIsPhq9(true);
+      }
     }
 
     const finalBotMsg = {
@@ -422,6 +469,18 @@ const ChatInterface = () => {
       //     timestamp: new Date().toISOString(),
       //   }),
       // });
+      await fetch(`${API_Python_URL}/therapy-agent/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user_id,
+          session_id: sessionID,
+          therapy_id: therapyInfo?.id, // FIXED
+          duration: Number(therapyInfo?.duration) || 0, // FIXED
+          feedback: feedback,
+        }),
+      });
+      console.log("Feedback saved successfully");
     } catch (err) {
       console.error("Failed to save feedback:", err);
     }
@@ -656,6 +715,8 @@ const ChatInterface = () => {
                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
                     onClick={() => {
                       setShowTherapyCard(false);
+                      const now = Date.now();
+                      localStorage.setItem("therapyStartTime", now.toString());
                       localStorage.setItem(
                         "therapyInProgress",
                         JSON.stringify(therapyInfo)

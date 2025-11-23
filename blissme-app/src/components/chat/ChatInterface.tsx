@@ -19,6 +19,7 @@ import {
   getClassifierResult,
   ClassifierResult,
   getDepressionLevel,
+  getDepressionLevelByUserID,
 } from "../../services/DetectionService";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
 import { Modal, Tag, Progress, Descriptions } from "antd";
@@ -57,6 +58,7 @@ const ChatInterface = () => {
   } | null>(null);
   const [askedPhq9Ids, setAskedPhq9Ids] = useState<number[]>([]);
   const [isPhq9, setIsPhq9] = useState(false);
+  console.log("isPhq9", isPhq9);
   const { selectedCharacter, nickname, fetchCharacters } =
     useCharacterContext();
   const [levelResult, setLevelResult] = useState<any>(null);
@@ -152,10 +154,15 @@ const ChatInterface = () => {
       // if (!user?.id) return;
 
       try {
-        const resp = await getDepressionLevel();
+        const resp = await getDepressionLevelByUserID();
         console.log("Depression Level API response:", resp);
 
-        if (resp?.success && resp.data) {
+        if (
+          resp?.success &&
+          resp.data &&
+          resp.data.components.phq9.answered_count == 9 &&
+          (resp.data.R_value != 0 || resp.data.level != null)
+        ) {
           setLevelResult(resp.data);
           //  setLevelOpen(true);
 
@@ -244,6 +251,15 @@ const ChatInterface = () => {
         return;
       }
     } else {
+      if (lastPhq9) {
+        await savePHQ9Answer(
+          sessionID,
+          lastPhq9.id,
+          lastPhq9.question,
+          inputValue
+        );
+        setLastPhq9(null);
+      }
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
@@ -266,6 +282,16 @@ const ChatInterface = () => {
         Number(sessionID)
       );
       console.log("botReply:", botReply);
+      if (
+        typeof botReply.phq9_questionID === "number" &&
+        typeof botReply.phq9_question === "string"
+      ) {
+        const questionID = botReply.phq9_questionID;
+        const question = botReply.phq9_question;
+        setAskedPhq9Ids((prev) => [...prev, questionID]);
+        setLastPhq9({ id: questionID, question });
+        setIsPhq9(true);
+      }
     }
 
     const finalBotMsg = {

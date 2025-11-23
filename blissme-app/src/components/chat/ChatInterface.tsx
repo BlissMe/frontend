@@ -741,7 +741,7 @@ const ChatInterface = () => {
                 onClick={() => void runLevelDetection()}
                 loading={detecting}
                 disabled={!sessionID}
-                hidden={true || therapyMode}
+                hidden={therapyMode}
                 className="bg-lime-500 hover:bg-lime-600 text-white"
               >
                 Level Detection

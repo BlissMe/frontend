@@ -32,13 +32,13 @@ export function ZenGarden() {
   const resetGarden = () => setPlacedItems([]);
 
   return (
-    <div className="flex justify-center items-center min-h-[70vh] mt-20">
-      <Card className="border-slate-300/20 bg-[#0b1213] text-white w-full max-w-md shadow-xl rounded-2xl">
+    <div className="flex justify-center items-center min-h-[70vh] mt-20 ">
+      <Card className="border-slate-300/20 bg-emerald-700 text-white w-full max-w-md shadow-xl rounded-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-lg font-semibold text-white">
+          <CardTitle className="text-lg font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
             Zen Garden
           </CardTitle>
-          <CardDescription className="text-slate-400 text-sm">
+          <CardDescription className="text-slate-100 text-sm">
             Create a peaceful mini garden by placing elements 🌿
           </CardDescription>
         </CardHeader>
@@ -52,11 +52,10 @@ export function ZenGarden() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedItem(item)}
                 title={item.label} // <-- Tooltip appears on hover
-                className={`p-3 rounded-lg transition-colors ${
-                  selectedItem.type === item.type
-                    ? "bg-[#A6CCB333]"
-                    : "bg-[#A6CCB30D]"
-                }`}
+                className={`p-3 rounded-lg transition-colors ${selectedItem.type === item.type
+                  ? "bg-[#A6CCB333]"
+                  : "bg-[#A6CCB30D]"
+                  }`}
               >
                 <span className="text-4xl">{item.icon}</span>
               </motion.button>
@@ -65,7 +64,7 @@ export function ZenGarden() {
 
           <div
             onClick={handleCanvasClick}
-            className="relative w-full h-[320px] bg-[#A6CCB30D] rounded-lg cursor-pointer overflow-hidden border border-slate-700"
+            className="relative w-full h-[320px] bg-emerald-100 rounded-lg cursor-pointer overflow-hidden border border-slate-700"
           >
             {placedItems.map((item, index) => (
               <motion.div
@@ -88,7 +87,7 @@ export function ZenGarden() {
           <div className="flex justify-center">
             <Button
               onClick={resetGarden}
-              className="bg-slate-700 text-white hover:bg-slate-600 text-sm px-4 py-2 rounded-md"
+              className="bg-emerald-400 text-white hover:bg-emerald-600 text-sm px-4 py-2 rounded-md"
             >
               Reset Garden
             </Button>

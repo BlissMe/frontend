@@ -44,8 +44,14 @@ const levelColor = (lvl?: string) => {
 const { Text } = Typography;
 
 const ChatInterface = () => {
-  const { sessionID, setSessionID, setMessages, setChatHistory, messages } =
-    useContext(AuthContext);
+  const {
+    sessionID,
+    setSessionID,
+    setMessages,
+    setChatHistory,
+    messages,
+    handleLogout,
+  } = useContext(AuthContext);
 
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
@@ -85,6 +91,7 @@ const ChatInterface = () => {
   const location = useLocation();
   const user_id = getLocalStoragedata("userId") || "";
   const API_Python_URL = process.env.REACT_APP_Python_API_URL;
+  const [isPhq9Complete, setIsPhq9Complete] = useState(false);
 
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
@@ -99,6 +106,12 @@ const ChatInterface = () => {
       setSessionSummaries(allSummaries);
     })();
   }, []);
+
+  useEffect(() => {
+    if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {
+      setIsPhq9Complete(true);
+    }
+  }, [askedPhq9Ids]);
 
   useEffect(() => {
     if (location.pathname === "/chat-new/text") {
@@ -510,20 +523,21 @@ const ChatInterface = () => {
     try {
       await ClassifierResult();
 
-      const resp = await getDepressionLevel();
-      if (!resp?.success) throw new Error("level API failed");
-      setLevelResult(resp.data);
-      setLevelOpen(true);
+      // const resp = await getDepressionLevel();
+      // if (!resp?.success) throw new Error("level API failed");
+      // setLevelResult(resp.data);
+      //setLevelOpen(true);
+      handleLogout();
 
-      const level = resp.data?.level?.toLowerCase();
-      console.log("level", level);
-      if (level === "minimal" || level === "moderate") {
-        setTherapyMode(true);
-        localStorage.setItem("therapyMode", "true");
-      } else {
-        setTherapyMode(false);
-        localStorage.removeItem("therapyMode");
-      }
+      // const level = resp.data?.level?.toLowerCase();
+      // console.log("level", level);
+      // if (level === "minimal" || level === "moderate") {
+      //   setTherapyMode(true);
+      //   localStorage.setItem("therapyMode", "true");
+      // } else {
+      //   setTherapyMode(false);
+      //   localStorage.removeItem("therapyMode");
+      // }
     } catch (e) {
       console.error(e);
     }
@@ -733,20 +747,50 @@ const ChatInterface = () => {
         </div>
 
         {/* Input Field */}
-        {!isPhq9 && (
-          <div className="flex items-center justify-between gap-2">
-            <div className=" mt-2 flex justify-center">
+        {(isPhq9Complete || therapyMode == true) && (
+          <div className="mt-4 flex flex-col items-center">
+            <div className="flex items-center w-full gap-3 mb-4">
+              {/* Input */}
+              <input
+                type="text"
+                placeholder="Type your message here..."
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSend();
+                  }
+                }}
+                disabled={loading}
+              />
+
+              {/* Optional Divider */}
+              {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
+
+              {/* Send Button */}
               <Button
-                type="primary"
-                onClick={() => void runLevelDetection()}
-                loading={detecting}
-                disabled={!sessionID}
-                hidden={true || therapyMode}
-                className="bg-lime-500 hover:bg-lime-600 text-white"
-              >
-                Level Detection
-              </Button>
+                type="text"
+                icon={
+                  <img
+                    src={assets.send_icon}
+                    alt="send"
+                    className="w-8 h-8 object-contain"
+                  />
+                }
+                onClick={handleSend}
+                disabled={loading}
+              />
             </div>
+            <Button
+              type="primary"
+              onClick={() => void runLevelDetection()}
+              loading={detecting}
+              disabled={!sessionID}
+              className="bg-lime-500 hover:bg-lime-600 text-white"
+            >
+              End Session
+            </Button>
             <Modal
               open={levelOpen}
               onCancel={() => setLevelOpen(false)}
@@ -845,39 +889,6 @@ const ChatInterface = () => {
               )}
             </Modal>
             {/* Input + Button Row */}
-            <div className="flex items-center w-full gap-2">
-              {/* Input */}
-              <input
-                type="text"
-                placeholder="Type your message here..."
-                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSend();
-                  }
-                }}
-                disabled={loading}
-              />
-
-              {/* Optional Divider */}
-              {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
-
-              {/* Send Button */}
-              <Button
-                type="text"
-                icon={
-                  <img
-                    src={assets.send_icon}
-                    alt="send"
-                    className="w-8 h-8 object-contain"
-                  />
-                }
-                onClick={handleSend}
-                disabled={loading}
-              />
-            </div>
           </div>
         )}
       </div>

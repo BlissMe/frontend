@@ -551,7 +551,7 @@ const ChatInterface = () => {
   ];
 
   return (
-    <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">
+    <div className="relative flex-1 px-2  h-screen flex items-center justify-end ">
       {/* Bear Image */}
       <div
         className="
@@ -576,9 +576,9 @@ const ChatInterface = () => {
     relative z-10 
     w-full lg:w-2/3
     h-[90%] lg:ml-[400px]
-    bg-emerald-200/80 bg-opacity-100 rounded-xl p-4 sm:p-6 shadow-lg
+    bg-emerald-200/80 bg-opacity-100 rounded-xl p-2 sm:p-6 shadow-lg
     flex flex-col justify-between
-    mx-auto
+    
   "
       >
         {/* Chat Area */}

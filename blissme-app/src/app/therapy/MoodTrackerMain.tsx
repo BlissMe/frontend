@@ -23,6 +23,17 @@ export default function MoodTrackerMain() {
   return (
     <div className="flex flex-col justify-between items-center  text-center px-6 py-10">
       <div className="mt-8">
+        <button
+          onClick={() => navigate("/chat-new/text")}
+          className="
+          fixed top-4 right-8 z-50 
+          bg-white/15 backdrop-blur-md border border-white/22
+        text-black text-sm font-medium px-4 py-2 rounded-xl shadow-lg
+          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+        "
+        >
+          ← Back to Chat
+        </button>
         <Title
           level={1}
           className="!text-4xl md:!text-5xl !font-extrabold !text-green-900 drop-shadow mb-4"

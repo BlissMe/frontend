@@ -11,6 +11,7 @@ import {
   CardTitle,
   CardDescription,
 } from "../../components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const BREATH_DURATION = 8; // seconds for one breath cycle
 const SESSION_DURATION = 5 * 60; // 5 minutes in seconds
@@ -22,6 +23,7 @@ export function OceanWaves() {
   const [timeLeft, setTimeLeft] = useState(SESSION_DURATION);
   const waveControls = useAnimation();
   const [audio] = useState(new Audio("/sounds/waves.mp3"));
+  const navigate = useNavigate();
 
   useEffect(() => {
     audio.loop = true;
@@ -145,7 +147,9 @@ export function OceanWaves() {
 
             {/* Play / Pause and Timer */}
             <div className="flex items-center justify-between w-full">
-              <span className="text-sm text-[#f9fbfc]">{formatTime(timeLeft)}</span>
+              <span className="text-sm text-[#f9fbfc]">
+                {formatTime(timeLeft)}
+              </span>
               <Button
                 variant="outline"
                 size="icon"
@@ -158,7 +162,9 @@ export function OceanWaves() {
                   <Play className="h-4 w-4 text-[#f9fbfc]" />
                 )}
               </Button>
-              <span className="text-sm text-[#f9fbfc]">{formatTime(SESSION_DURATION)}</span>
+              <span className="text-sm text-[#f9fbfc]">
+                {formatTime(SESSION_DURATION)}
+              </span>
             </div>
           </div>
         </CardContent>

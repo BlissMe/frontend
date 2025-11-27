@@ -11,6 +11,7 @@ import {
   CardTitle,
   CardDescription,
 } from "../../components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const MEDITATION_DURATION = 5 * 60; // 5 minutes in seconds
 
@@ -24,6 +25,7 @@ export function ForestGame() {
     wind: new Audio("/sounds/wind.mp3"),
     leaves: new Audio("/sounds/leaves.mp3"),
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     Object.values(audioElements).forEach((audio) => {
@@ -142,7 +144,9 @@ export function ForestGame() {
 
             {/* Play / Pause and Timer */}
             <div className="flex items-center justify-between w-full">
-              <span className="text-sm text-[#f9fbfc]">{formatTime(timeLeft)}</span>
+              <span className="text-sm text-[#f9fbfc]">
+                {formatTime(timeLeft)}
+              </span>
               <Button
                 variant="outline"
                 size="icon"
@@ -155,7 +159,9 @@ export function ForestGame() {
                   <Play className="h-4 w-4 text-[#f9fbfc]" />
                 )}
               </Button>
-              <span className="text-sm text-[#f9fbfc]">{formatTime(MEDITATION_DURATION)}</span>
+              <span className="text-sm text-[#f9fbfc]">
+                {formatTime(MEDITATION_DURATION)}
+              </span>
             </div>
           </div>
         </CardContent>

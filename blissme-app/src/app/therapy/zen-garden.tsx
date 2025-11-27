@@ -8,6 +8,7 @@ import {
   CardDescription,
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const items = [
   { type: "rock", icon: "🪨", label: "Rock" },
@@ -28,6 +29,7 @@ export function ZenGarden() {
     const y = e.clientY - rect.top;
     setPlacedItems([...placedItems, { ...selectedItem, x, y }]);
   };
+  const navigate = useNavigate();
 
   const resetGarden = () => setPlacedItems([]);
 

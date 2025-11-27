@@ -745,11 +745,7 @@ const ChatInterface = () => {
             </div>
           )}
         </div>
-
-        {/* Input Field */}
-        {(isPhq9Complete || therapyMode == true) && (
-          <div className="mt-4 flex flex-col items-center">
-            <div className="flex items-center w-full gap-3 mb-4">
+ <div className="flex items-center w-full gap-3 mb-4">
               {/* Input */}
               <input
                 type="text"
@@ -782,6 +778,10 @@ const ChatInterface = () => {
                 disabled={loading}
               />
             </div>
+        {/* Input Field */}
+        {(therapyMode == true) && (
+          <div className="mt-4 flex flex-col items-center">
+           
             <Button
               type="primary"
               onClick={() => void runLevelDetection()}

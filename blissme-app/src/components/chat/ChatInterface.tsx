@@ -779,7 +779,7 @@ const ChatInterface = () => {
               />
             </div>
         {/* Input Field */}
-        {(therapyMode == true) && (
+        {(isPhq9Complete ||therapyMode == true) && (
           <div className="mt-4 flex flex-col items-center">
            
             <Button

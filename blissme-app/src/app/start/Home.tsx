@@ -145,7 +145,7 @@ const Home = () => {
                     </button>
                     <button
                         onClick={handleStartChat}
-                        className="bg-emerald-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-emerald-400 transition text-sm md:text-base"
+                        className="bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base"
                     >
                         Start Chat
                     </button>
@@ -192,7 +192,7 @@ const Home = () => {
                     </button>
                     <button
                         onClick={handleStartChat}
-                        className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-400 transition"
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                     >
                         Start Chat
                     </button>
@@ -214,10 +214,11 @@ const Home = () => {
                             key={index}
                             src={img}
                             alt={`Slide ${index}`}
-                            className="w-full h-full object-cover flex-shrink-0"
+                            className="w-full h-full object-cover object-right flex-shrink-0"
                         />
                     ))}
                 </div>
+
 
                 {/* Content */}
                 <div className="relative z-10 max-w-lg text-center md:text-left mt-20 md:mt-32 md:ml-4 lg:ml-12">
@@ -263,10 +264,8 @@ const Home = () => {
             {/* ABOUT */}
             <section
                 id="about"
-                className="h-screen w-full flex items-center justify-center px-6 bg-cover bg-center relative bg-green-100"
-            // style={{ backgroundImage: `url(${about})` }}
+                className="relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 text-white overflow-hidden"
             >
-                {/* Background blobs */}
                 <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-teal-400 rounded-full opacity-25 blur-2xl animate-pulse"></div>
@@ -294,7 +293,6 @@ const Home = () => {
 
                     <div className="mt-10 md:mt-0 md:w-1/2 flex flex-col gap-6">
 
-                        {/* Card 1 */}
                         <div
                             className="p-6 rounded-xl shadow-lg bg-emerald-100 border-l-4 border-emerald-500"
                             data-aos="fade-left"
@@ -308,7 +306,6 @@ const Home = () => {
                             </p>
                         </div>
 
-                        {/* Card 2 */}
                         <div
                             className="p-6 rounded-xl shadow-lg bg-green-100 border-l-4 border-green-600"
                             data-aos="fade-left"
@@ -323,7 +320,6 @@ const Home = () => {
                             </p>
                         </div>
 
-                        {/* Card 3 */}
                         <div
                             className="p-6 rounded-xl shadow-lg bg-teal-100 border-l-4 border-teal-600"
                             data-aos="fade-left"
@@ -342,24 +338,17 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* FEATURES */}
             <section
                 id="features"
-                className="min-h-screen flex flex-col items-center px-6 py-20 bg-gray-100 relative overflow-hidden"
+                className='relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 text-white overflow-hidden'
             >
-                {/* Background blobs */}
                 <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-teal-400 rounded-full opacity-25 blur-2xl animate-pulse"></div>
                 <div className="absolute bottom-40 left-1/4 w-56 h-56 bg-green-300 rounded-full opacity-25 blur-2xl animate-pulse"></div>
                 <div className="absolute top-20 right-1/3 w-44 h-44 bg-emerald-300 rounded-full opacity-20 blur-2xl animate-pulse"></div>
 
-                {/* Background leaves */}
-                {/* <div className="absolute top-10 left-1/3 w-32 h-32 rotate-12 bg-green-200 opacity-30 rounded-full clip-[polygon(50%_0%,_61%_35%,_98%_35%,_68%_57%,_79%_91%,_50%_70%,_21%_91%,_32%_57%,_2%_35%,_39%_35%)] animate-pulse"></div>
-                <div className="absolute bottom-20 right-1/4 w-28 h-28 rotate-[-15deg] bg-emerald-200 opacity-25 rounded-full clip-[polygon(50%_0%,_61%_35%,_98%_35%,_68%_57%,_79%_91%,_50%_70%,_21%_91%,_32%_57%,_2%_35%,_39%_35%)] animate-pulse"></div>
-                <div className="absolute top-1/2 left-10 w-24 h-24 rotate-6 bg-teal-200 opacity-25 rounded-full clip-[polygon(50%_0%,_61%_35%,_98%_35%,_68%_57%,_79%_91%,_50%_70%,_21%_91%,_32%_57%,_2%_35%,_39%_35%)] animate-pulse"></div> */}
 
-                {/* Section title */}
                 <h1
                     className="text-3xl md:text-4xl font-bold text-green-700 mb-12 relative z-10"
                     data-aos="fade-down"
@@ -369,7 +358,6 @@ const Home = () => {
                 </h1>
 
                 <div className="relative w-full max-w-4xl z-10">
-                    {/* Timeline vertical line */}
                     <div className="absolute left-1/2 transform -translate-x-1/2 h-full border-l-2 border-gray-300"></div>
 
                     <div className="flex flex-col space-y-12">

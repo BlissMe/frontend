@@ -82,24 +82,13 @@ export function ForestGame() {
 
   return (
     <div className="flex justify-center items-center min-h-[70vh] mt-20">
-      <button
-        onClick={() => navigate("/chat-new/text")}
-        className="
-          fixed top-4 right-8 z-50 
-          bg-white/15 backdrop-blur-md border border-white/22
-        text-black text-sm font-medium px-4 py-2 rounded-xl shadow-lg
-          hover:bg-white/20 hover:scale-105 transition-transform duration-200
-        "
-      >
-        ← Back to Chat
-      </button>
-      <Card className="border-slate-300/20 bg-[#0b1213] text-white w-full max-w-md shadow-xl rounded-2xl">
+      <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
         {/* Card Header */}
         <CardHeader className="text-center">
-          <CardTitle className="text-lg font-semibold text-white">
+          <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
             Mindful Forest
           </CardTitle>
-          <CardDescription className="text-slate-400 text-sm">
+          <CardDescription className="text-slate-100 text-sm">
             Relax and meditate with the calming sounds of nature 🌲
           </CardDescription>
         </CardHeader>

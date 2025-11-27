@@ -102,25 +102,20 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
 
   return (
     <>
-      <div className="relative min-h-screen bg-[#01090b] p-6">
-        <Card className="relative border-slate-300/20">
-          <button
-            onClick={() => navigate("/chat-new/text")}
-            className="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
-          >
-            ← Back to Chat
-          </button>
+      <div className="relative min-h-screen p-6 justify-center items-center flex">
+        <Card className="relative border-slate-300/20 bg-emerald-50/60 gap-4 flex flex-col pb-16">
+
           <CardHeader>
-            <CardTitle className="text-xl font-semibold flex items-center gap-2 text-white">
-              <Gamepad2 className="h-5 w-5 text-white" />
+            <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center" style={{ fontFamily: 'Merienda, cursive' }}>
+              <Gamepad2 className="h-5 w-5 text-emerald-700" />
               Anxiety Relief Activities
             </CardTitle>
-            <CardDescription className="text-white">
+            <CardDescription className="text-center text-slate-600">
               Interactive exercises to help reduce stress and anxiety
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
               {games.map((game) => (
                 <motion.div
                   key={game.id}
@@ -128,9 +123,8 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Card
-                    className={`border-slate-300/20transition-colors cursor-pointer ${
-                      selectedGame === game.id ? "ring-2 ring-slate-400" : ""
-                    }`}
+                    className={`border-slate-300/20 bg-emerald-200 justify-center items-center transition-colors cursor-pointer ${selectedGame === game.id ? "ring-2 ring-slate-400" : ""
+                      }`}
                     onClick={() => handleGameStart(game.id)}
                   >
                     <CardContent className="p-4">
@@ -141,10 +135,10 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                           <game.icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-white">
+                          <h4 className="font-semibold text-emerald-800" style={{ fontFamily: 'Merienda, cursive' }}>
                             {game.title}
                           </h4>
-                          <p className="text-sm text-white mt-1">
+                          <p className="text-sm text-emerald-700 mt-1">
                             {game.description}
                           </p>
                           <div className="flex items-center gap-2 mt-3">
@@ -173,6 +167,13 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
             </div>
           )} */}
           </CardContent>
+          <button
+            onClick={() => navigate("/chat-new/text")}
+            className="absolute bottom-4 left-4 mt-4 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+          >
+            ← Back to Chat
+          </button>
+
         </Card>
 
         <Dialog open={showGame} onOpenChange={setShowGame}>

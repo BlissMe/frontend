@@ -83,7 +83,7 @@ export function ForestGame() {
       <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
         {/* Card Header */}
         <CardHeader className="text-center">
-          <CardTitle className="text-lg font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
+          <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
             Mindful Forest
           </CardTitle>
           <CardDescription className="text-slate-100 text-sm">

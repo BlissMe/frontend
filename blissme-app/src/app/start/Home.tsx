@@ -145,7 +145,7 @@ const Home = () => {
                     </button>
                     <button
                         onClick={handleStartChat}
-                        className="bg-emerald-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-emerald-400 transition text-sm md:text-base"
+                        className="bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base"
                     >
                         Start Chat
                     </button>
@@ -192,7 +192,7 @@ const Home = () => {
                     </button>
                     <button
                         onClick={handleStartChat}
-                        className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-400 transition"
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                     >
                         Start Chat
                     </button>

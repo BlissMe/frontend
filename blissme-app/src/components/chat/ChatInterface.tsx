@@ -555,12 +555,23 @@ const ChatInterface = () => {
       {/* Bear Image */}
       <div
         className="
-    absolute bottom-0 
-    left-1/2 -translate-x-1/2          /* Center on small screens */
-    sm:left-8 sm:translate-x-0         /* Original position on larger screens */
-    z-0 w-[600px] h-[600px] 
+    relative z-10
+    w-full lg:w-2/3
+    bg-emerald-200/80 rounded-xl p-4 sm:p-6 shadow-lg
+    flex flex-col
+
+    /* Positioning rules */
+    mx-auto
+    lg:ml-[400px]
+
+    /* Fill remaining height under navbar */
+    h-[calc(100vh-64px)]  
+
+    /* Prevent outer scrolling */
+    overflow-hidden
   "
       >
+
         {therapyMode === true && (
           <div className="absolute top-4 right-6 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-md shadow-sm border border-green-300 z-50">
             🧘 Therapy Mode Active

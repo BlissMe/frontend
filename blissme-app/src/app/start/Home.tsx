@@ -214,34 +214,46 @@ const Home = () => {
                             key={index}
                             src={img}
                             alt={`Slide ${index}`}
-                            className="w-full h-full object-cover object-right flex-shrink-0"
+                            className="w-full h-full object-cover flex-shrink-0 object-[85%]"
                         />
                     ))}
                 </div>
 
 
                 {/* Content */}
-                <div className="relative z-10 max-w-lg text-center md:text-left mt-20 md:mt-32 md:ml-4 lg:ml-12">
-                    <h1
-                        className="text-3xl md:text-5xl font-bold text-green-900 hover:drop-shadow-[0_0_10px_#22c55e]"
-                        style={{ fontFamily: 'Merienda, cursive' }}
-                        data-aos="fade-right"
+                <div
+                    className="
+        relative z-10 
+        w-full max-w-lg 
+        text-center md:text-left 
+        mt-10 md:mt-32 
+        px-4
+        flex flex-col 
+        justify-between 
+        h-[720px] 
+        md:h-auto  
+    "
+                >
+                    <div>
+                        <h1
+                            className="text-3xl md:text-5xl font-bold text-green-900 hover:drop-shadow-[0_0_10px_#22c55e]"
+                            style={{ fontFamily: 'Merienda, cursive' }}
+                            data-aos="fade-right"
+                        >
+                            Your journey to mental wellness starts here
+                        </h1>
 
-                    >
-                        Your journey to mental wellness starts here
-                    </h1>
-
-                    <p
-                        className="mt-4 text-green-800 text-base md:text-lg"
-                        style={{ fontFamily: 'Merienda, cursive' }}
-                        data-aos="fade-right"
-
-                    >
-                        BlissMe is an AI-based mental health companion that combines therapy,
-                        games, and intelligent agents to support your emotional well-being.
-                        Connect with a friendly virtual character and begin personalized therapy
-                        with just a tap.
-                    </p>
+                        <p
+                            className="mt-4 text-green-800 text-base md:text-lg"
+                            style={{ fontFamily: 'Merienda, cursive' }}
+                            data-aos="fade-right"
+                        >
+                            BlissMe is an AI-based mental health companion that combines therapy,
+                            games, and intelligent agents to support your emotional well-being.
+                            Connect with a friendly virtual character and begin personalized therapy
+                            with just a tap.
+                        </p>
+                    </div>
 
                     <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 mt-6">
                         <button
@@ -250,6 +262,7 @@ const Home = () => {
                         >
                             Start Chat
                         </button>
+
                         <button
                             onClick={handleLogin}
                             className="border border-green-600 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition bg-white"
@@ -258,6 +271,7 @@ const Home = () => {
                         </button>
                     </div>
                 </div>
+
             </section>
 
 

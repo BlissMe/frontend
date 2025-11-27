@@ -1,7 +1,7 @@
 import bearnew from "../../assets/images/bearnew.png";
 import { Button, Typography, Spin, Input, Divider } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
 import {
@@ -113,6 +113,15 @@ const ChatInterface = () => {
     }
   }, [askedPhq9Ids]);
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // adjust to scroll height
+    }
+  }, [inputValue]);
   useEffect(() => {
     if (location.pathname === "/chat-new/text") {
       // Check if user just returned from therapy
@@ -757,19 +766,25 @@ const ChatInterface = () => {
         </div>
         <div className="flex items-center w-full gap-3 mb-4">
           {/* Input */}
-          <input
-            type="text"
-            placeholder="Type your message here..."
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none"
+          <textarea
+            rows={1}
+            ref={textareaRef}
+            className="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-xl border border-gray-300 
+   focus:outline-none text-sm md:text-base resize-none overflow-hidden 
+   transition-all duration-150 leading-[1.5rem]"
+            style={{ maxHeight: "150px" }}
             value={inputValue}
+            placeholder="Type your message here..."
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 handleSend();
               }
             }}
-            disabled={loading}
+            disabled={loading || isPhq9}
           />
+
 
           {/* Optional Divider */}
           {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}

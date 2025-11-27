@@ -164,7 +164,15 @@ const Home = () => {
 
             {/* Mobile Dropdown */}
             {isMenuOpen && (
-                <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[95%] md:hidden bg-white shadow-lg rounded-lg p-4 flex flex-col space-y-4 z-50">
+                <div
+                    className="
+            absolute top-16 right-4 
+            w-auto max-w-[90%] min-w-[200px]
+            md:hidden justify-center
+            bg-white shadow-lg rounded-lg
+            p-4 flex flex-col space-y-4 z-50
+        "
+                >
                     {sections.map((id) => (
                         <a
                             key={id}
@@ -178,21 +186,24 @@ const Home = () => {
                             {id.charAt(0).toUpperCase() + id.slice(1)}
                         </a>
                     ))}
+
                     <button
                         onClick={handleLogin}
-                        className="border border-green-600 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition"
+                        className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
                     >
                         Sign In
                     </button>
+
                     <button
                         onClick={handleSignUp}
-                        className="border border-green-600 text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition"
+                        className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
                     >
                         Sign Up
                     </button>
+
                     <button
                         onClick={handleStartChat}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition"
                     >
                         Start Chat
                     </button>
@@ -230,7 +241,7 @@ const Home = () => {
         px-4
         flex flex-col 
         justify-between 
-        h-[720px] 
+        h-[680px] 
         md:h-auto  
     "
                 >

@@ -558,7 +558,7 @@ const ChatInterface = () => {
     absolute bottom-0 
     left-1/2 -translate-x-1/2          /* Center on small screens */
     sm:left-8 sm:translate-x-0         /* Original position on larger screens */
-    z-0 w-[600px] h-[600px]
+    z-0 w-[600px] h-[600px] 
   "
       >
         {therapyMode === true && (
@@ -574,8 +574,8 @@ const ChatInterface = () => {
       <div
         className="
     relative z-10 
-    w-full sm:w-[90%] lg:w-2/3
-    h-[90%] lg:ml-[400px]
+    w-full lg:w-2/3
+    h-auto lg:ml-[400px]
     bg-emerald-200/80 bg-opacity-100 rounded-xl p-4 sm:p-6 shadow-lg
     flex flex-col justify-between
     mx-auto

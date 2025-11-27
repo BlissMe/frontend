@@ -276,10 +276,10 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-            sender: msg.sender === "bot" ? "popo" : "you",
-            text: msg.message,
-            time: getCurrentTime(),
-          }))
+          sender: msg.sender === "bot" ? "popo" : "you",
+          text: msg.message,
+          time: getCurrentTime(),
+        }))
         : [];
 
       const context = formattedHistory
@@ -378,10 +378,10 @@ const ChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+        sender: msg.sender === "bot" ? "popo" : "you",
+        text: msg.message,
+        time: getCurrentTime(),
+      }))
       : [];
 
     const context = formattedHistory
@@ -430,9 +430,9 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-            (msg: any) =>
-              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-          )
+          (msg: any) =>
+            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -505,8 +505,8 @@ const ChatInterface = () => {
         feedback === "Felt Good"
           ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
           : feedback === "No Change"
-          ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
-          : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
+            ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
+            : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
       time: getCurrentTime(),
     };
 
@@ -553,34 +553,45 @@ const ChatInterface = () => {
   return (
     <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">
       {/* Bear Image */}
-      <div className="absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
+      <div
+        className="
+    absolute bottom-0 
+    left-1/2 -translate-x-1/2          /* Center on small screens */
+    sm:left-8 sm:translate-x-0         /* Original position on larger screens */
+    z-0 w-[600px] h-[600px]
+  "
+      >
         {therapyMode === true && (
           <div className="absolute top-4 right-6 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-md shadow-sm border border-green-300 z-50">
             🧘 Therapy Mode Active
           </div>
         )}
-        <img
-          src={bearnew}
-          alt="Bear"
-          className="w-full h-full object-contain"
-        />
+        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
       </div>
 
+
       {/* Chat Box */}
-      <div className="relative z-10 w-2/3 h-[90%] bg-green-100 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+      <div
+        className="
+    relative z-10 
+    w-full sm:w-[90%] lg:w-2/3
+    h-[90%] lg:ml-[400px]
+    bg-emerald-200/80 bg-opacity-100 rounded-xl p-4 sm:p-6 shadow-lg
+    flex flex-col justify-between
+    mx-auto
+  "
+      >
         {/* Chat Area */}
         <div className="flex-1 overflow-y-auto px-4 space-y-6">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${
-                msg.sender === "you" ? "items-end" : "items-start"
-              }`}
+              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
+                }`}
             >
               <div
-                className={`flex gap-2 items-center ${
-                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                  }`}
               >
                 {/* Avatar */}
                 {msg.sender === "you" ? (
@@ -622,9 +633,8 @@ const ChatInterface = () => {
               </div>
 
               <Text
-                className={`text-xs text-gray-500 mt-1 ${
-                  msg.sender === "you" ? "" : "ml-12"
-                }`}
+                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-12"
+                  }`}
               >
                 {msg.time}
               </Text>
@@ -687,8 +697,8 @@ const ChatInterface = () => {
                           option === "Felt Good"
                             ? "bg-green-500 hover:bg-green-600 text-white rounded-full"
                             : option === "No Change"
-                            ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
-                            : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                              ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                              : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
                         }
                       >
                         {option}
@@ -829,8 +839,8 @@ const ChatInterface = () => {
                         levelColor(levelResult.level) === "gold"
                           ? "#faad14"
                           : levelColor(levelResult.level) === "red"
-                          ? "#ff4d4f"
-                          : "#52c41a"
+                            ? "#ff4d4f"
+                            : "#52c41a"
                       }
                       showInfo
                     />
@@ -841,8 +851,8 @@ const ChatInterface = () => {
                       {typeof levelResult.cutoffs?.minimal_max === "number"
                         ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
                         : levelResult.cutoffs
-                        ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
-                        : "—"}
+                          ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                          : "—"}
                     </Typography.Text>
                   </div>
 

@@ -174,7 +174,7 @@ const ChatInterface = () => {
           resp?.success &&
           resp.data &&
           resp.data.components.phq9.answered_count == 9 &&
-          (resp.data.R_value != 0 || resp.data.level != null)
+          resp.data.level != null
         ) {
           setLevelResult(resp.data);
           //  setLevelOpen(true);
@@ -523,9 +523,9 @@ const ChatInterface = () => {
     try {
       await ClassifierResult();
 
-      // const resp = await getDepressionLevel();
-      // if (!resp?.success) throw new Error("level API failed");
-      // setLevelResult(resp.data);
+      const resp = await getDepressionLevel();
+      if (!resp?.success) throw new Error("level API failed");
+      setLevelResult(resp.data);
       //setLevelOpen(true);
       handleLogout();
 
@@ -745,43 +745,42 @@ const ChatInterface = () => {
             </div>
           )}
         </div>
+        <div className="flex items-center w-full gap-3 mb-4">
+          {/* Input */}
+          <input
+            type="text"
+            placeholder="Type your message here..."
+            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSend();
+              }
+            }}
+            disabled={loading}
+          />
 
+          {/* Optional Divider */}
+          {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
+
+          {/* Send Button */}
+          <Button
+            type="text"
+            icon={
+              <img
+                src={assets.send_icon}
+                alt="send"
+                className="w-8 h-8 object-contain"
+              />
+            }
+            onClick={handleSend}
+            disabled={loading}
+          />
+        </div>
         {/* Input Field */}
         {(isPhq9Complete || therapyMode == true) && (
           <div className="mt-4 flex flex-col items-center">
-            <div className="flex items-center w-full gap-3 mb-4">
-              {/* Input */}
-              <input
-                type="text"
-                placeholder="Type your message here..."
-                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSend();
-                  }
-                }}
-                disabled={loading}
-              />
-
-              {/* Optional Divider */}
-              {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
-
-              {/* Send Button */}
-              <Button
-                type="text"
-                icon={
-                  <img
-                    src={assets.send_icon}
-                    alt="send"
-                    className="w-8 h-8 object-contain"
-                  />
-                }
-                onClick={handleSend}
-                disabled={loading}
-              />
-            </div>
             <Button
               type="primary"
               onClick={() => void runLevelDetection()}

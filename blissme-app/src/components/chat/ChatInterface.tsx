@@ -570,11 +570,6 @@ const ChatInterface = () => {
     z-0 w-[600px] h-[600px] 
   "
       >
-        {therapyMode === true && (
-          <div className="absolute top-4 right-6 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-md shadow-sm border border-green-300 z-50">
-            🧘 Therapy Mode Active
-          </div>
-        )}
         <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
       </div>
 
@@ -583,8 +578,8 @@ const ChatInterface = () => {
       <div
         className="
     relative z-10 
-    w-full lg:w-2/3
-    h-[90%] lg:ml-[400px]
+    w-full lg:w-2/3 md:w-3/4
+    h-full  lg:ml-[400px]
     bg-emerald-200/80 bg-opacity-100 rounded-xl p-2 sm:p-6 shadow-lg
     flex flex-col justify-between
     

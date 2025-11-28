@@ -1,12 +1,11 @@
 import Sidebar from "../../components/chat/Sidebar";
 import bg from "../../assets/images/bg-zen.jpg";
-import { Outlet, useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
 import { motion } from "framer-motion";
 
 const flowers = ["🌸", "🌺", "🌼", "💮"];
 
-const AnxietyLayout = () => {
+const AnxietyLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       className="w-screen h-screen flex overflow-hidden relative bg-[#0D1A1A]"
@@ -16,8 +15,6 @@ const AnxietyLayout = () => {
         backgroundPosition: "center",
       }}
     >
-      <Sidebar />
-
       {/* Floating flowers */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 15 }).map((_, i) => {
@@ -51,8 +48,8 @@ const AnxietyLayout = () => {
         })}
       </div>
 
-      <Content className="w-full h-full p-2 overflow-scroll relative z-10">
-        <Outlet />
+      <Content className="w-full h-full justify-center items-center flex z-10">
+        {children}
       </Content>
     </div>
   );

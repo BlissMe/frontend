@@ -1,7 +1,7 @@
 import React from "react";
 import ChatInterface from "../../components/chat/ChatInterface";
 import Sidebar from "../../components/chat/Sidebar";
-import bg from "../../assets/images/chatbg.png"
+import bg from "../../assets/images/cb1.png"
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { getLocalStoragedata } from "../../helpers/Storage";

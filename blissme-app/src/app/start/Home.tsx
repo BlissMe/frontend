@@ -8,6 +8,8 @@ import { getLocalStoragedata } from '../../helpers/Storage';
 import about from '../../assets/images/about1.png';
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { AnxietyGames } from '../therapy/Anxiety_Games';
+import AnxietyLayout from '../layouts/AnxietyLayout';
 
 const images = [home, home2, home3];
 const sections = ["home", "about", "features"];
@@ -415,7 +417,16 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-
+            <section
+                id="therapy"
+                className="relative h-auto flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start text-white overflow-hidden"
+            >
+                <>
+                    <AnxietyLayout >
+                        <AnxietyGames />
+                    </AnxietyLayout>
+                </>
+            </section>
 
             <footer className="bg-emerald-700 text-white py-6">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-center md:text-left">

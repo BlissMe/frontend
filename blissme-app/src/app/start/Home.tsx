@@ -12,7 +12,7 @@ import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
 
 const images = [home, home2, home3];
-const sections = ["home", "about", "features"];
+const sections = ["home", "about", "features", "therapy"];
 
 const Home = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -235,17 +235,7 @@ const Home = () => {
 
                 {/* Content */}
                 <div
-                    className="
-        relative z-10 
-        w-full max-w-lg 
-        text-center md:text-left 
-        mt-10 md:mt-32 
-        px-4
-        flex flex-col 
-        justify-between 
-        h-[680px] 
-        md:h-auto  
-    "
+                    className="relative z-10 w-full max-w-lg text-center md:text-left mt-10 md:mt-32 px-4 flex flex-col justify-between h-[680px] md:h-auto"
                 >
                     <div>
                         <h1

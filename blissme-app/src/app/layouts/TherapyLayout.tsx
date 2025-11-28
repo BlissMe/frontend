@@ -1,4 +1,3 @@
-import Sidebar from "../../components/chat/Sidebar";
 import backgroundImage from "../../assets/images/br.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
@@ -17,7 +16,6 @@ const TherapyLayout = () => {
         backgroundPosition: "center",
       }}
     >
-      <Sidebar />
       <div
         onClick={handleLogoClick}
         className="absolute top-4 left-20 cursor-pointer z-20"

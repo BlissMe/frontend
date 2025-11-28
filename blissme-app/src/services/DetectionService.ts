@@ -54,3 +54,37 @@ export async function getDepressionLevelByUserID() {
     console.log("Response from getDepressionLevelByUserID:", res);
     return await res.json();
 }
+
+export async function startTherapyAPI(userID: number, sessionID: number, therapyInfo: any) {
+  try {
+    const token = getLocalStoragedata("token");
+    const res = await fetch(`${metadataServiceURL}therapy-agent/end-start`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        user_id: userID,
+        session_id: sessionID,
+        therapy_id: therapyInfo.id,
+        therapy_name: therapyInfo.name,
+      }),
+    });
+
+    console.log("Response from startTherapyAPI:", res);
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (err: unknown) {
+    let errorMessage = "Unknown error";
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    }
+    console.error("Failed to call startTherapyAPI:", errorMessage);
+    return { success: false, error: errorMessage };
+  }
+}

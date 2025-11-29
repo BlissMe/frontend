@@ -28,6 +28,8 @@ import { therapyAgentChat, User } from "../../services/TherapyAgentService";
 import { getLocalStoragedata } from "../../helpers/Storage";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { getTherapyFeedbackReport } from "../../services/TherapyFeedbackService";
+import { trackPromise } from "react-promise-tracker";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -93,6 +95,13 @@ const ChatInterface = () => {
   const user_id = getLocalStoragedata("userId") || "";
   const API_Python_URL = process.env.REACT_APP_Python_API_URL;
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
+  console.log("isPhq9Complete", isPhq9Complete);
+  const [postPhqMessageCount, setPostPhqMessageCount] = useState(0);
+  console.log("postPhqMessageCount", postPhqMessageCount);
+  const [therapyFeedbackReport, setTherapyFeedbackReport] =
+    useState<string>("");
+  const [therapyFeedbackConclusion, setTherapyFeedbackConclusion] =
+    useState<string>("");
 
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
@@ -111,6 +120,7 @@ const ChatInterface = () => {
   useEffect(() => {
     if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {
       setIsPhq9Complete(true);
+      setPostPhqMessageCount(0);
     }
   }, [askedPhq9Ids]);
 
@@ -123,6 +133,15 @@ const ChatInterface = () => {
       textarea.style.height = `${textarea.scrollHeight}px`; // adjust to scroll height
     }
   }, [inputValue]);
+  useEffect(() => {
+    console.log("postPhqMessageCount UPDATED:", postPhqMessageCount);
+    if (isPhq9Complete && postPhqMessageCount + 1 >= 2) {
+      console.log("Triggering level detection automatically...");
+      runLevelDetectionWithoutLogout();
+      setPostPhqMessageCount(0);
+    }
+  }, [postPhqMessageCount]);
+
   useEffect(() => {
     if (location.pathname === "/chat-new/text") {
       // Check if user just returned from therapy
@@ -189,9 +208,14 @@ const ChatInterface = () => {
           setLevelResult(resp.data);
           //  setLevelOpen(true);
 
-          if (resp.data.level) {
+          const level = resp.data?.level?.toLowerCase();
+          if (level === "moderate" || level === "minimal") {
             setTherapyMode(true);
             localStorage.setItem("therapyMode", "true");
+          } else if (level === "severe") {
+            setTherapyMode(false);
+            localStorage.removeItem("therapyMode");
+            navigate("/therapy/all-doctors");
           } else {
             setTherapyMode(false);
             localStorage.removeItem("therapyMode");
@@ -213,7 +237,10 @@ const ChatInterface = () => {
   }, []);
 
   useEffect(() => {
-    fetchCharacters();
+    trackPromise(fetchCharacters());
+    if (therapyMode) {
+      handleGenerateTherapyFeedbackReport();
+    }
   }, []);
 
   const handleSend = async () => {
@@ -239,13 +266,15 @@ const ChatInterface = () => {
 
       const userID = getLocalStoragedata("userId")?.toString() || "guest";
       console.log("userID in therapy mode:", userID);
+      handleGenerateTherapyFeedbackReport();
 
       botReply = await therapyAgentChat(
         sessionSummaries,
         inputValue,
         levelResult.level,
         userID,
-        String(sessionID)
+        String(sessionID),
+        therapyFeedbackConclusion
       );
 
       if (botReply.isTherapySuggested) {
@@ -286,10 +315,10 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+            sender: msg.sender === "bot" ? "popo" : "you",
+            text: msg.message,
+            time: getCurrentTime(),
+          }))
         : [];
 
       const context = formattedHistory
@@ -305,6 +334,9 @@ const ChatInterface = () => {
         Number(sessionID)
       );
       console.log("botReply:", botReply);
+      if (isPhq9Complete) {
+        setPostPhqMessageCount((prev) => prev + 1);
+      }
       if (
         typeof botReply.phq9_questionID === "number" &&
         typeof botReply.phq9_question === "string"
@@ -349,8 +381,8 @@ const ChatInterface = () => {
       // Step 4: Gentle bot message and continue chat
       const gentleText =
         choice === "no"
-          ? "No worries, maybe another time. Let’s keep chatting!"
-          : "Sure, we can try that therapy later when you feel ready.";
+          ? "No worries, maybe another time. Let’s keep chatting! tell me more about how you're feeling."
+          : "Sure, we can try that therapy later when you feel ready. Let’s continue our chat! tell me more about how you're feeling.";
 
       const botMsg = {
         sender: "popo",
@@ -388,10 +420,10 @@ const ChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "popo" : "you",
-        text: msg.message,
-        time: getCurrentTime(),
-      }))
+          sender: msg.sender === "bot" ? "popo" : "you",
+          text: msg.message,
+          time: getCurrentTime(),
+        }))
       : [];
 
     const context = formattedHistory
@@ -440,9 +472,9 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-          (msg: any) =>
-            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -515,8 +547,8 @@ const ChatInterface = () => {
         feedback === "Felt Good"
           ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
           : feedback === "No Change"
-            ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
-            : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
+          ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
+          : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
       time: getCurrentTime(),
     };
 
@@ -552,6 +584,47 @@ const ChatInterface = () => {
       console.error(e);
     }
   }
+
+  async function runLevelDetectionWithoutLogout() {
+    try {
+      await ClassifierResult();
+      const resp = await getDepressionLevel();
+      if (resp?.success) {
+        setLevelResult(resp.data);
+        //   setLevelOpen(true);
+      }
+      const level = resp.data?.level?.toLowerCase();
+      if (level === "minimal" || level === "moderate") {
+        setTherapyMode(true);
+        localStorage.setItem("therapyMode", "true");
+      } else if (level === "severe") {
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+        navigate("/therapy/all-doctors");
+      } else {
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+      }
+    } catch (err) {
+      console.error("Level detection failed:", err);
+    }
+  }
+
+  const handleGenerateTherapyFeedbackReport = async () => {
+    try {
+      const userID = getLocalStoragedata("userId");
+
+      const res = await getTherapyFeedbackReport(userID);
+
+      console.log("REPORT:", res.report);
+      console.log("CONCLUSION:", res.conclusion);
+
+      setTherapyFeedbackReport(res.report);
+      setTherapyFeedbackConclusion(res.conclusion);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const phqOptions = [
     "Not at all",
@@ -601,9 +674,12 @@ const startTherapy = async () => {
     z-0 w-[600px] h-[600px] 
   "
       >
-        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
+        <img
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
-
 
       {/* Chat Box */}
       <div
@@ -621,12 +697,14 @@ const startTherapy = async () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
-                }`}
+              className={`flex flex-col ${
+                msg.sender === "you" ? "items-end" : "items-start"
+              }`}
             >
               <div
-                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                  }`}
+                className={`flex gap-2 items-center ${
+                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                }`}
               >
                 {/* Avatar */}
                 {msg.sender === "you" ? (
@@ -668,8 +746,9 @@ const startTherapy = async () => {
               </div>
 
               <Text
-                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-12"
-                  }`}
+                className={`text-xs text-gray-500 mt-1 ${
+                  msg.sender === "you" ? "" : "ml-12"
+                }`}
               >
                 {msg.time}
               </Text>
@@ -732,8 +811,8 @@ const startTherapy = async () => {
                           option === "Felt Good"
                             ? "bg-green-500 hover:bg-green-600 text-white rounded-full"
                             : option === "No Change"
-                              ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
-                              : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                            ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                            : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
                         }
                       >
                         {option}
@@ -796,7 +875,7 @@ const startTherapy = async () => {
             placeholder="Type your message here..."
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
               }
@@ -867,8 +946,8 @@ const startTherapy = async () => {
                         levelColor(levelResult.level) === "gold"
                           ? "#faad14"
                           : levelColor(levelResult.level) === "red"
-                            ? "#ff4d4f"
-                            : "#52c41a"
+                          ? "#ff4d4f"
+                          : "#52c41a"
                       }
                       showInfo
                     />
@@ -879,8 +958,8 @@ const startTherapy = async () => {
                       {typeof levelResult.cutoffs?.minimal_max === "number"
                         ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
                         : levelResult.cutoffs
-                          ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
-                          : "—"}
+                        ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                        : "—"}
                     </Typography.Text>
                   </div>
 

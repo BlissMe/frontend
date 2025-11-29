@@ -12,7 +12,7 @@ import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
 
 const images = [home, home2, home3];
-const sections = ["home", "about", "features"];
+const sections = ["home", "about", "features", "therapy"];
 
 const Home = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -212,12 +212,10 @@ const Home = () => {
                 </div>
             )}
 
-            {/* HOME SECTION with slideshow */}
             <section
                 id="home"
                 className="relative h-screen flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-6 md:px-10 text-white overflow-hidden"
             >
-                {/* Slideshow */}
                 <div
                     className="absolute top-0 left-0 h-full w-full flex transition-transform duration-1000 ease-in-out"
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -232,20 +230,8 @@ const Home = () => {
                     ))}
                 </div>
 
-
-                {/* Content */}
                 <div
-                    className="
-        relative z-10 
-        w-full max-w-lg 
-        text-center md:text-left 
-        mt-10 md:mt-32 
-        px-4
-        flex flex-col 
-        justify-between 
-        h-[680px] 
-        md:h-auto  
-    "
+                    className="relative z-10 w-full max-w-lg text-center md:text-left mt-10 md:mt-32 px-4 flex flex-col justify-between h-[680px] md:h-auto"
                 >
                     <div>
                         <h1
@@ -287,8 +273,6 @@ const Home = () => {
 
             </section>
 
-
-            {/* ABOUT */}
             <section
                 id="about"
                 className="relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 text-white overflow-hidden"
@@ -396,7 +380,6 @@ const Home = () => {
                                     className={`flex items-center w-full ${isLeft ? "justify-start" : "justify-end"}`}
                                     data-aos={isLeft ? "fade-right" : "fade-left"}
                                 >
-                                    {/* Connector Flower Emoji */}
                                     <div className="absolute left-1/2 transform -translate-x-1/2 top-6 text-2xl">
                                         🌸
                                     </div>

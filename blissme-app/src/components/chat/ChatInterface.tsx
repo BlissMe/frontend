@@ -380,8 +380,8 @@ const ChatInterface = () => {
       // Step 4: Gentle bot message and continue chat
       const gentleText =
         choice === "no"
-          ? "No worries, maybe another time. Let’s keep chatting!"
-          : "Sure, we can try that therapy later when you feel ready.";
+          ? "No worries, maybe another time. Let’s keep chatting! tell me more about how you're feeling."
+          : "Sure, we can try that therapy later when you feel ready. Let’s continue our chat! tell me more about how you're feeling.";
 
       const botMsg = {
         sender: "popo",

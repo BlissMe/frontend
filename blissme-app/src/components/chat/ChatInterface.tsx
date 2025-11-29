@@ -27,6 +27,8 @@ import { therapyAgentChat, User } from "../../services/TherapyAgentService";
 import { getLocalStoragedata } from "../../helpers/Storage";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { getTherapyFeedbackReport } from "../../services/TherapyFeedbackService";
+import { trackPromise } from "react-promise-tracker";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -95,6 +97,10 @@ const ChatInterface = () => {
   console.log("isPhq9Complete", isPhq9Complete);
   const [postPhqMessageCount, setPostPhqMessageCount] = useState(0);
   console.log("postPhqMessageCount", postPhqMessageCount);
+  const [therapyFeedbackReport, setTherapyFeedbackReport] =
+    useState<string>("");
+  const [therapyFeedbackConclusion, setTherapyFeedbackConclusion] =
+    useState<string>("");
 
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
@@ -230,7 +236,10 @@ const ChatInterface = () => {
   }, []);
 
   useEffect(() => {
-    fetchCharacters();
+    trackPromise(fetchCharacters());
+    if (therapyMode) {
+      handleGenerateTherapyFeedbackReport();
+    }
   }, []);
 
   const handleSend = async () => {
@@ -256,13 +265,15 @@ const ChatInterface = () => {
 
       const userID = getLocalStoragedata("userId")?.toString() || "guest";
       console.log("userID in therapy mode:", userID);
+      handleGenerateTherapyFeedbackReport();
 
       botReply = await therapyAgentChat(
         sessionSummaries,
         inputValue,
         levelResult.level,
         userID,
-        String(sessionID)
+        String(sessionID),
+        therapyFeedbackConclusion
       );
 
       if (botReply.isTherapySuggested) {
@@ -303,10 +314,10 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+            sender: msg.sender === "bot" ? "popo" : "you",
+            text: msg.message,
+            time: getCurrentTime(),
+          }))
         : [];
 
       const context = formattedHistory
@@ -408,10 +419,10 @@ const ChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "popo" : "you",
-        text: msg.message,
-        time: getCurrentTime(),
-      }))
+          sender: msg.sender === "bot" ? "popo" : "you",
+          text: msg.message,
+          time: getCurrentTime(),
+        }))
       : [];
 
     const context = formattedHistory
@@ -460,9 +471,9 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-          (msg: any) =>
-            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -535,8 +546,8 @@ const ChatInterface = () => {
         feedback === "Felt Good"
           ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
           : feedback === "No Change"
-            ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
-            : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
+          ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
+          : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
       time: getCurrentTime(),
     };
 
@@ -598,6 +609,22 @@ const ChatInterface = () => {
     }
   }
 
+  const handleGenerateTherapyFeedbackReport = async () => {
+    try {
+      const userID = getLocalStoragedata("userId");
+
+      const res = await getTherapyFeedbackReport(userID);
+
+      console.log("REPORT:", res.report);
+      console.log("CONCLUSION:", res.conclusion);
+
+      setTherapyFeedbackReport(res.report);
+      setTherapyFeedbackConclusion(res.conclusion);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const phqOptions = [
     "Not at all",
     "Several days",
@@ -616,9 +643,12 @@ const ChatInterface = () => {
     z-0 w-[600px] h-[600px] 
   "
       >
-        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
+        <img
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
-
 
       {/* Chat Box */}
       <div
@@ -636,12 +666,14 @@ const ChatInterface = () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
-                }`}
+              className={`flex flex-col ${
+                msg.sender === "you" ? "items-end" : "items-start"
+              }`}
             >
               <div
-                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                  }`}
+                className={`flex gap-2 items-center ${
+                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                }`}
               >
                 {/* Avatar */}
                 {msg.sender === "you" ? (
@@ -683,8 +715,9 @@ const ChatInterface = () => {
               </div>
 
               <Text
-                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-12"
-                  }`}
+                className={`text-xs text-gray-500 mt-1 ${
+                  msg.sender === "you" ? "" : "ml-12"
+                }`}
               >
                 {msg.time}
               </Text>
@@ -747,8 +780,8 @@ const ChatInterface = () => {
                           option === "Felt Good"
                             ? "bg-green-500 hover:bg-green-600 text-white rounded-full"
                             : option === "No Change"
-                              ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
-                              : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                            ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                            : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
                         }
                       >
                         {option}
@@ -818,14 +851,13 @@ const ChatInterface = () => {
             placeholder="Type your message here..."
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
               }
             }}
             disabled={loading || isPhq9}
           />
-
 
           {/* Optional Divider */}
           {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
@@ -895,8 +927,8 @@ const ChatInterface = () => {
                         levelColor(levelResult.level) === "gold"
                           ? "#faad14"
                           : levelColor(levelResult.level) === "red"
-                            ? "#ff4d4f"
-                            : "#52c41a"
+                          ? "#ff4d4f"
+                          : "#52c41a"
                       }
                       showInfo
                     />
@@ -907,8 +939,8 @@ const ChatInterface = () => {
                       {typeof levelResult.cutoffs?.minimal_max === "number"
                         ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
                         : levelResult.cutoffs
-                          ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
-                          : "—"}
+                        ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                        : "—"}
                     </Typography.Text>
                   </div>
 

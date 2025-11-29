@@ -11,7 +11,8 @@ export async function therapyAgentChat(
     userQuery: string,
     depressionLevel: string,
     userID: string,
-    sessionID: string
+    sessionID: string,
+    therapyFeedbackConclusion?: string
 ): Promise<{
     response: string;
     action?: string;
@@ -30,6 +31,7 @@ export async function therapyAgentChat(
             depression_level: depressionLevel,
             user_id: userID,
             session_id: sessionID,
+            therapy_feedback_conclusion: therapyFeedbackConclusion,
            
         }),
     });

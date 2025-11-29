@@ -15,3 +15,5 @@ blissme-app/terraform/.terraform.lock.hcl
 # Misc
 *.log
 .DS_Store
+
+node_modules/

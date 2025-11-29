@@ -59,8 +59,8 @@ const games = [
     duration: "8 mins",
   },
   {
-    id: "bloom-mind",
-    title: "Bloom Mind",
+    id: "medication",
+    title: "Medication",
     description: "Follow calming breathing exercises with visual guidance",
     icon: Wind,
     color: "text-blue-500",
@@ -77,8 +77,8 @@ const games = [
     duration: "10 mins",
   },
   {
-    id: "number-guessing-game",
-    title: "Guess The Number",
+    id: "all-songs",
+    title: "Listen Me",
     description: "Take a peaceful walk through a virtual forest",
     icon: TreePine,
     color: "text-green-500",

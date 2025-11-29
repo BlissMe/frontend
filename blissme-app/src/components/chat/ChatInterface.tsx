@@ -1,7 +1,7 @@
 import bearnew from "../../assets/images/bearnew.png";
 import { Button, Typography, Spin, Input, Divider } from "antd";
 import { assets } from "../../assets/assets";
-import { useState, useEffect, useContext, use } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { getCurrentTime } from "../../helpers/Time";
 import { chatBotService } from "../../services/ChatBotService";
 import {
@@ -117,6 +117,15 @@ const ChatInterface = () => {
     }
   }, [askedPhq9Ids]);
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto"; // reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // adjust to scroll height
+    }
+  }, [inputValue]);
   useEffect(() => {
     console.log("postPhqMessageCount UPDATED:", postPhqMessageCount);
     if (isPhq9Complete && postPhqMessageCount + 1 >= 2) {
@@ -294,10 +303,10 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-            sender: msg.sender === "bot" ? "popo" : "you",
-            text: msg.message,
-            time: getCurrentTime(),
-          }))
+          sender: msg.sender === "bot" ? "popo" : "you",
+          text: msg.message,
+          time: getCurrentTime(),
+        }))
         : [];
 
       const context = formattedHistory
@@ -399,10 +408,10 @@ const ChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "popo" : "you",
-          text: msg.message,
-          time: getCurrentTime(),
-        }))
+        sender: msg.sender === "bot" ? "popo" : "you",
+        text: msg.message,
+        time: getCurrentTime(),
+      }))
       : [];
 
     const context = formattedHistory
@@ -451,9 +460,9 @@ const ChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-            (msg: any) =>
-              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-          )
+          (msg: any) =>
+            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+        )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -526,8 +535,8 @@ const ChatInterface = () => {
         feedback === "Felt Good"
           ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
           : feedback === "No Change"
-          ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
-          : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
+            ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
+            : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
       time: getCurrentTime(),
     };
 
@@ -597,36 +606,42 @@ const ChatInterface = () => {
   ];
 
   return (
-    <div className="relative flex-1 px-8 h-screen flex items-center justify-end ">
+    <div className="relative flex-1 px-2  h-screen flex items-center justify-end ">
       {/* Bear Image */}
-      <div className="absolute bottom-0 left-8 z-0 w-[600px] h-[600px]">
-        {therapyMode === true && (
-          <div className="absolute top-4 right-6 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-md shadow-sm border border-green-300 z-50">
-            🧘 Therapy Mode Active
-          </div>
-        )}
-        <img
-          src={bearnew}
-          alt="Bear"
-          className="w-full h-full object-contain"
-        />
+      <div
+        className="
+    absolute bottom-0 
+    left-1/2 -translate-x-1/2          /* Center on small screens */
+    sm:left-8 sm:translate-x-0         /* Original position on larger screens */
+    z-0 w-[600px] h-[600px] 
+  "
+      >
+        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
       </div>
 
+
       {/* Chat Box */}
-      <div className="relative z-10 w-2/3 h-[90%] bg-green-100 bg-opacity-100 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+      <div
+        className="
+    relative z-10 
+    w-full lg:w-2/3 md:w-3/4
+    h-full  lg:ml-[400px]
+    bg-emerald-200/80 bg-opacity-100 rounded-xl p-2 sm:p-6 shadow-lg
+    flex flex-col justify-between
+    
+  "
+      >
         {/* Chat Area */}
         <div className="flex-1 overflow-y-auto px-4 space-y-6">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${
-                msg.sender === "you" ? "items-end" : "items-start"
-              }`}
+              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
+                }`}
             >
               <div
-                className={`flex gap-2 items-center ${
-                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                  }`}
               >
                 {/* Avatar */}
                 {msg.sender === "you" ? (
@@ -668,9 +683,8 @@ const ChatInterface = () => {
               </div>
 
               <Text
-                className={`text-xs text-gray-500 mt-1 ${
-                  msg.sender === "you" ? "" : "ml-12"
-                }`}
+                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-12"
+                  }`}
               >
                 {msg.time}
               </Text>
@@ -733,8 +747,8 @@ const ChatInterface = () => {
                           option === "Felt Good"
                             ? "bg-green-500 hover:bg-green-600 text-white rounded-full"
                             : option === "No Change"
-                            ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
-                            : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                              ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                              : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
                         }
                       >
                         {option}
@@ -793,19 +807,25 @@ const ChatInterface = () => {
         </div>
         <div className="flex items-center w-full gap-3 mb-4">
           {/* Input */}
-          <input
-            type="text"
-            placeholder="Type your message here..."
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 focus:outline-none"
+          <textarea
+            rows={1}
+            ref={textareaRef}
+            className="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-xl border border-gray-300 
+   focus:outline-none text-sm md:text-base resize-none overflow-hidden 
+   transition-all duration-150 leading-[1.5rem]"
+            style={{ maxHeight: "150px" }}
             value={inputValue}
+            placeholder="Type your message here..."
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 handleSend();
               }
             }}
-            disabled={loading}
+            disabled={loading || isPhq9}
           />
+
 
           {/* Optional Divider */}
           {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
@@ -875,8 +895,8 @@ const ChatInterface = () => {
                         levelColor(levelResult.level) === "gold"
                           ? "#faad14"
                           : levelColor(levelResult.level) === "red"
-                          ? "#ff4d4f"
-                          : "#52c41a"
+                            ? "#ff4d4f"
+                            : "#52c41a"
                       }
                       showInfo
                     />
@@ -887,8 +907,8 @@ const ChatInterface = () => {
                       {typeof levelResult.cutoffs?.minimal_max === "number"
                         ? `Minimal ≤ ${levelResult.cutoffs.minimal_max}, Moderate ≤ ${levelResult.cutoffs.moderate_max}`
                         : levelResult.cutoffs
-                        ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
-                        : "—"}
+                          ? `Minimal ${levelResult.cutoffs.Minimal}, Moderate ${levelResult.cutoffs.Moderate}, Severe ${levelResult.cutoffs.Severe}`
+                          : "—"}
                     </Typography.Text>
                   </div>
 

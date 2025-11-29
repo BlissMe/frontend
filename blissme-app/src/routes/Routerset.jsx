@@ -97,6 +97,11 @@ const Routerset = () => {
           </Route>
           <Route path="/therapy" element={<TherapyLayout />}>
             <Route path="breathing" element={<BreathingExercise />} />
+            <Route path="zen" element={<ZenGarden />} />
+            <Route path="forest" element={<ForestGame />} />
+            <Route path="ocean" element={<OceanWaves />} />
+            <Route path="mood-tracker" element={<MoodTracker />} />
+
             <Route path="medication" element={<MeditationPlayer />} />
             <Route path="mood-tracker-home" element={<MoodTrackerMain />} />
             <Route path="all-songs" element={<Songs />} />
@@ -107,19 +112,19 @@ const Routerset = () => {
           <Route path="/game" element={<GameLayout />}>
             <Route path="therapy_game" element={<NumberGuessingGame />} />
           </Route>
-          <Route path="/dash" element={<AnxietyLayout />}>
+          {/* <Route path="/dash" element={<AnxietyLayout />}>
             <Route path="anxiety" element={<AnxietyGames />} />
             <Route path="zen" element={<ZenGarden />} />
-          </Route>
-          <Route path="/dash" element={<ForestLayout />}>
+          </Route> */}
+          {/* <Route path="/dash" element={<ForestLayout />}>
             <Route path="forest" element={<ForestGame />} />
           </Route>
           <Route path="/dash" element={<OceanLayout />}>
             <Route path="ocean" element={<OceanWaves />} />
-          </Route>
-          <Route path="/dash" element={<DashLayout />}>
+          </Route> */}
+          {/* <Route path="/dash" element={<DashLayout />}>
             <Route path="mood-tracker" element={<MoodTracker />} />
-          </Route>
+          </Route> */}
           <Route path="/mood" element={<MoodLayout />}>
             <Route path="step1" element={<LogMood />} />
           </Route>

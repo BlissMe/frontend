@@ -92,6 +92,9 @@ const ChatInterface = () => {
   const user_id = getLocalStoragedata("userId") || "";
   const API_Python_URL = process.env.REACT_APP_Python_API_URL;
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
+  console.log("isPhq9Complete", isPhq9Complete);
+  const [postPhqMessageCount, setPostPhqMessageCount] = useState(0);
+  console.log("postPhqMessageCount", postPhqMessageCount);
 
   console.log("awaitingFeedback", awaitingFeedback);
   console.log("therapyMode", therapyMode);
@@ -110,6 +113,7 @@ const ChatInterface = () => {
   useEffect(() => {
     if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {
       setIsPhq9Complete(true);
+      setPostPhqMessageCount(0);
     }
   }, [askedPhq9Ids]);
 
@@ -122,6 +126,15 @@ const ChatInterface = () => {
       textarea.style.height = `${textarea.scrollHeight}px`; // adjust to scroll height
     }
   }, [inputValue]);
+  useEffect(() => {
+    console.log("postPhqMessageCount UPDATED:", postPhqMessageCount);
+    if (isPhq9Complete && postPhqMessageCount + 1 >= 2) {
+      console.log("Triggering level detection automatically...");
+      runLevelDetectionWithoutLogout();
+      setPostPhqMessageCount(0);
+    }
+  }, [postPhqMessageCount]);
+
   useEffect(() => {
     if (location.pathname === "/chat-new/text") {
       // Check if user just returned from therapy
@@ -188,9 +201,14 @@ const ChatInterface = () => {
           setLevelResult(resp.data);
           //  setLevelOpen(true);
 
-          if (resp.data.level) {
+          const level = resp.data?.level?.toLowerCase();
+          if (level === "moderate" || level === "minimal") {
             setTherapyMode(true);
             localStorage.setItem("therapyMode", "true");
+          } else if (level === "severe") {
+            setTherapyMode(false);
+            localStorage.removeItem("therapyMode");
+            navigate("/therapy/all-doctors");
           } else {
             setTherapyMode(false);
             localStorage.removeItem("therapyMode");
@@ -304,6 +322,9 @@ const ChatInterface = () => {
         Number(sessionID)
       );
       console.log("botReply:", botReply);
+      if (isPhq9Complete) {
+        setPostPhqMessageCount((prev) => prev + 1);
+      }
       if (
         typeof botReply.phq9_questionID === "number" &&
         typeof botReply.phq9_question === "string"
@@ -549,6 +570,31 @@ const ChatInterface = () => {
       // }
     } catch (e) {
       console.error(e);
+    }
+  }
+
+  async function runLevelDetectionWithoutLogout() {
+    try {
+      await ClassifierResult();
+      const resp = await getDepressionLevel();
+      if (resp?.success) {
+        setLevelResult(resp.data);
+        //   setLevelOpen(true);
+      }
+      const level = resp.data?.level?.toLowerCase();
+      if (level === "minimal" || level === "moderate") {
+        setTherapyMode(true);
+        localStorage.setItem("therapyMode", "true");
+      } else if (level === "severe") {
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+        navigate("/therapy/all-doctors");
+      } else {
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+      }
+    } catch (err) {
+      console.error("Level detection failed:", err);
     }
   }
 

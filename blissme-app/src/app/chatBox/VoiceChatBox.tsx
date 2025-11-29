@@ -23,6 +23,7 @@ import {
   getDepressionLevel,
 } from "../../services/DetectionService";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 const { Text } = Typography;
 
@@ -73,6 +74,7 @@ const VoiceChatBox: React.FC = () => {
   const [detecting, setDetecting] = useState(false);
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
+  const user_id = getLocalStoragedata("userId") || "";
   const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const phqOptions = [
@@ -398,7 +400,7 @@ const VoiceChatBox: React.FC = () => {
           ? sessionSummaries[sessionSummaries.length - 1]
           : null;
 
-      const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? [],Number(user_id),Number(sessionID));
       setClassifier(res);
 
       console.log("Classifier:", res);

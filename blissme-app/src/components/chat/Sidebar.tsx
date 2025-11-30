@@ -155,14 +155,14 @@ const Sidebar: React.FC = () => {
           </div>
 
           {/* Songs */}
-          <div className="group relative flex justify-center">
+          {/* <div className="group relative flex justify-center">
             <Link to="/therapy/all-songs">
               <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
                 <Mic className="w-6 h-6 text-white" />
               </button>
             </Link>
             <Tooltip label="Voice" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-          </div>
+          </div> */}
 
         </div>
 

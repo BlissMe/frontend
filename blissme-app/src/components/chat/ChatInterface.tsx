@@ -686,9 +686,9 @@ const startTherapy = async () => {
         className="
     relative z-10 
     w-full lg:w-2/3 md:w-3/4
-    h-full  lg:ml-[400px]
+    h-[90%]  lg:ml-[400px]
     bg-emerald-200/80 bg-opacity-100 rounded-xl p-2 sm:p-6 shadow-lg
-    flex flex-col justify-between
+    flex flex-col justify-between my-2
     
   "
       >

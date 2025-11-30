@@ -83,156 +83,115 @@ const Sidebar: React.FC = () => {
     };
   }, []);
 
+  const Tooltip = ({ label, className = "" }: { label: string; className?: string }) => (
+    <div className={`absolute left-14 top-1/2 -translate-y-1/2 bg-emerald-800 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap z-[9999] ${className}`}>
+      {/* Arrow */}
+      <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 
+      border-t-4 border-b-4 border-r-4 border-transparent border-r-emerald-800" />
+      {label}
+    </div>
+  );
+
+
   return (
     <>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex w-16 bg-green-300 bg-opacity-50 flex-col items-center py-4 space-y-6 shadow-md">
         <div className="flex flex-col items-center space-y-6 flex-grow">
-          <div className="w-10 h-10 rounded-full bg-white overflow-hidden">
-            <img
-              src={user}
-              alt="Avatar"
-              className="object-cover w-full h-full"
-            />
+
+          {/* Avatar */}
+          <div className="group relative flex justify-center">
+            <div className="w-10 h-10 rounded-full bg-white overflow-hidden">
+              <img src={user} alt="Avatar" className="object-cover w-full h-full" />
+            </div>
           </div>
 
-          <Link to={chatRoute}>
-            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-              <MessageCircle className="w-6 h-6 text-white" />
-            </button>
-          </Link>
-
-          <Link to="/home">
-            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-              <Home className="w-6 h-6 text-white" />
-            </button>
-          </Link>
-
-          <div className="relative z-50" ref={brainRef}>
-            <button
-              className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110"
-              onClick={() => setShowBrainDropdown((prev) => !prev)}
-            >
-              <Brain className="w-6 h-6 text-white" />
-            </button>
-
-            {showBrainDropdown && (
-              <div className="absolute left-14 top-0 mt-10 bg-white border rounded-md shadow-lg py-2 z-[9999] w-52 text-sm max-h-80 overflow-y-auto">
-                <Link
-                  to="/therapy/breathing"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Breathing Therapy
-                </Link>
-                <Link
-                  to="/therapy/medication"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Meditation
-                </Link>
-                <Link
-                  to="/dash/anxiety"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Anxiety Games
-                </Link>
-                <Link
-                  to="/dash/zen"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  BloomMind
-                </Link>
-                <Link
-                  to="/dash/forest"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Mindful Forest
-                </Link>
-                <Link
-                  to="/dash/ocean"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  WaveMind
-                </Link>
-                <Link
-                  to="/therapy/mood-tracker-home"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Mood Tracker
-                </Link>
-                <Link
-                  to="/game/therapy_game"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Number Guessing Game
-                </Link>
-                <Link
-                  to="/therapy/body-scan"
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Body Scan Therapy
-                </Link>
-              </div>
-            )}
+          {/* Chat */}
+          <div className="group relative flex justify-center">
+            <Link to={chatRoute}>
+              <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
+                <MessageCircle className="w-6 h-6 text-white" />
+              </button>
+            </Link>
+            <Tooltip label="Chat" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
           </div>
 
-          <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-            <Calendar className="w-6 h-6 text-white" />
-          </button>
+          {/* Home */}
+          <div className="group relative flex justify-center">
+            <Link to="/home">
+              <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
+                <Home className="w-6 h-6 text-white" />
+              </button>
+            </Link>
+            <Tooltip label="Home" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div>
 
-          <Link to="/therapy/all-doctors">
-            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-              <Heart className="w-6 h-6 text-white" />
-            </button>
-          </Link>
+          {/* Therapy (Brain) - GAMES REMOVED */}
+          <div className="group relative flex justify-center">
+            <Link to="/home#therapy">
+              <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
+                <Brain className="w-6 h-6 text-white" />
+              </button>
+            </Link>
+            <Tooltip label="Therapy" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div>
 
-          <Link to="/therapy/all-songs">
-            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110">
-              <Mic className="w-6 h-6 text-white" />
+          {/* Calendar */}
+          {/* <div className="group relative flex justify-center">
+            <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
+              <Calendar className="w-6 h-6 text-white" />
             </button>
-          </Link>
+            <Tooltip label="Calendar" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div> */}
+
+          {/* Doctors */}
+          <div className="group relative flex justify-center">
+            <Link to="/therapy/all-doctors">
+              <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
+                <Heart className="w-6 h-6 text-white" />
+              </button>
+            </Link>
+            <Tooltip label="Doctors" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div>
+
+          {/* Songs */}
+          {/* <div className="group relative flex justify-center">
+            <Link to="/therapy/all-songs">
+              <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
+                <Mic className="w-6 h-6 text-white" />
+              </button>
+            </Link>
+            <Tooltip label="Voice" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div> */}
+
         </div>
 
-        {/* Settings & Logout */}
-        <div className="relative space-y-6 z-50" ref={settingsRef}>
-          <button
-            className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all duration-200 hover:scale-110"
-            onClick={() => setShowSettings((prev) => !prev)}
-          >
-            <Settings className="w-6 h-6 text-white" />
-          </button>
+        {/* Settings */}
+        <div className="relative space-y-6" ref={settingsRef}>
 
-          {showSettings && (
-            <div className="absolute left-14 bottom-0 bg-white border rounded-md shadow-lg py-2 z-[9999] w-48 text-sm">
-              <Link
-                to="/chat/setting/profile"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Profile Settings
-              </Link>
-              <Link
-                to="/chat/setting/account"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Account Settings
-              </Link>
-              <Link
-                to="/chat/setting/security"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Security Settings
-              </Link>
-            </div>
-          )}
+          <div className="group relative flex justify-center">
+            <button
+              className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110"
+              onClick={() => setShowSettings(!showSettings)}
+            >
+              <Settings className="w-6 h-6 text-white" />
+            </button>
+            <Tooltip label="Settings" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div>
 
-          <button
-            onClick={handleLogout}
-            className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-red-400 transition-all duration-200 hover:scale-110"
-          >
-            <LogOut className="w-6 h-6 text-white" />
-          </button>
+          {/* Logout */}
+          <div className="group relative flex justify-center">
+            <button
+              onClick={handleLogout}
+              className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-red-400 transition-all hover:scale-110"
+            >
+              <LogOut className="w-6 h-6 text-white" />
+            </button>
+            <Tooltip label="Logout" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div>
         </div>
       </div>
+
 
       {/* Mobile Topbar */}
       <div className="flex md:hidden items-center justify-end px-4 py-3 bg-green-200 shadow-md">

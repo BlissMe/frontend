@@ -128,7 +128,7 @@ const Sidebar: React.FC = () => {
 
           {/* Therapy (Brain) - GAMES REMOVED */}
           <div className="group relative flex justify-center">
-            <Link to="/therapy/breathing">
+            <Link to="/home#therapy">
               <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
                 <Brain className="w-6 h-6 text-white" />
               </button>

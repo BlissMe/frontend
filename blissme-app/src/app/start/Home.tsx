@@ -10,6 +10,8 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
+import { useLocation } from "react-router-dom";
+
 
 const images = [home, home2, home3];
 const sections = ["home", "about", "features", "therapy"];
@@ -19,6 +21,7 @@ const Home = () => {
     const [activeSection, setActiveSection] = useState<string>("home");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const featuresData = [
         {
@@ -68,6 +71,17 @@ const Home = () => {
         }, 3000);
         return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        if (location.hash) {
+            const element = document.querySelector(location.hash);
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: "smooth" });
+                }, 100); // small delay to ensure DOM is ready
+            }
+        }
+    }, [location]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(

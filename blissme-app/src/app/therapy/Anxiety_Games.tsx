@@ -122,9 +122,13 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
       <Card className="relative border-slate-300/20 bg-emerald-50/60 gap-4 flex flex-col pb-16">
 
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center">
-            <Gamepad2 className="h-5 w-5 text-emerald-700" />
-            Anxiety Relief Activities
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center" >
+            <Gamepad2 className="h-5 w-5 text-emerald-700"
+            />
+            <h3 style={{ fontFamily: 'Merienda, cursive' }}>
+              Anxiety Relief Activities
+
+            </h3>
           </CardTitle>
           <CardDescription className="text-center text-slate-600">
             Interactive exercises to help reduce stress and anxiety
@@ -146,7 +150,7 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                           <game.icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-emerald-800">{game.title}</h4>
+                          <h4 className="font-semibold text-emerald-800" style={{ fontFamily: 'Merienda, cursive' }}>{game.title}</h4>
                           <p className="text-sm text-emerald-700 mt-1">{game.description}</p>
                           <div className="flex items-center gap-2 mt-3">
                             <Music2 className="h-4 w-4 text-slate-500" />

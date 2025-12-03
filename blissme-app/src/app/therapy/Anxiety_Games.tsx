@@ -114,7 +114,8 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
       }
     }
 
-    navigate(`/therapy/${gameId}`); // 👈 Go to game-specific route
+    navigate(`/therapy/${gameId}`);
+    console.log(`Navigating to /therapy/${gameId}`);
   };
 
   return (

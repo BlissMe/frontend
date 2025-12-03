@@ -11,7 +11,7 @@ import "aos/dist/aos.css";
 import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
 import { useLocation } from "react-router-dom";
-
+import { Settings } from "lucide-react";
 
 const images = [home, home2, home3];
 const sections = ["home", "about", "features", "therapy"];
@@ -22,6 +22,8 @@ const Home = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const [showSettings, setShowSettings] = useState(false);
+
 
     const featuresData = [
         {
@@ -165,6 +167,14 @@ const Home = () => {
                     >
                         Start Chat
                     </button>
+                    <div className="group relative flex justify-center">
+                        <button
+                            className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110"
+                            onClick={() => setShowSettings(!showSettings)}
+                        >
+                            <Settings className="w-6 h-6 text-white" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Mobile Menu Button */}

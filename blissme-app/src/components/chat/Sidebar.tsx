@@ -169,15 +169,38 @@ const Sidebar: React.FC = () => {
         {/* Settings */}
         <div className="relative space-y-6" ref={settingsRef}>
 
-          <div className="group relative flex justify-center">
+          <div className="relative">
             <button
               className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110"
               onClick={() => setShowSettings(!showSettings)}
             >
               <Settings className="w-6 h-6 text-white" />
             </button>
-            <Tooltip label="Settings" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+
+            {showSettings && (
+              <div className="absolute left-12 bottom-[-40px] bg-white shadow-lg rounded-xl py-2 w-40 z-50">
+                <Link
+                  to="/chat/setting/profile"
+                  className="block px-4 py-1 hover:bg-emerald-100"
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/chat/setting/account"
+                  className="block px-4 py-1 hover:bg-emerald-100"
+                >
+                  Account
+                </Link>
+                <Link
+                  to="/chat/setting/security"
+                  className="block px-4 py-1 hover:bg-emerald-100"
+                >
+                  Security
+                </Link>
+              </div>
+            )}
           </div>
+
 
           {/* Logout */}
           <div className="group relative flex justify-center">

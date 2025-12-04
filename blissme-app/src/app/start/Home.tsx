@@ -27,6 +27,7 @@ const Home = () => {
     const brainRef = useRef<HTMLDivElement>(null);
     const settingsRef = useRef<HTMLDivElement>(null);
     const [showBrainDropdown, setShowBrainDropdown] = useState(false);
+    const token = getLocalStoragedata("token") || "";
 
     const featuresData = [
         {
@@ -157,15 +158,15 @@ const Home = () => {
                     <img src={logo} alt="Logo" className="h-8 md:h-10 w-auto" />
                 </div>
 
-                {/* Desktop Nav */}
+                {/* Desktop Nav Links */}
                 <div className="hidden md:flex space-x-6">
                     {sections.map((id) => (
                         <a
                             key={id}
                             href={`#${id}`}
                             className={`font-medium transition ${activeSection === id
-                                ? "text-green-700 border-b-2 border-green-600"
-                                : "text-gray-700 hover:text-green-600"
+                                    ? "text-green-700 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
                                 }`}
                         >
                             {id.charAt(0).toUpperCase() + id.slice(1)}
@@ -173,63 +174,72 @@ const Home = () => {
                     ))}
                 </div>
 
-                {/* Desktop Buttons */}
-                <div className=" md:flex space-x-4 items-center">
-                    <button
-                        onClick={handleLogin}
-                        className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
-                    >
-                        Sign In
-                    </button>
-                    <button
-                        onClick={handleSignUp}
-                        className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
-                    >
-                        Sign Up
-                    </button>
+                {/* Desktop Buttons → Only visible on md+ */}
+                <div className="hidden md:flex space-x-4 items-center">
+                    {/* Show Sign In / Sign Up ONLY when token is NOT present */}
+                    {!token && (
+                        <>
+                            <button
+                                onClick={handleLogin}
+                                className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
+                            >
+                                Sign In
+                            </button>
+
+                            <button
+                                onClick={handleSignUp}
+                                className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
+                            >
+                                Sign Up
+                            </button>
+                        </>
+                    )}
+
+                    {/* Start Chat → ALWAYS visible */}
                     <button
                         onClick={handleStartChat}
                         className="bg-emerald-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-emerald-700 transition text-sm md:text-base"
                     >
                         Start Chat
                     </button>
-                    <div className="relative ">
-                        <button
-                            className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-700 transition-all hover:scale-110"
-                            onClick={() => setShowSettings(!showSettings)}
-                        >
-                            <Settings className="w-6 h-6 text-white" />
-                        </button>
 
-                        {showSettings && (
-                            <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl py-2 w-40 border border-gray-200"
+                    {/* Show Settings ONLY when token exists */}
+                    {token && (
+                        <div className="relative">
+                            <button
+                                className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-700 transition-all hover:scale-110"
+                                onClick={() => setShowSettings(!showSettings)}
                             >
-                                <Link
-                                    to="/chat/setting/profile"
-                                    className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
-                                >
-                                    Profile
-                                </Link>
-                                <Link
-                                    to="/chat/setting/account"
-                                    className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
-                                >
-                                    Account
-                                </Link>
-                                <Link
-                                    to="/chat/setting/security"
-                                    className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
-                                >
-                                    Security
-                                </Link>
-                            </div>
-                        )}
+                                <Settings className="w-6 h-6 text-white" />
+                            </button>
 
-                    </div>
-
+                            {showSettings && (
+                                <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl py-2 w-40 border border-gray-200">
+                                    <Link
+                                        to="/chat/setting/profile"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Profile
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/account"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Account
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/security"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Security
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Button → only visible on mobile */}
                 <div className="md:hidden">
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -240,24 +250,24 @@ const Home = () => {
                 </div>
             </nav>
 
-            {/* Mobile Dropdown */}
+            {/* Mobile Dropdown → only shows when menu is open */}
             {isMenuOpen && (
                 <div
                     className="
-            absolute top-16 right-4 
-            w-auto max-w-[90%] min-w-[200px]
-            md:hidden justify-center
-            bg-white shadow-lg rounded-lg
-            p-4 flex flex-col space-y-4 z-50
-        "
+        absolute top-16 right-4 
+        w-auto max-w-[90%] min-w-[200px]
+        md:hidden justify-center
+        bg-white shadow-lg rounded-lg
+        p-4 flex flex-col space-y-4 z-50
+    "
                 >
                     {sections.map((id) => (
                         <a
                             key={id}
                             href={`#${id}`}
                             className={`font-medium transition ${activeSection === id
-                                ? "text-green-700 border-b-2 border-green-600"
-                                : "text-gray-700 hover:text-green-600"
+                                    ? "text-green-700 border-b-2 border-green-600"
+                                    : "text-gray-700 hover:text-green-600"
                                 }`}
                             onClick={() => setIsMenuOpen(false)}
                         >
@@ -265,26 +275,67 @@ const Home = () => {
                         </a>
                     ))}
 
-                    <button
-                        onClick={handleLogin}
-                        className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
-                    >
-                        Sign In
-                    </button>
+                    {/* Show Sign In / Sign Up ONLY when token is NOT present */}
+                    {!token && (
+                        <>
+                            <button
+                                onClick={handleLogin}
+                                className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
+                            >
+                                Sign In
+                            </button>
 
-                    <button
-                        onClick={handleSignUp}
-                        className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
-                    >
-                        Sign Up
-                    </button>
+                            <button
+                                onClick={handleSignUp}
+                                className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
+                            >
+                                Sign Up
+                            </button>
+                        </>
+                    )}
 
+                    {/* Start Chat → ALWAYS visible */}
                     <button
                         onClick={handleStartChat}
                         className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition"
                     >
                         Start Chat
                     </button>
+
+                    {/* Show Settings ONLY when token exists */}
+                    {token && (
+                        <div className="relative">
+                            <button
+                                className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-700 transition-all hover:scale-110"
+                                onClick={() => setShowSettings(!showSettings)}
+                            >
+                                <Settings className="w-6 h-6 text-white" />
+                            </button>
+
+                            {showSettings && (
+                                <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl py-2 w-40 border border-gray-200">
+                                    <Link
+                                        to="/chat/setting/profile"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Profile
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/account"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Account
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/security"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Security
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
 

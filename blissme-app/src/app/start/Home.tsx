@@ -515,7 +515,7 @@ const Home = () => {
                                     <div
                                         className={`relative w-5/12 p-6 rounded-xl shadow-lg ${feature.color} border-l-4 ${feature.border}`}
                                     >
-                                        <h3 className="text-lg font-bold text-gray-800">
+                                        <h3 className="text-lg font-bold text-gray-800" style={{ fontFamily: 'Merienda, cursive' }}>
                                             {feature.title}
                                         </h3>
                                         <p className="text-sm text-gray-700 mt-2">

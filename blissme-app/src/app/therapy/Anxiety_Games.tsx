@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding } from "lucide-react";
+import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding, AudioLines } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -79,16 +79,16 @@ const games = [
   {
     id: "all-songs",
     title: "Listen Me",
-    description: "Take a peaceful walk through a virtual forest",
-    icon: TreePine,
-    color: "text-green-500",
-    bgColor: "bg-green-500/10",
-    duration: "15 mins",
+    description: "Listen to soothing sounds that bring peace and balance",
+    icon: AudioLines,
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+    duration: "3 mins",
   },
   {
     id: "body-scan",
     title: "Body Scan",
-    description: "Gently observe your body and relax from head to toe.",
+    description: "Gently observe your body and relax from head to toe",
     icon: PersonStanding,
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",

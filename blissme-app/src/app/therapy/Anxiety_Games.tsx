@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2 } from "lucide-react";
+import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -88,11 +88,11 @@ const games = [
   {
     id: "body-scan",
     title: "Body Scan",
-    description: "Match your breath with gentle ocean waves",
-    icon: Waves,
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-500/10",
-    duration: "8 mins",
+    description: "Gently observe your body and relax from head to toe.",
+    icon: PersonStanding,
+    color: "text-yellow-500",
+    bgColor: "bg-yellow-500/10",
+    duration: "10 mins",
   },
 ];
 

@@ -43,7 +43,7 @@ const Songs = () => {
 
   return (
     <div
-      className="min-h-screen flex bg-green-50"
+      className="min-h-screen flex"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -65,9 +65,9 @@ const Songs = () => {
           onClick={() => navigate("/chat-new/text")}
           className="
           fixed top-4 right-8 z-50 
-          bg-white/10 backdrop-blur-md border border-white/20
+          bg-emerald-500 backdrop-blur-md border border-white/20
           text-white text-sm font-medium px-4 py-2 rounded-xl shadow-lg
-          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+          hover:bg-emerald-200/20 hover:scale-105 transition-transform duration-200
         "
         >
           ← Back to Chat

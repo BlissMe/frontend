@@ -33,35 +33,35 @@ const Home = () => {
         {
             title: "User-Friendly Chatbot",
             description:
-                "Chat with BlissMe using **text or voice messages** in a simple and interactive interface.",
+                "Chat with BlissMe using text or voice messages in a simple and interactive interface.",
             color: "bg-green-100",
             border: "border-green-500",
         },
         {
             title: "Multi-Agent AI System",
             description:
-                "Our system has multiple AI agents working together to **analyze emotional state** and provide support.",
+                "Our system has multiple AI agents working together to analyze emotional state and provide support.",
             color: "bg-emerald-100",
             border: "border-emerald-500",
         },
         {
             title: "Therapy Suggestions",
             description:
-                "Receive **personalized therapy sessions**, mindfulness exercises, and emotional guidance.",
+                "Receive personalized therapy sessions, mindfulness exercises, and emotional guidance.",
             color: "bg-teal-100",
             border: "border-teal-500",
         },
         {
             title: "Gamified Mental Health Tools",
             description:
-                "Engage with interactive **games** and exercises to improve mood and mental resilience.",
+                "Engage with interactive games and exercises to improve mood and mental resilience.",
             color: "bg-blue-100",
             border: "border-blue-500",
         },
         {
             title: "Journaling & Mood Tracking",
             description:
-                "Keep a personal journal and **track your mood** over time to identify patterns and improvements.",
+                "Keep a personal journal and track your mood over time to identify patterns and improvements.",
             color: "bg-purple-100",
             border: "border-purple-500",
         },
@@ -165,8 +165,8 @@ const Home = () => {
                             key={id}
                             href={`#${id}`}
                             className={`font-medium transition ${activeSection === id
-                                    ? "text-green-700 border-b-2 border-green-600"
-                                    : "text-gray-700 hover:text-green-600"
+                                ? "text-green-700 border-b-2 border-green-600"
+                                : "text-gray-700 hover:text-green-600"
                                 }`}
                         >
                             {id.charAt(0).toUpperCase() + id.slice(1)}
@@ -266,8 +266,8 @@ const Home = () => {
                             key={id}
                             href={`#${id}`}
                             className={`font-medium transition ${activeSection === id
-                                    ? "text-green-700 border-b-2 border-green-600"
-                                    : "text-gray-700 hover:text-green-600"
+                                ? "text-green-700 border-b-2 border-green-600"
+                                : "text-gray-700 hover:text-green-600"
                                 }`}
                             onClick={() => setIsMenuOpen(false)}
                         >
@@ -435,7 +435,8 @@ const Home = () => {
                             className="p-6 rounded-xl shadow-lg bg-emerald-100 border-l-4 border-emerald-500"
                             data-aos="fade-left"
                         >
-                            <h3 className="text-lg font-bold text-emerald-700">
+                            <h3 className="text-lg font-bold text-emerald-700" style={{ fontFamily: 'Merienda, cursive' }}
+                            >
                                 AI Depression Detection
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
@@ -449,7 +450,7 @@ const Home = () => {
                             data-aos="fade-left"
                             data-aos-delay="200"
                         >
-                            <h3 className="text-lg font-bold text-green-700">
+                            <h3 className="text-lg font-bold text-green-700" style={{ fontFamily: 'Merienda, cursive' }}>
                                 Personalized Therapy
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
@@ -463,7 +464,7 @@ const Home = () => {
                             data-aos="fade-left"
                             data-aos-delay="400"
                         >
-                            <h3 className="text-lg font-bold text-teal-700">
+                            <h3 className="text-lg font-bold text-teal-700" style={{ fontFamily: 'Merienda, cursive' }}>
                                 Multi-Agent Support System
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">

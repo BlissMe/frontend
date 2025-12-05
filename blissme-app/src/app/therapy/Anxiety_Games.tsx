@@ -61,10 +61,10 @@ const games = [
   {
     id: "medication",
     title: "Medication",
-    description: "Follow calming breathing exercises with visual guidance",
+    description: "Calm your mind with slow, mindful breaths",
     icon: Wind,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
+    color: "text-cyan-400",
+    bgColor: "bg-cyan-400/10",
     duration: "5 mins",
   },
   {

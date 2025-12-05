@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding, AudioLines } from "lucide-react";
+import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding, AudioLines, Smile } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -70,11 +70,11 @@ const games = [
   {
     id: "mood-tracker-home",
     title: "Mood Tracker",
-    description: "Create and maintain your digital peaceful space",
-    icon: Flower2,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
-    duration: "10 mins",
+    description: "Record how you feel and understand your emotional patterns",
+    icon: Smile,
+    color: "text-rose-400",
+    bgColor: "bg-rose-400/10",
+    duration: "2 mins",
   },
   {
     id: "all-songs",

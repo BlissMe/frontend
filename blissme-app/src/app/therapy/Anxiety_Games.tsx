@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2 } from "lucide-react";
+import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding, AudioLines, Smile } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -61,38 +61,38 @@ const games = [
   {
     id: "medication",
     title: "Medication",
-    description: "Follow calming breathing exercises with visual guidance",
+    description: "Calm your mind with slow, mindful breaths",
     icon: Wind,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
+    color: "text-cyan-400",
+    bgColor: "bg-cyan-400/10",
     duration: "5 mins",
   },
   {
     id: "mood-tracker-home",
     title: "Mood Tracker",
-    description: "Create and maintain your digital peaceful space",
-    icon: Flower2,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
-    duration: "10 mins",
+    description: "Record how you feel and understand your emotional patterns",
+    icon: Smile,
+    color: "text-rose-400",
+    bgColor: "bg-rose-400/10",
+    duration: "2 mins",
   },
   {
     id: "all-songs",
     title: "Listen Me",
-    description: "Take a peaceful walk through a virtual forest",
-    icon: TreePine,
-    color: "text-green-500",
-    bgColor: "bg-green-500/10",
-    duration: "15 mins",
+    description: "Listen to soothing sounds that bring peace and balance",
+    icon: AudioLines,
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+    duration: "3 mins",
   },
   {
     id: "body-scan",
     title: "Body Scan",
-    description: "Match your breath with gentle ocean waves",
-    icon: Waves,
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-500/10",
-    duration: "8 mins",
+    description: "Gently observe your body and relax from head to toe",
+    icon: PersonStanding,
+    color: "text-yellow-500",
+    bgColor: "bg-yellow-500/10",
+    duration: "10 mins",
   },
 ];
 
@@ -114,7 +114,8 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
       }
     }
 
-    navigate(`/therapy/${gameId}`); // 👈 Go to game-specific route
+    navigate(`/therapy/${gameId}`);
+    console.log(`Navigating to /therapy/${gameId}`);
   };
 
   return (
@@ -122,9 +123,13 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
       <Card className="relative border-slate-300/20 bg-emerald-50/60 gap-4 flex flex-col pb-16">
 
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center">
-            <Gamepad2 className="h-5 w-5 text-emerald-700" />
-            Anxiety Relief Activities
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center" >
+            <Gamepad2 className="h-5 w-5 text-emerald-700"
+            />
+            <h3 style={{ fontFamily: 'Merienda, cursive' }}>
+              Anxiety Relief Activities
+
+            </h3>
           </CardTitle>
           <CardDescription className="text-center text-slate-600">
             Interactive exercises to help reduce stress and anxiety
@@ -146,7 +151,7 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                           <game.icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-emerald-800">{game.title}</h4>
+                          <h4 className="font-semibold text-emerald-800" style={{ fontFamily: 'Merienda, cursive' }}>{game.title}</h4>
                           <p className="text-sm text-emerald-700 mt-1">{game.description}</p>
                           <div className="flex items-center gap-2 mt-3">
                             <Music2 className="h-4 w-4 text-slate-500" />

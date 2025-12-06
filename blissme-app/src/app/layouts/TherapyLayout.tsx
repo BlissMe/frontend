@@ -5,7 +5,7 @@ import { Content } from "antd/es/layout/layout";
 
 const TherapyLayout = () => {
   const navigate = useNavigate();
-  const handleLogoClick = () => navigate("/therapy/mood-tracker-home");
+  const handleLogoClick = () => navigate("/home");
 
   return (
     <div

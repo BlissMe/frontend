@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import home from '../../assets/images/home.png';
 import home2 from '../../assets/images/home2.png';
 import home3 from '../../assets/images/home3.png';
@@ -11,7 +11,7 @@ import "aos/dist/aos.css";
 import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
 import { useLocation } from "react-router-dom";
-
+import { Link, Settings } from "lucide-react";
 
 const images = [home, home2, home3];
 const sections = ["home", "about", "features", "therapy"];
@@ -22,40 +22,46 @@ const Home = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const [showSettings, setShowSettings] = useState(false);
+
+    const brainRef = useRef<HTMLDivElement>(null);
+    const settingsRef = useRef<HTMLDivElement>(null);
+    const [showBrainDropdown, setShowBrainDropdown] = useState(false);
+    const token = getLocalStoragedata("token") || "";
 
     const featuresData = [
         {
             title: "User-Friendly Chatbot",
             description:
-                "Chat with BlissMe using **text or voice messages** in a simple and interactive interface.",
+                "Chat with BlissMe using text or voice messages in a simple and interactive interface.",
             color: "bg-green-100",
             border: "border-green-500",
         },
         {
             title: "Multi-Agent AI System",
             description:
-                "Our system has multiple AI agents working together to **analyze emotional state** and provide support.",
+                "Our system has multiple AI agents working together to analyze emotional state and provide support.",
             color: "bg-emerald-100",
             border: "border-emerald-500",
         },
         {
             title: "Therapy Suggestions",
             description:
-                "Receive **personalized therapy sessions**, mindfulness exercises, and emotional guidance.",
+                "Receive personalized therapy sessions, mindfulness exercises, and emotional guidance.",
             color: "bg-teal-100",
             border: "border-teal-500",
         },
         {
             title: "Gamified Mental Health Tools",
             description:
-                "Engage with interactive **games** and exercises to improve mood and mental resilience.",
+                "Engage with interactive games and exercises to improve mood and mental resilience.",
             color: "bg-blue-100",
             border: "border-blue-500",
         },
         {
             title: "Journaling & Mood Tracking",
             description:
-                "Keep a personal journal and **track your mood** over time to identify patterns and improvements.",
+                "Keep a personal journal and track your mood over time to identify patterns and improvements.",
             color: "bg-purple-100",
             border: "border-purple-500",
         },
@@ -63,6 +69,29 @@ const Home = () => {
 
     useEffect(() => {
         AOS.init({ duration: 1200, once: true });
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                brainRef.current &&
+                !brainRef.current.contains(event.target as Node)
+            ) {
+                setShowBrainDropdown(false);
+            }
+            if (
+                settingsRef.current &&
+                !settingsRef.current.contains(event.target as Node)
+            ) {
+                setShowSettings(false);
+            }
+        };
+
+        // attach listener and provide cleanup to avoid returning JSX from useEffect
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     useEffect(() => {
@@ -123,13 +152,13 @@ const Home = () => {
     return (
         <div className="relative min-h-screen scroll-smooth">
             {/* Navbar */}
-            <nav className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center justify-between w-[95%] md:w-[90%] max-w-6xl px-4 md:px-6 py-3 bg-white/50 backdrop-blur-md rounded-xl shadow-lg z-50">
+            <nav className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center justify-between w-[95%] md:w-[90%] max-w-6xl px-4 md:px-6 py-3 bg-white/50 backdrop-blur-md rounded-xl shadow-lg z-50 overflow-visible">
                 {/* Logo */}
                 <div onClick={handleLogoClick} className="cursor-pointer">
                     <img src={logo} alt="Logo" className="h-8 md:h-10 w-auto" />
                 </div>
 
-                {/* Desktop Nav */}
+                {/* Desktop Nav Links */}
                 <div className="hidden md:flex space-x-6">
                     {sections.map((id) => (
                         <a
@@ -145,29 +174,72 @@ const Home = () => {
                     ))}
                 </div>
 
-                {/* Desktop Buttons */}
+                {/* Desktop Buttons → Only visible on md+ */}
                 <div className="hidden md:flex space-x-4 items-center">
-                    <button
-                        onClick={handleLogin}
-                        className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
-                    >
-                        Sign In
-                    </button>
-                    <button
-                        onClick={handleSignUp}
-                        className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
-                    >
-                        Sign Up
-                    </button>
+                    {/* Show Sign In / Sign Up ONLY when token is NOT present */}
+                    {!token && (
+                        <>
+                            <button
+                                onClick={handleLogin}
+                                className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
+                            >
+                                Sign In
+                            </button>
+
+                            <button
+                                onClick={handleSignUp}
+                                className="border border-green-600 text-green-700 px-3 md:px-4 py-2 rounded-lg hover:bg-green-100 transition text-sm md:text-base"
+                            >
+                                Sign Up
+                            </button>
+                        </>
+                    )}
+
+                    {/* Start Chat → ALWAYS visible */}
                     <button
                         onClick={handleStartChat}
-                        className="bg-green-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm md:text-base"
+                        className="bg-emerald-600 text-white px-3 md:px-4 py-2 rounded-lg hover:bg-emerald-700 transition text-sm md:text-base"
                     >
                         Start Chat
                     </button>
+
+                    {/* Show Settings ONLY when token exists */}
+                    {token && (
+                        <div className="relative">
+                            <button
+                                className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-700 transition-all hover:scale-110"
+                                onClick={() => setShowSettings(!showSettings)}
+                            >
+                                <Settings className="w-6 h-6 text-white" />
+                            </button>
+
+                            {showSettings && (
+                                <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl py-2 w-40 border border-gray-200">
+                                    <Link
+                                        to="/chat/setting/profile"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Profile
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/account"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Account
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/security"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Security
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                {/* Mobile Menu Button */}
+                {/* Mobile Menu Button → only visible on mobile */}
                 <div className="md:hidden">
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -178,16 +250,16 @@ const Home = () => {
                 </div>
             </nav>
 
-            {/* Mobile Dropdown */}
+            {/* Mobile Dropdown → only shows when menu is open */}
             {isMenuOpen && (
                 <div
                     className="
-            absolute top-16 right-4 
-            w-auto max-w-[90%] min-w-[200px]
-            md:hidden justify-center
-            bg-white shadow-lg rounded-lg
-            p-4 flex flex-col space-y-4 z-50
-        "
+        absolute top-16 right-4 
+        w-auto max-w-[90%] min-w-[200px]
+        md:hidden justify-center
+        bg-white shadow-lg rounded-lg
+        p-4 flex flex-col space-y-4 z-50
+    "
                 >
                     {sections.map((id) => (
                         <a
@@ -203,32 +275,73 @@ const Home = () => {
                         </a>
                     ))}
 
-                    <button
-                        onClick={handleLogin}
-                        className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
-                    >
-                        Sign In
-                    </button>
+                    {/* Show Sign In / Sign Up ONLY when token is NOT present */}
+                    {!token && (
+                        <>
+                            <button
+                                onClick={handleLogin}
+                                className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
+                            >
+                                Sign In
+                            </button>
 
-                    <button
-                        onClick={handleSignUp}
-                        className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
-                    >
-                        Sign Up
-                    </button>
+                            <button
+                                onClick={handleSignUp}
+                                className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 transition"
+                            >
+                                Sign Up
+                            </button>
+                        </>
+                    )}
 
+                    {/* Start Chat → ALWAYS visible */}
                     <button
                         onClick={handleStartChat}
                         className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition"
                     >
                         Start Chat
                     </button>
+
+                    {/* Show Settings ONLY when token exists */}
+                    {token && (
+                        <div className="relative">
+                            <button
+                                className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-700 transition-all hover:scale-110"
+                                onClick={() => setShowSettings(!showSettings)}
+                            >
+                                <Settings className="w-6 h-6 text-white" />
+                            </button>
+
+                            {showSettings && (
+                                <div className="absolute top-12 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl py-2 w-40 border border-gray-200">
+                                    <Link
+                                        to="/chat/setting/profile"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Profile
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/account"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Account
+                                    </Link>
+                                    <Link
+                                        to="/chat/setting/security"
+                                        className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
+                                    >
+                                        Security
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
 
             <section
                 id="home"
-                className="relative h-screen flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-6 md:px-10 text-white overflow-hidden"
+                className="relative h-screen flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-6 md:px-10 overflow-hidden"
             >
                 <div
                     className="absolute top-0 left-0 h-full w-full flex transition-transform duration-1000 ease-in-out"
@@ -289,7 +402,7 @@ const Home = () => {
 
             <section
                 id="about"
-                className="relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 text-white overflow-hidden"
+                className="relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 overflow-hidden"
             >
                 <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
@@ -322,7 +435,8 @@ const Home = () => {
                             className="p-6 rounded-xl shadow-lg bg-emerald-100 border-l-4 border-emerald-500"
                             data-aos="fade-left"
                         >
-                            <h3 className="text-lg font-bold text-emerald-700">
+                            <h3 className="text-lg font-bold text-emerald-700" style={{ fontFamily: 'Merienda, cursive' }}
+                            >
                                 AI Depression Detection
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
@@ -336,7 +450,7 @@ const Home = () => {
                             data-aos="fade-left"
                             data-aos-delay="200"
                         >
-                            <h3 className="text-lg font-bold text-green-700">
+                            <h3 className="text-lg font-bold text-green-700" style={{ fontFamily: 'Merienda, cursive' }}>
                                 Personalized Therapy
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
@@ -350,7 +464,7 @@ const Home = () => {
                             data-aos="fade-left"
                             data-aos-delay="400"
                         >
-                            <h3 className="text-lg font-bold text-teal-700">
+                            <h3 className="text-lg font-bold text-teal-700" style={{ fontFamily: 'Merienda, cursive' }}>
                                 Multi-Agent Support System
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
@@ -365,7 +479,7 @@ const Home = () => {
 
             <section
                 id="features"
-                className='relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 text-white overflow-hidden'
+                className='relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 overflow-hidden'
             >
                 <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
@@ -401,7 +515,7 @@ const Home = () => {
                                     <div
                                         className={`relative w-5/12 p-6 rounded-xl shadow-lg ${feature.color} border-l-4 ${feature.border}`}
                                     >
-                                        <h3 className="text-lg font-bold text-gray-800">
+                                        <h3 className="text-lg font-bold text-gray-800" style={{ fontFamily: 'Merienda, cursive' }}>
                                             {feature.title}
                                         </h3>
                                         <p className="text-sm text-gray-700 mt-2">
@@ -416,7 +530,7 @@ const Home = () => {
             </section>
             <section
                 id="therapy"
-                className="relative h-auto flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start text-white overflow-hidden"
+                className="relative h-auto flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start overflow-hidden"
             >
                 <>
                     <AnxietyLayout >

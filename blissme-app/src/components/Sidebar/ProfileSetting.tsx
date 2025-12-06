@@ -169,8 +169,8 @@ const ProfileSetting = () => {
         }
       }
 
-      if (!isFaceSign && newUsername!== username) {
-        const response = await updateEmailService({newUsername}, token);
+      if (!isFaceSign && newUsername !== username) {
+        const response = await updateEmailService({ newUsername }, token);
         if (response.message === "Username updated successfully") {
           setLocalStorageData("user", newUsername);
           setUsername(newUsername);
@@ -221,9 +221,9 @@ const ProfileSetting = () => {
     };
   }, [previewUrl]);
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32 z-10">
+    <div className="max-w-xl mx-auto bg-emerald-300/60 p-6 rounded-xl shadow-md mt-32 z-10">
       <div className="w-full flex justify-center mt-4">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+        <h2 className="text-2xl font-semibold text-emerald-800 mb-6" style={{ fontFamily: 'Merienda, cursive' }}>
           Profile Settings
         </h2>
       </div>
@@ -293,7 +293,7 @@ const ProfileSetting = () => {
             >
               <Button
                 icon={<UploadOutlined />}
-                className="bg-green-500 text-white hover:bg-green-600"
+                className="bg-emerald-600 text-white hover:bg-emerald-400"
               >
                 Change Virtual Character
               </Button>
@@ -322,7 +322,7 @@ const ProfileSetting = () => {
         <Button
           type="primary"
           htmlType="submit"
-          className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md"
+          className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-md"
           loading={uploading}
           disabled={!isFormChanged}
         >

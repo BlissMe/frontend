@@ -12,7 +12,7 @@ const SettingsLayout = () => {
 
     return (
         <div
-            className="w-screen h-screen flex overflow-hidden relative"
+            className="w-screen h-screen flex flex-col md:flex-row overflow-hidden relative "
             style={{
                 backgroundImage: `url(${bg})`,
                 backgroundSize: "cover",

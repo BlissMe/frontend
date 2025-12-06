@@ -221,7 +221,7 @@ const ProfileSetting = () => {
     };
   }, [previewUrl]);
   return (
-    <div className="max-w-xl mx-auto bg-emerald-400/60 p-6 rounded-xl shadow-md mt-32 z-10">
+    <div className="max-w-xl mx-auto bg-green-300/50 p-6 rounded-xl shadow-md mt-32 z-10">
       <div className="w-full flex justify-center mt-4">
         <h2 className="text-2xl font-semibold text-emerald-800 mb-6" style={{ fontFamily: 'Merienda, cursive' }}>
           Profile Settings

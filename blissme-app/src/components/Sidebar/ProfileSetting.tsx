@@ -221,7 +221,7 @@ const ProfileSetting = () => {
     };
   }, [previewUrl]);
   return (
-    <div className="max-w-xl mx-auto bg-emerald-300/60 p-6 rounded-xl shadow-md mt-32 z-10">
+    <div className="max-w-xl mx-auto bg-emerald-400/60 p-6 rounded-xl shadow-md mt-32 z-10">
       <div className="w-full flex justify-center mt-4">
         <h2 className="text-2xl font-semibold text-emerald-800 mb-6" style={{ fontFamily: 'Merienda, cursive' }}>
           Profile Settings
@@ -264,7 +264,7 @@ const ProfileSetting = () => {
           }
           rules={[{ required: true, message: "Please enter character name" }]}
         >
-          <Input placeholder="Enter character name" className="h-10 rounded-lg" />
+          <Input placeholder="Enter character name" className="h-10 rounded-lg bg-emerald-100" />
         </Form.Item>
 
         <Form.Item
@@ -306,7 +306,7 @@ const ProfileSetting = () => {
           label={<span className="font-medium text-gray-700">Nick Name</span>}
           rules={[{ required: true, message: "Please enter your nickname" }]}
         >
-          <Input className="h-10" />
+          <Input className="h-10 rounded-lg bg-emerald-100" />
         </Form.Item>
 
         {!isFaceSign && (
@@ -315,7 +315,7 @@ const ProfileSetting = () => {
             label={<span className="font-medium text-gray-700">Username</span>}
             rules={[{ validator: validateUsername }]}
           >
-            <Input className="h-10" />
+            <Input className="h-10 rounded-lg bg-emerald-100" />
           </Form.Item>
         )}
 

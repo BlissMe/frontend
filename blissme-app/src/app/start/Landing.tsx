@@ -10,10 +10,10 @@ const Landing = () => {
     const [loading, setLoading] = useState(false);
     const Navigate = useNavigate();
     const logoStyle = {
-        maxWidth: '300px',
-        marginBottom: '20px',
-        marginTop: '40px',
-        animation: 'scalePulse 2s infinite ease-in-out'
+        width: "clamp(120px, 40vw, 300px)",
+        marginBottom: "20px",
+        marginTop: "40px",
+        animation: "scalePulse 2s infinite ease-in-out"
     };
 
     return (

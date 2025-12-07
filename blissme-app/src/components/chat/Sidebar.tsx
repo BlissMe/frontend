@@ -101,9 +101,9 @@ const Sidebar: React.FC = () => {
 
           {/* Avatar */}
           <div className="group relative flex justify-center">
-            <div className="w-10 h-10 rounded-full bg-white overflow-hidden">
+            <Link to="/chat/setting/profile" className="w-10 h-10 rounded-full bg-white overflow-hidden">
               <img src={user} alt="Avatar" className="object-cover w-full h-full" />
-            </div>
+            </Link>
           </div>
 
           {/* Chat */}

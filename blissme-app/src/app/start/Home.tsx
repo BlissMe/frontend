@@ -12,6 +12,8 @@ import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
 import { useLocation } from "react-router-dom";
 import { Link, Settings } from "lucide-react";
+import { motion } from "framer-motion";
+const flowers = ["🧘‍♀️", "💚", "💐"];
 
 const images = [home, home2, home3];
 const sections = ["home", "about", "features", "therapy"];
@@ -404,19 +406,53 @@ const Home = () => {
                 id="about"
                 className="relative min-h-screen flex flex-col bg-gray-100 items-center justify-center py-2 px-6 overflow-hidden"
             >
+                {/* 🌸 Floating Flowers Background Animation */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    {Array.from({ length: 20 }).map((_, i) => {
+                        const size = Math.random() * 10 + 15; // 20–45px
+                        const left = Math.random() * 100;
+                        const duration = Math.random() * 8 + 6;
+                        const delay = Math.random() * 5;
+                        const flower = flowers[Math.floor(Math.random() * flowers.length)];
+
+                        return (
+                            <motion.div
+                                key={i}
+                                initial={{ y: "110%", opacity: 0 }}
+                                animate={{ y: "-10%", opacity: 1 }}
+                                transition={{
+                                    duration,
+                                    delay,
+                                    repeat: Infinity,
+                                    repeatType: "loop",
+                                    ease: "linear",
+                                }}
+                                className="absolute"
+                                style={{
+                                    left: `${left}%`,
+                                    fontSize: `${size}px`,
+                                }}
+                            >
+                                {flower}
+                            </motion.div>
+                        );
+                    })}
+                </div>
+
+                {/* 🌿 Your existing blurred blobs */}
                 <div className="absolute top-[-60px] left-[-60px] w-96 h-96 bg-green-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute bottom-10 right-[-40px] w-80 h-80 bg-emerald-400 rounded-full opacity-30 blur-3xl animate-pulse"></div>
                 <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-teal-400 rounded-full opacity-25 blur-2xl animate-pulse"></div>
                 <div className="absolute bottom-40 left-1/4 w-56 h-56 bg-green-300 rounded-full opacity-25 blur-2xl animate-pulse"></div>
                 <div className="absolute top-20 right-1/3 w-44 h-44 bg-emerald-300 rounded-full opacity-20 blur-2xl animate-pulse"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-6xl">
 
-                    <div
-                        className="md:w-1/2 text-center md:text-left"
-                        data-aos="fade-right"
-                    >
-                        <h1 className="text-3xl md:text-4xl font-bold text-green-700"
-                            style={{ fontFamily: 'Merienda, cursive' }}
+                {/* 🌼 Actual About Content */}
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full max-w-6xl">
+                    {/* LEFT TEXT */}
+                    <div className="md:w-1/2 text-center md:text-left" data-aos="fade-right">
+                        <h1
+                            className="text-3xl md:text-4xl font-bold text-green-700"
+                            style={{ fontFamily: "Merienda, cursive" }}
                         >
                             About BlissMe
                         </h1>
@@ -426,22 +462,23 @@ const Home = () => {
                             system designed to support mental wellness through personalized therapy,
                             emotional analysis, and healing-focused experiences.
                         </p>
-
                     </div>
 
+                    {/* RIGHT CARDS */}
                     <div className="mt-10 md:mt-0 md:w-1/2 flex flex-col gap-6">
-
                         <div
                             className="p-6 rounded-xl shadow-lg bg-emerald-100 border-l-4 border-emerald-500"
                             data-aos="fade-left"
                         >
-                            <h3 className="text-lg font-bold text-emerald-700" style={{ fontFamily: 'Merienda, cursive' }}
+                            <h3
+                                className="text-lg font-bold text-emerald-700"
+                                style={{ fontFamily: "Merienda, cursive" }}
                             >
                                 AI Depression Detection
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
-                                Multi-agent emotional analyzers detect signs of depression through voice
-                                tone, text patterns, and behavior recognition.
+                                Multi-agent emotional analyzers detect signs of depression through
+                                voice tone, text patterns, and behavior recognition.
                             </p>
                         </div>
 
@@ -450,7 +487,10 @@ const Home = () => {
                             data-aos="fade-left"
                             data-aos-delay="200"
                         >
-                            <h3 className="text-lg font-bold text-green-700" style={{ fontFamily: 'Merienda, cursive' }}>
+                            <h3
+                                className="text-lg font-bold text-green-700"
+                                style={{ fontFamily: "Merienda, cursive" }}
+                            >
                                 Personalized Therapy
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
@@ -464,18 +504,21 @@ const Home = () => {
                             data-aos="fade-left"
                             data-aos-delay="400"
                         >
-                            <h3 className="text-lg font-bold text-teal-700" style={{ fontFamily: 'Merienda, cursive' }}>
+                            <h3
+                                className="text-lg font-bold text-teal-700"
+                                style={{ fontFamily: "Merienda, cursive" }}
+                            >
                                 Multi-Agent Support System
                             </h3>
                             <p className="text-sm text-gray-700 mt-2">
-                                Each agent plays a role emotional detection, therapy guidance,
+                                Each agent plays a role in emotional detection, therapy guidance,
                                 mood tracking, and recovery planning.
                             </p>
                         </div>
-
                     </div>
                 </div>
             </section>
+
 
             <section
                 id="features"

@@ -227,7 +227,7 @@ const Sidebar: React.FC = () => {
 
         {/* Mobile dropdown menu */}
         {menuOpen && (
-          <div className="absolute top-14 right-4 bg-white border rounded-md shadow-lg py-3 px-4 z-[9999] w-56 flex flex-col space-y-3 text-sm">
+          <div className="absolute top-14 right-4 bg-white border rounded-md shadow-lg py-3 px-4 z-[9999] w-42 flex flex-col space-y-3 text-sm">
             <div className="flex items-center gap-3 pb-2 border-b border-gray-200 mb-2">
               <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
                 <img
@@ -256,14 +256,14 @@ const Sidebar: React.FC = () => {
             </Link>
 
             <Link
-              to="/therapy/breathing"
+              to="/home#therapy"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2"
             >
-              <Brain className="w-5 h-5 text-emerald-600" /> Brain Therapy
+              <Brain className="w-5 h-5 text-emerald-600" /> Therapy
             </Link>
 
-            <Link
+            {/* <Link
               to="/therapy/mood-tracker-home"
               onClick={() => setMenuOpen(false)}
               className="flex items-center gap-2"
@@ -287,15 +287,45 @@ const Sidebar: React.FC = () => {
               <Mic className="w-5 h-5 text-emerald-600" /> Voice
             </Link>
 
-            <hr />
+            <hr /> */}
 
-            <Link
-              to="/chat/setting/profile"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2"
-            >
-              <Settings className="w-5 h-5 text-emerald-600" /> Settings
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="flex items-center gap-2"
+              >
+                <Settings className="w-5 h-5 text-emerald-600" /> Settings
+              </button>
+
+              {showSettings && (
+                <div className="absolute left-0 top-8 bg-white shadow-lg rounded-xl py-2 w-40 z-50">
+                  <Link
+                    to="/chat/setting/profile"
+                    className="block px-4 py-1 hover:bg-emerald-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+
+                  <Link
+                    to="/chat/setting/account"
+                    className="block px-4 py-1 hover:bg-emerald-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Account
+                  </Link>
+
+                  <Link
+                    to="/chat/setting/security"
+                    className="block px-4 py-1 hover:bg-emerald-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Security
+                  </Link>
+                </div>
+              )}
+            </div>
+
 
             <button
               onClick={handleLogout}

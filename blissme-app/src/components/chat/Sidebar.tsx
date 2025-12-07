@@ -228,7 +228,11 @@ const Sidebar: React.FC = () => {
         {/* Mobile dropdown menu */}
         {menuOpen && (
           <div className="absolute top-14 right-4 bg-white border rounded-md shadow-lg py-3 px-4 z-[9999] w-42 flex flex-col space-y-3 text-sm">
-            <div className="flex items-center gap-3 pb-2 border-b border-gray-200 mb-2">
+            <Link
+              to="/chat/setting/profile"
+              className="flex items-center gap-3 pb-2 border-b border-gray-200 mb-2 hover:bg-gray-100 p-2 rounded-lg transition"
+              onClick={() => setMenuOpen(false)}  // optional if inside menu
+            >
               <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
                 <img
                   src={user}
@@ -236,8 +240,10 @@ const Sidebar: React.FC = () => {
                   className="object-cover w-full h-full"
                 />
               </div>
+
               <span className="text-gray-700 font-medium">My Profile</span>
-            </div>
+            </Link>
+
 
             <Link
               to={chatRoute}

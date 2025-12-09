@@ -12,7 +12,6 @@ blissme-app/terraform/*.tfstate*
 blissme-app/terraform/.terraform/
 blissme-app/terraform/.terraform.lock.hcl
 
-# Misc
 *.log
 .DS_Store
 

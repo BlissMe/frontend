@@ -1,16 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  BreathingProtocol,
-  PROTOCOLS,
-} from "../../components/therapy/protocols";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { BreathingProtocol, PROTOCOLS } from "../../components/therapy/protocols";
 import { useNavigate } from "react-router-dom";
-
 
 type Props = {
   protocolId?: string;
@@ -19,22 +9,24 @@ type Props = {
   apiBase?: string;
 };
 
-const AUDIO_FREQ = 440;
 const prefersReducedMotion =
   typeof window !== "undefined" &&
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const API_URL = process.env.REACT_APP_API_URL;
+
 const AdvancedBreathing: React.FC<Props> = ({
   protocolId = "resonance-6bpm",
   durationMinutes = 5,
   onSessionComplete,
   apiBase = `${API_URL}`,
 }) => {
+  // keep protocol lookup in case other logic depends on it elsewhere
   const protocol: BreathingProtocol = useMemo(
     () => PROTOCOLS.find((p) => p.id === protocolId) || PROTOCOLS[0],
     [protocolId]
   );
+
   const navigate = useNavigate();
   const [running, setRunning] = useState(false);
   const [phaseIndex, setPhaseIndex] = useState(0);
@@ -43,33 +35,6 @@ const AdvancedBreathing: React.FC<Props> = ({
   const startTimeRef = useRef<number | null>(null);
   const lastTickRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
-
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const cue = useCallback(() => {
-    try {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new AudioContext();
-      }
-      const ctx = audioCtxRef.current;
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = AUDIO_FREQ;
-      g.gain.value = 0.0001; // very soft
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.start();
-      // short fade in/out
-      g.gain.exponentialRampToValueAtTime(0.03, ctx.currentTime + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
-      o.stop(ctx.currentTime + 0.2);
-    } catch { }
-  }, []);
-
-  // Haptic cue
-  const haptic = useCallback((ms = 25) => {
-    if (navigator.vibrate) navigator.vibrate(ms);
-  }, []);
 
   const liveRef = useRef<HTMLDivElement>(null);
   const announce = useCallback((msg: string) => {
@@ -82,23 +47,31 @@ const AdvancedBreathing: React.FC<Props> = ({
   }, []);
 
   const totalMs = durationMinutes * 60_000;
-  const phaseDurations = useMemo(
-    () => protocol.phases.map((p) => p.durationMs),
-    [protocol]
+
+  // Fixed phases per your request: Inhale 4s, Hold 2s, Exhale 6s (repeat)
+  const localPhases = useMemo(
+    () => [
+      { name: "inhale", durationMs: 4000 },
+      { name: "hold", durationMs: 2000 },
+      { name: "exhale", durationMs: 6000 },
+    ],
+    []
   );
-  const phase = protocol.phases[phaseIndex];
+
+  // current phase derived from our localPhases (not protocol phases)
+  const phase = localPhases[phaseIndex];
+  const phaseDurations = localPhases.map((p) => p.durationMs);
 
   useEffect(() => {
+    // announce the phase for accessibility (no audio/haptics)
     const label =
       phase.name === "inhale"
         ? "Inhale"
         : phase.name === "exhale"
-          ? "Exhale"
-          : "Hold";
+        ? "Exhale"
+        : "Hold";
     announce(label);
-    if (phase.audioCue) cue();
-    if (phase.hapticCue) haptic();
-  }, [phaseIndex]);
+  }, [phaseIndex, phase.name, announce]);
 
   const tick = useCallback(
     (now: number) => {
@@ -106,8 +79,7 @@ const AdvancedBreathing: React.FC<Props> = ({
       if (startTimeRef.current == null) startTimeRef.current = now;
       if (lastTickRef.current == null) lastTickRef.current = now;
 
-      const phaseElapsed =
-        elapsedMsInPhase + (now - (lastTickRef.current || now));
+      const phaseElapsed = elapsedMsInPhase + (now - (lastTickRef.current || now));
       setElapsedMsInPhase(phaseElapsed);
       lastTickRef.current = now;
 
@@ -121,7 +93,7 @@ const AdvancedBreathing: React.FC<Props> = ({
       const sessionElapsed = now - (startTimeRef.current || now);
       if (sessionElapsed >= totalMs) {
         setRunning(false);
-        cancelAnimationFrame(rafRef.current!);
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
       } else {
         rafRef.current = requestAnimationFrame(tick);
       }
@@ -151,13 +123,17 @@ const AdvancedBreathing: React.FC<Props> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(summary),
-      }).catch(() => { });
+      }).catch(() => {});
     }
+    
   }, [running]);
 
+  // Use the local phase duration for progress calculation
   const phaseProgress = Math.min(1, elapsedMsInPhase / phase.durationMs);
+
+  // remaining time calculation (defensive fallback if refs are null)
   const remainingMs =
-    totalMs - ((lastTickRef.current || 0) - (startTimeRef.current || 0));
+    totalMs - ((lastTickRef.current || Date.now()) - (startTimeRef.current || Date.now()));
   const remainingMin = Math.max(0, Math.floor(remainingMs / 60000));
   const remainingSec = Math.max(0, Math.floor((remainingMs % 60000) / 1000));
 
@@ -168,22 +144,25 @@ const AdvancedBreathing: React.FC<Props> = ({
     phase.name === "inhale"
       ? ease(phaseProgress)
       : phase.name === "exhale"
-        ? 1 - ease(phaseProgress)
-        : 0.5; // hold
-  const radius = prefersReducedMotion
-    ? (minR + maxR) / 2
-    : minR + (maxR - minR) * sizeT;
+      ? 1 - ease(phaseProgress)
+      : 0.5; // hold
+  const radius = prefersReducedMotion ? (minR + maxR) / 2 : minR + (maxR - minR) * sizeT;
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 ">
-
       <div className="w-full max-w-xl bg-emerald-400/30 rounded-2xl shadow-md p-6 relative flex flex-col items-center">
-
         {/* Heading centered */}
-        <h2 className="text-2xl font-bold text-emerald-900 text-center mb-4" style={{ fontFamily: 'Merienda, cursive' }}
+        <h2
+          className="text-2xl font-bold text-emerald-900 text-center mb-2"
+          style={{ fontFamily: "Merienda, cursive" }}
         >
           Mindful Breathing
         </h2>
+
+        {/* Instructions */}
+        <p className="text-sm text-emerald-800 opacity-90 text-center mb-4 max-w-prose">
+          Inhale 4 seconds → Hold 2 seconds → Exhale 6 seconds.  — follow the visual guide and the on-screen labels.
+        </p>
 
         {/* Timer */}
         <span className="px-3 py-1 rounded-md bg-emerald-500 text-white font-mono text-sm mb-4">
@@ -220,6 +199,7 @@ const AdvancedBreathing: React.FC<Props> = ({
             <circle cx="160" cy="160" r={radius} fill="currentColor" opacity="0.2" />
           </svg>
 
+          {/* Center label: appears during the active phase (Inhale / Hold / Exhale) */}
           <div className="absolute inset-0 flex items-center justify-center text-xl font-medium">
             {phase.name.charAt(0).toUpperCase() + phase.name.slice(1)}
           </div>
@@ -275,11 +255,12 @@ const AdvancedBreathing: React.FC<Props> = ({
         >
           ← Back to Chat
         </button>
-      </div>
 
+        {/* Live region for accessibility announcements */}
+        <div aria-live="polite" ref={liveRef} className="sr-only" />
+      </div>
     </div>
   );
-
 };
 
 export default AdvancedBreathing;

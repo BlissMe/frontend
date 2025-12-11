@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Divider, Typography, Modal, Tooltip } from "antd";
-import { assets } from "../../assets/assets";
+import { Button, Typography, Modal, Tooltip } from "antd";
 import ReactBarsLoader from "../../components/loader/ReactBarLoader";
 import { getCurrentTime } from "../../helpers/Time";
 import {
@@ -15,12 +14,16 @@ import {
   AudioMutedOutlined,
   AudioOutlined,
   LoadingOutlined,
-  StopOutlined,
 } from "@ant-design/icons";
 import Avatar from "../../components/profile/Avatar";
 import { useNotification } from "../context/notificationContext";
-import { getClassifierResult ,ClassifierResult,getDepressionLevel  } from "../../services/DetectionService";
-import {saveClassifierToServer  } from "../../services/ClassifierResults";
+import {
+  getClassifierResult,
+  ClassifierResult,
+  getDepressionLevel,
+} from "../../services/DetectionService";
+import { saveClassifierToServer } from "../../services/ClassifierResults";
+import { getLocalStoragedata } from "../../helpers/Storage";
 
 const { Text } = Typography;
 
@@ -71,6 +74,8 @@ const VoiceChatBox: React.FC = () => {
   const [detecting, setDetecting] = useState(false);
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const { openNotification } = useNotification();
+  const user_id = getLocalStoragedata("userId") || "";
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const phqOptions = [
     "Not at all",
@@ -87,34 +92,33 @@ const VoiceChatBox: React.FC = () => {
     scrollToBottom();
   }, [messages, isBotTyping]);
 
- useEffect(() => {
-  (async () => {
-    const session = await createNewSession();
-    setSessionID(session);
-    const allSummaries = await fetchAllSummaries();
-    setSessionSummaries(allSummaries);
+  useEffect(() => {
+    (async () => {
+      const session = await createNewSession();
+      setSessionID(session);
+      const allSummaries = await fetchAllSummaries();
+      setSessionSummaries(allSummaries);
 
-    const res = await fetch("http://localhost:8000/greeting");
-    if (res.ok) {
-      const greeting = await res.json();
+      const res = await fetch(`${Python_URL}/greeting`);
+      if (res.ok) {
+        const greeting = await res.json();
 
-      const botMessage: Message = {
-        text: greeting.bot_response,
-        sender: "bot",
-        time: getCurrentTime(),
-      };
+        const botMessage: Message = {
+          text: greeting.bot_response,
+          sender: "bot",
+          time: getCurrentTime(),
+        };
 
-      setMessages([botMessage]); // first message
-      await saveMessage(botMessage.text, session, "bot");
+        setMessages([botMessage]); // first message
+        await saveMessage(botMessage.text, session, "bot");
 
-      if (greeting.audio_url) {
-        const audio = new Audio(`http://localhost:8000${greeting.audio_url}`);
-        audio.play();
+        if (greeting.audio_url) {
+          const audio = new Audio(`${Python_URL}${greeting.audio_url}`);
+          audio.play();
+        }
       }
-    }
-  })();
-}, []);
-
+    })();
+  }, []);
 
   const handleStartRecording = async () => {
     isCancelledRef.current = false; // reset cancellation flag
@@ -201,7 +205,7 @@ const VoiceChatBox: React.FC = () => {
         .join("\n");
       formData.append("history", historyText);
 
-      const response = await fetch("http://localhost:8000/voice-chat", {
+      const response = await fetch(`${Python_URL}/voice-chat`, {
         method: "POST",
         body: formData,
       });
@@ -255,7 +259,7 @@ const VoiceChatBox: React.FC = () => {
       await saveMessage(botMessage.text, sessionID, "bot");
       setMessages((prev) => [...prev, botMessage]);
 
-      const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+      const audio = new Audio(`${Python_URL}${result.audio_url}`);
       audio.play();
 
       // Handle emotion state
@@ -322,7 +326,7 @@ const VoiceChatBox: React.FC = () => {
     formData.append("history", historyText);
 
     try {
-      const response = await fetch("http://localhost:8000/voice-chat", {
+      const response = await fetch(`${Python_URL}/voice-chat`, {
         method: "POST",
         body: formData,
       });
@@ -362,7 +366,7 @@ const VoiceChatBox: React.FC = () => {
 
       // Play audio if any
       if (result.audio_url) {
-        const audio = new Audio(`http://localhost:8000${result.audio_url}`);
+        const audio = new Audio(`${Python_URL}${result.audio_url}`);
         await audio.play();
       }
     } catch (err) {
@@ -376,57 +380,55 @@ const VoiceChatBox: React.FC = () => {
     setIsBotTyping(false);
     setIsWaitingForBotResponse(false);
   };
-async function ClassifierResult() {
-  if (!sessionID) return; // session not ready yet
-  setDetecting(true);
-  try {
-    const updatedHistory = await fetchChatHistory(sessionID);
-    const formattedHistory: string[] = Array.isArray(updatedHistory)
-      ? updatedHistory.map((msg: any) =>
-          `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
-      : [];
-
-    const historyStr = formattedHistory.join("\n").trim();
-    if (!historyStr) return; // nothing to classify yet
-
-    const latestSummary: string | null =
-      sessionSummaries && sessionSummaries.length
-        ? sessionSummaries[sessionSummaries.length - 1]
-        : null;
-
-const res = await getClassifierResult(historyStr, sessionSummaries ?? []); 
-    setClassifier(res);
-    
-    console.log("Classifier:", res);
+  async function ClassifierResult() {
+    if (!sessionID) return; // session not ready yet
+    setDetecting(true);
     try {
-      await saveClassifierToServer(Number(sessionID), res);
-      console.log("Classifier result saved.");
-    } catch (err) {
-      console.error("Failed to persist classifier result:", err);
+      const updatedHistory = await fetchChatHistory(sessionID);
+      const formattedHistory: string[] = Array.isArray(updatedHistory)
+        ? updatedHistory.map(
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
+        : [];
+
+      const historyStr = formattedHistory.join("\n").trim();
+      if (!historyStr) return; // nothing to classify yet
+
+      const latestSummary: string | null =
+        sessionSummaries && sessionSummaries.length
+          ? sessionSummaries[sessionSummaries.length - 1]
+          : null;
+
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? [],Number(user_id),Number(sessionID));
+      setClassifier(res);
+
+      console.log("Classifier:", res);
+      try {
+        await saveClassifierToServer(Number(sessionID), res);
+        console.log("Classifier result saved.");
+      } catch (err) {
+        console.error("Failed to persist classifier result:", err);
+      }
+    } catch (e) {
+      console.error("getClassifierResult failed:", e);
+    } finally {
+      setDetecting(false);
     }
-  } catch (e) {
-    console.error("getClassifierResult failed:", e);
-  } finally {
-    setDetecting(false);
   }
-}
 
-async function runLevelDetection() {
-  try {
-    
-    await ClassifierResult();
+  async function runLevelDetection() {
+    try {
+      await ClassifierResult();
 
-  
-    const resp = await getDepressionLevel();
-    if (!resp?.success) throw new Error("level API failed");
-    console.log("Depression Level Response:", resp);
-    setLevelResult(resp.data);
-
-  } catch (e) {
-    console.error(e);
+      const resp = await getDepressionLevel();
+      if (!resp?.success) throw new Error("level API failed");
+      console.log("Depression Level Response:", resp);
+      setLevelResult(resp.data);
+    } catch (e) {
+      console.error(e);
+    }
   }
-}
   return (
     <div className="flex flex-col h-screen">
       <div className="flex items-center justify-center py-4">
@@ -437,10 +439,10 @@ async function runLevelDetection() {
           height={120}
         />{" "}
       </div>
-  <div className="px-4 -mt-2 mb-2 flex justify-center">
+      <div className="px-4 -mt-2 mb-2 flex justify-center">
         <Button
           type="primary"
-          onClick={() => void runLevelDetection()} 
+          onClick={() => void runLevelDetection()}
           loading={detecting}
           disabled={!sessionID}
         >

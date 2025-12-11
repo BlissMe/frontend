@@ -1,7 +1,6 @@
 import CryptoJS from "crypto-js";
 
 const key = process.env.REACT_APP_ENCRYPTION_KEY as string | undefined;
-console.log(key)
 if (!key) {
   throw new Error("Encryption key (REACT_APP_ENCRYPTION_KEY) is not set in environment variables");
 }

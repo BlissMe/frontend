@@ -5,12 +5,14 @@ import {
   setLocalStorageData,
 } from "../../helpers/Storage";
 import { getCurrentTime } from "../../helpers/Time";
+import { jwtDecode } from "jwt-decode"; 
 
 export interface Message {
   sender: string;
   text: string;
   time: string;
 }
+
 interface AuthContextType {
   token: string | null;
   setToken: (token: string | null) => void;
@@ -22,6 +24,7 @@ interface AuthContextType {
   setChatHistory: React.Dispatch<React.SetStateAction<Message[]>>;
   isSessionEnded: boolean;
   setIsSessionEnded: (ended: boolean) => void;
+  handleLogout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -35,6 +38,7 @@ export const AuthContext = createContext<AuthContextType>({
   setChatHistory: () => {},
   isSessionEnded: false,
   setIsSessionEnded: () => {},
+  handleLogout: () => {},
 });
 
 interface AuthProviderProps {
@@ -59,6 +63,16 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
 
+  const handleLogout = () => {
+    setToken(null);
+    setSessionID("");
+    setMessages([]);
+    setChatHistory([]);
+    setIsSessionEnded(true);
+    localStorage.clear();
+    window.location.href = "/home"; 
+  };
+
   useEffect(() => {
     if (tokenFromURL) {
       setLocalStorageData("token", tokenFromURL);
@@ -66,6 +80,28 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
       window.history.replaceState({}, document.title, cleanURL);
     }
   }, [tokenFromURL]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    try {
+      const decoded: { exp: number } = jwtDecode(token); 
+      const expiryTime = decoded.exp * 1000 - Date.now();
+
+      if (expiryTime <= 0) {
+        handleLogout(); 
+      } else {
+        const timer = setTimeout(() => {
+          handleLogout();
+        }, expiryTime);
+
+        return () => clearTimeout(timer);
+      }
+    } catch (err) {
+      console.error("Failed to decode token", err);
+      handleLogout();
+    }
+  }, [token]);
 
   return (
     <AuthContext.Provider
@@ -80,6 +116,7 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
         setChatHistory,
         isSessionEnded,
         setIsSessionEnded,
+        handleLogout,
       }}
     >
       <ConfigProvider

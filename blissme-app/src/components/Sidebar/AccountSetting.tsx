@@ -31,6 +31,7 @@ const AccountSetting = () => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
   const [confirmDeleteChecked, setConfirmDeleteChecked] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleTabChange = (key: string) => {
     setActiveTabKey(key);
@@ -51,17 +52,14 @@ const AccountSetting = () => {
         return;
       }
 
-      const res = await fetch(
-        "http://localhost:8080/authuser/change-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ currentPassword, newPassword }),
-        }
-      );
+      const res = await fetch(`${API_URL}/authuser/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -83,7 +81,7 @@ const AccountSetting = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      const res = await fetch("http://localhost:8080/authuser/delete-account", {
+      const res = await fetch(`${API_URL}/authuser/delete-account`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -111,7 +109,12 @@ const AccountSetting = () => {
 
   return (
     <>
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32">
+      <div className="max-w-xl mx-auto bg-green-300/50 p-6 rounded-xl shadow-md mt-32">
+        <div className="w-full flex justify-center mt-4">
+          <h2 className="text-2xl font-semibold text-emerald-800 mb-6" style={{ fontFamily: 'Merienda, cursive' }}>
+            Account Settings
+          </h2>
+        </div>
         <Tabs activeKey={activeTabKey} onChange={handleTabChange} centered>
           <TabPane tab="Change Password" key="1">
             <Form
@@ -131,7 +134,7 @@ const AccountSetting = () => {
                   { validator: passwordFieldValidation },
                 ]}
               >
-                <Input.Password className="h-10" />
+                <Input.Password className="h-10 rounded-lg bg-emerald-100 " />
               </Form.Item>
 
               <Form.Item
@@ -146,7 +149,7 @@ const AccountSetting = () => {
                   { validator: passwordFieldValidation },
                 ]}
               >
-                <Input.Password className="h-10" />
+                <Input.Password className="h-10 rounded-lg bg-emerald-100" />
               </Form.Item>
 
               <Form.Item
@@ -171,14 +174,14 @@ const AccountSetting = () => {
                   }),
                 ]}
               >
-                <Input.Password className="h-10" />
+                <Input.Password className="h-10 rounded-lg bg-emerald-100" />
               </Form.Item>
 
               <Button
                 type="primary"
                 htmlType="submit"
                 block
-                className="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md"
+                className="mt-2 bg-emerald-600 hover:bg-emerald-400 text-white font-semibold py-2 rounded-md"
               >
                 Update Password
               </Button>

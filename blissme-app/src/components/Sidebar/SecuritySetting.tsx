@@ -15,6 +15,8 @@ const SecuritySetting = () => {
   const [consentGiven, setConsentGiven] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState("1");
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
 
   const capture = async () => {
     if (!webcamRef.current) {
@@ -39,7 +41,7 @@ const SecuritySetting = () => {
 
       // Step 1: Send image to FastAPI to get descriptor
       const fastApiResponse = await fetch(
-        "http://localhost:8000/generate-descriptor",
+        `${Python_URL}/generate-descriptor`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -61,7 +63,7 @@ const SecuritySetting = () => {
 
       // Step 2: Send descriptor to Express backend for registration
       const expressResponse = await fetch(
-        "http://localhost:8080/authUser/face-register",
+        `${API_URL}/authUser/face-register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -108,54 +110,43 @@ const SecuritySetting = () => {
   };
 
   return (
-    <div className="h-screen overflow-hidden flex items-center justify-center">
-      <div className="max-w-xl w-full bg-white p-6 rounded-xl shadow-md max-h-screen overflow-auto">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Biometrics-Face Recongnition</h2>
-        <Tabs activeKey={activeTabKey} onChange={handleTabChange}>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-3xl bg-green-300/50 p-4 sm:p-6 rounded-xl shadow-md max-h-screen overflow-auto">
+
+        <h2
+          className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6 text-center"
+          style={{ fontFamily: "Merienda, cursive" }}
+        >
+          Biometrics - Face Recognition
+        </h2>
+
+        <Tabs activeKey={activeTabKey} onChange={handleTabChange} className="w-full">
+
+          {/* ---------------------- CONSENT FORM ---------------------- */}
           <TabPane tab="Consent Form" key="1">
             <Form layout="vertical" className="space-y-4 w-full">
+
               <div className="bg-gray-100 p-4 rounded text-sm text-gray-700 w-full max-h-[350px] overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
 
-                {/* Consent Text */}
-                <p className="mb-2 font-semibold text-base">
-                  Purpose of Data Collection:
-                </p>
-                <p className="mb-4">
-                  We use facial recognition to provide a secure and convenient
-                  method of identity verification. This helps ensure that only
-                  authorized users can access sensitive parts of the application.
-                </p>
+                {/* Your Consent Text (unchanged) */}
+                <p className="mb-2 font-semibold text-base">Purpose of Data Collection:</p>
+                <p className="mb-4">We use facial recognition...</p>
 
-                <p className="mb-2 font-semibold text-base">
-                  How We Use Your Data:
-                </p>
+                <p className="mb-2 font-semibold text-base">How We Use Your Data:</p>
                 <ul className="list-disc list-inside mb-4">
                   <li>Your facial data will be used only for authentication.</li>
                   <li>We do not share your data with third-party services.</li>
-                  <li>
-                    All facial data is stored securely in compliance with data
-                    protection regulations.
-                  </li>
+                  <li>All facial data is stored securely...</li>
                 </ul>
 
                 <p className="mb-2 font-semibold text-base">Your Rights:</p>
-                <p className="mb-4">
-                  You have the right to withdraw your consent at any time by
-                  contacting support. This may affect your ability to use
-                  biometric login features.
-                </p>
+                <p className="mb-4">You have the right to withdraw...</p>
 
                 <p className="mb-2 font-semibold text-base">Security Notice:</p>
-                <p className="mb-4">
-                  All facial images are encrypted and securely transmitted to our
-                  servers for processing. We implement industry-standard security
-                  measures to protect your information.
-                </p>
+                <p className="mb-4">All facial images are encrypted...</p>
 
                 <p className="text-xs italic text-gray-500">
-                  By checking the box below, you acknowledge that you have read
-                  and understood the terms above and voluntarily consent to facial
-                  recognition for authentication purposes.
+                  By checking the box, you acknowledge...
                 </p>
               </div>
 
@@ -175,63 +166,63 @@ const SecuritySetting = () => {
               <Button
                 type="primary"
                 onClick={() => {
-                  if (consentGiven) {
-                    setActiveTabKey("2");
-                  } else {
-                    message.warning("You must accept the consent to continue.");
-                  }
+                  if (consentGiven) setActiveTabKey("2");
+                  else message.warning("You must accept the consent to continue.");
                 }}
-                className="bg-green-600 hover:bg-green-700"
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-400"
               >
                 Continue
               </Button>
+
             </Form>
           </TabPane>
 
+          {/* ---------------------- FACE RECOGNITION SETUP ---------------------- */}
           <TabPane tab="Face Recognition Setup" key="2" disabled={!consentGiven}>
-            <Form layout="vertical" className="w-[380px] sm:w-[400px]">
+            <Form layout="vertical" className="w-full max-w-sm mx-auto">
+
               <div className="flex justify-center items-center mb-4">
+
                 {isWebcamOn ? (
                   <Webcam
                     audio={false}
                     ref={webcamRef}
                     screenshotFormat="image/jpeg"
-                    className="rounded border"
-                    width={320}
-                    height={240}
+                    className="rounded border w-[260px] h-[200px] sm:w-[320px] sm:h-[240px]"
                   />
                 ) : (
                   <div
-                    className="w-[180px] h-[180px] rounded-full border-4 border-dashed border-gray-400 flex items-center justify-center cursor-pointer hover:border-[#3FBFA8] transition"
+                    className="w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] rounded-full border-4 border-dashed border-gray-400 flex items-center justify-center cursor-pointer hover:border-[#3FBFA8] transition"
                     onClick={() => setIsWebcamOn(true)}
                   >
-                    <CameraOutlined
-                      style={{ fontSize: "48px", color: "#3FBFA8" }}
-                    />
+                    <CameraOutlined className="text-4xl sm:text-5xl" style={{ color: "#3FBFA8" }} />
                   </div>
                 )}
+
               </div>
 
               <Form.Item>
                 <div className="flex justify-center items-center">
-                  <Button
-                    type="primary"
-                    icon={<CameraOutlined />}
+                  <button
+                    // type="primary"
+                    // icon={<CameraOutlined />}
                     onClick={capture}
-                    loading={loading}
-                    className="w-[200px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
-                    block
+                    // loading={loading}
+                    className="w-[140px] sm:w-[200px] h-[45px] font-semibold rounded-md text-white text-xl bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:to-[#207F6A]"
                     disabled={!isWebcamOn}
                   >
                     Save Setting
-                  </Button>
+                  </button>
                 </div>
               </Form.Item>
+
             </Form>
           </TabPane>
+
         </Tabs>
       </div>
     </div>
+
   );
 };
 

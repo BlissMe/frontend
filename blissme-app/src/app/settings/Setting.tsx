@@ -66,6 +66,9 @@ const Settings: React.FC = () => {
   const webcamRef = useRef<Webcam | null>(null);
   const [isWebcamOn, setIsWebcamOn] = useState(true);
   const [loading, setLoading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
+  const Python_URL = process.env.REACT_APP_Python_API_URL;
+
   const handleFileChange = (info: any) => {
     if (info.file.status === "removed") {
       setFile(null);
@@ -108,7 +111,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/blissme/upload",
+        `${API_URL}/api/blissme/upload`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -130,7 +133,7 @@ const Settings: React.FC = () => {
   const handleSave = async (values: any) => {
     const {
       nickname: newNickname,
-      email: newEmail,
+      email: newUsername,
       name: newCharacterName,
     } = values;
 
@@ -197,11 +200,11 @@ const Settings: React.FC = () => {
         }
       }
 
-      if (newEmail !== email) {
-        const response = await updateEmailService({ newEmail }, token);
+      if (newUsername !== email) {
+        const response = await updateEmailService({ newUsername }, token);
         if (response.message === "Email updated successfully") {
-          setLocalStorageData("user", newEmail);
-          setEmail(newEmail);
+          setLocalStorageData("user", newUsername);
+          setEmail(newUsername);
           emailChanged = true;
         } else {
           openNotification("error", "Email update failed", response.message);
@@ -235,7 +238,7 @@ const Settings: React.FC = () => {
       }
 
       const res = await axios.post<ResetResponse>(
-        "http://localhost:8080/authuser/change-password",
+        `${API_URL}/authuser/change-password`,
         {
           currentPassword,
           newPassword,
@@ -256,7 +259,7 @@ const Settings: React.FC = () => {
   const handleDeleteAccount = async () => {
     try {
       const res = await axios.delete<ResetResponse>(
-        "http://localhost:8080/authuser/delete-account",
+        "${API_URL}/authuser/delete-account",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -331,7 +334,7 @@ const Settings: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/face-signup", {
+      const response = await fetch(`${Python_URL}/face-signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, image: imageSrc }),
@@ -340,7 +343,7 @@ const Settings: React.FC = () => {
       const result = await response.json();
       if (response.ok) {
         message.success(result.message || "Face signup successful!");
-        setIsWebcamOn(false); 
+        setIsWebcamOn(false);
       } else {
         message.error(result.detail || "Signup failed.");
       }
@@ -367,20 +370,20 @@ const Settings: React.FC = () => {
                 email: email,
                 name: originalCharacterName,
               }}
-              /*  onValuesChange={(_, values) => {
-                const isNicknameChanged = values.nickname !== nickname;
-                const isEmailChanged = values.email !== email;
-                const isCharacterNameChanged =
-                  values.name !== originalCharacterName;
-                const isImageChanged = !!file;
+            /*  onValuesChange={(_, values) => {
+              const isNicknameChanged = values.nickname !== nickname;
+              const isEmailChanged = values.email !== email;
+              const isCharacterNameChanged =
+                values.name !== originalCharacterName;
+              const isImageChanged = !!file;
 
-                const characterChanged =
-                  isCharacterNameChanged && isImageChanged;
+              const characterChanged =
+                isCharacterNameChanged && isImageChanged;
 
-                setIsFormChanged(
-                  isNicknameChanged || isEmailChanged || characterChanged
-                );
-              }} */
+              setIsFormChanged(
+                isNicknameChanged || isEmailChanged || characterChanged
+              );
+            }} */
             >
               <Form.Item
                 name="name"
@@ -429,7 +432,7 @@ const Settings: React.FC = () => {
                     maxCount={1}
                     accept="image/*"
                   >
-                    <Button icon={<UploadOutlined />}>
+                    <Button icon={<UploadOutlined />} className="bg-emerald-500 text-white">
                       Change Virual Character
                     </Button>
                   </Upload>

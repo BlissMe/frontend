@@ -19,14 +19,15 @@ const SignIn: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { setToken } = useContext(AuthContext);
   const { openNotification } = useNotification();
+  const API_URL = process.env.REACT_APP_API_URL;
 
-const dispatch = useDispatch<AppDispatch>(); 
+  const dispatch = useDispatch<AppDispatch>();
   const onFinish = async (values: any) => {
     try {
       setLoading(true);
 
       const userData = {
-        email: values.email,
+        username: values.username,
         password: values.password,
       };
 
@@ -64,7 +65,7 @@ const dispatch = useDispatch<AppDispatch>();
   };
 
   const googleAuth = () => {
-    window.open(`http://localhost:8080/auth/google`, "_self");
+    window.open(`${API_URL}/auth/google`, "_self");
   };
   return (
     <>
@@ -90,22 +91,18 @@ const dispatch = useDispatch<AppDispatch>();
           <div className="flex flex-col items-center w-full max-w-[400px]">
             <Form layout="vertical" className="w-full" onFinish={onFinish}>
               <Form.Item
-                name="email"
-                label="Email *"
+                name="username"
+                label="username *"
                 rules={[
                   {
                     required: true,
-                    message: "Email is required!",
-                  },
-                  {
-                    type: "email",
-                    message: "Email is invalid!",
+                    message: "username is required!",
                   },
                 ]}
               >
                 <Input
                   prefix={<MailOutlined />}
-                  placeholder="Email"
+                  placeholder="username"
                   onKeyDown={(e) => {
                     const key = e.key;
                     if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {
@@ -114,7 +111,7 @@ const dispatch = useDispatch<AppDispatch>();
                   }}
                   size="large"
                   maxLength={100}
-                  autoComplete="off"
+ 
                 />
               </Form.Item>
 

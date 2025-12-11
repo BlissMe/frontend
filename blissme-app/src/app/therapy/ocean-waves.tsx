@@ -85,6 +85,7 @@ export function OceanWaves() {
   return (
     <div className="flex justify-center items-center min-h-[70vh] mt-20">
       <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
+        
         {/* Card Header */}
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
@@ -94,6 +95,25 @@ export function OceanWaves() {
             Relax and match your breath with gentle ocean waves 🌊
           </CardDescription>
         </CardHeader>
+
+        {/* 🌊 Instructions Block */}
+        <div className="px-6">
+          <div className="bg-emerald-100/40 rounded-lg p-3 mb-4">
+            <h3 className="text-sm font-medium text-blue-100 mb-2">How to Use</h3>
+            <ul className="text-xs text-blue-100/90 space-y-1 list-disc list-inside">
+              <li>Sit comfortably and take a moment to settle your breathing.</li>
+              <li>Adjust the volume to a soft, soothing level.</li>
+              <li>Press play to begin the ocean wave breathing session.</li>
+              <li>Match your breath to the rising and falling wave animation.</li>
+              <li>Inhale as the waves rise, exhale as they fall.</li>
+              <li>If your mind wanders, gently return to the rhythm of the waves.</li>
+              <li>Continue until the timer ends or pause anytime you need.</li>
+            </ul>
+            <p className="text-[10px] text-blue-100/70 mt-2">
+              Tip: Slow, steady breaths enhance the calming ocean effect.
+            </p>
+          </div>
+        </div>
 
         {/* Card Content */}
         <CardContent className="flex flex-col items-center space-y-8">
@@ -145,7 +165,7 @@ export function OceanWaves() {
             {/* Progress */}
             <Progress value={progress} className="h-2" />
 
-            {/* Play / Pause and Timer */}
+            {/* Timer + Controls */}
             <div className="flex items-center justify-between w-full">
               <span className="text-sm text-[#f9fbfc]">
                 {formatTime(timeLeft)}

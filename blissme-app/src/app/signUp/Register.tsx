@@ -1,7 +1,12 @@
 import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Checkbox, Typography, Modal, Select } from "antd";
-import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  MailOutlined,
+  LockOutlined,
+  UserOutlined,
+  PhoneOutlined,
+} from "@ant-design/icons";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
 import { passwordFieldValidation } from "../../helpers/PasswordValidation";
@@ -28,6 +33,7 @@ const Register = () => {
   const [stepOneValues, setStepOneValues] = useState({
     username: "",
     password: "",
+    phoneNumber: "",
   });
   const [currentStep, setCurrentStep] = useState(1);
   const next = () => setCurrentStep(2);
@@ -66,6 +72,7 @@ const Register = () => {
       setStepOneValues({
         username: values.username,
         password: values.password,
+        phoneNumber: values.phoneNumber,
       });
       next();
     } else if (currentStep === 2) {
@@ -185,6 +192,29 @@ const Register = () => {
                   placeholder="Password"
                   maxLength={60}
                   className="w-full rounded-md  bg-gray-100 placeholder-lime-500"
+                />
+              </Form.Item>
+              <Form.Item
+                name="phoneNumber"
+                label="Phone Number"
+                rules={[
+                  { required: true, message: "Phone number is required!" },
+                  { min: 10, message: "Invalid phone number!" },
+                ]}
+              >
+                <Input
+                  prefix={<UserOutlined />}
+                  placeholder="07XXXXXXXX"
+                  size="large"
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className="w-full rounded-md bg-gray-100 placeholder-lime-500"
                 />
               </Form.Item>
 
@@ -439,8 +469,8 @@ const Register = () => {
                 <ul className="list-disc list-inside ml-5 space-y-1 mt-2">
                   <li>The app will not attempt therapy</li>
                   <li>
-                    You will be given immediate options to contact a licensed consultant or
-                    emergency helpline for professional help.
+                    You will be given immediate options to contact a licensed
+                    consultant or emergency helpline for professional help.
                   </li>
                 </ul>
               </li>

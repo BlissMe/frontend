@@ -68,7 +68,7 @@ const MeditationApp: React.FC = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <button
+     {/*  <button
         onClick={() => navigate("/chat-new/text")}
         className="
           fixed top-4 right-8 z-50 
@@ -78,7 +78,7 @@ const MeditationApp: React.FC = () => {
         "
       >
         ← Back to Chat
-      </button>
+      </button> */}
       <div className="relative w-full max-w-4xl rounded-3xl bg-white shadow-xl overflow-hidden flex flex-col ">
         {/* Video background */}
         <video

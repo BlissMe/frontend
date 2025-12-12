@@ -17,7 +17,6 @@ const GameLayout = () => {
         backgroundPosition: "center",
       }}
     >
-      <Sidebar />
       <div
         onClick={handleLogoClick}
         className="absolute top-4 left-20 cursor-pointer z-20"

@@ -3,8 +3,7 @@ import Routerset from "./routes/Routerset";
 import { useDisableDevTools } from "./helpers/useDisableDevTools";
 
 function App() {
-  
-  useDisableDevTools();
+  // useDisableDevTools();
 
   return (
     <BrowserRouter>

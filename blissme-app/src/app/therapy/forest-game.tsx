@@ -83,6 +83,7 @@ export function ForestGame() {
   return (
     <div className="flex justify-center items-center min-h-[70vh] mt-20">
       <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
+        
         {/* Card Header */}
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
@@ -92,6 +93,21 @@ export function ForestGame() {
             Relax and meditate with the calming sounds of nature 🌲
           </CardDescription>
         </CardHeader>
+
+        {/* ✨ Instructions Added Here */}
+        <div className="px-6">
+          <div className="bg-emerald-700 rounded-lg p-3 mb-4">
+            <h3 className="text-sm font-medium text-emerald-100 mb-2">How to Use</h3>
+            <ul className="text-xs text-emerald-100/90 space-y-1 list-disc list-inside">
+              <li>Find a comfortable seated position and relax your shoulders.</li>
+              <li>Adjust the volume to a soft, relaxing level.</li>
+              <li>Press the play button to begin the forest meditation.</li>
+              <li>Focus on the sounds of birds, wind, and rustling leaves.</li>
+              <li>If thoughts appear, gently return attention to the nature sounds.</li>
+              <li>Continue until the timer completes or pause anytime you need.</li>
+            </ul>
+          </div>
+        </div>
 
         {/* Card Content */}
         <CardContent className="flex flex-col items-center space-y-8">
@@ -142,7 +158,7 @@ export function ForestGame() {
             {/* Progress */}
             <Progress value={progress} className="h-2" />
 
-            {/* Play / Pause and Timer */}
+            {/* Timer + Play Controls */}
             <div className="flex items-center justify-between w-full">
               <span className="text-sm text-[#f9fbfc]">
                 {formatTime(timeLeft)}

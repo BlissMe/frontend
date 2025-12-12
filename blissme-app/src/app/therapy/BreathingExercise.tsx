@@ -68,8 +68,8 @@ const AdvancedBreathing: React.FC<Props> = ({
       phase.name === "inhale"
         ? "Inhale"
         : phase.name === "exhale"
-        ? "Exhale"
-        : "Hold";
+          ? "Exhale"
+          : "Hold";
     announce(label);
   }, [phaseIndex, phase.name, announce]);
 
@@ -123,9 +123,9 @@ const AdvancedBreathing: React.FC<Props> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(summary),
-      }).catch(() => {});
+      }).catch(() => { });
     }
-    
+
   }, [running]);
 
   // Use the local phase duration for progress calculation
@@ -144,8 +144,8 @@ const AdvancedBreathing: React.FC<Props> = ({
     phase.name === "inhale"
       ? ease(phaseProgress)
       : phase.name === "exhale"
-      ? 1 - ease(phaseProgress)
-      : 0.5; // hold
+        ? 1 - ease(phaseProgress)
+        : 0.5; // hold
   const radius = prefersReducedMotion ? (minR + maxR) / 2 : minR + (maxR - minR) * sizeT;
 
   return (
@@ -173,29 +173,6 @@ const AdvancedBreathing: React.FC<Props> = ({
         {/* Breathing animation */}
         <div className="relative mb-4">
           <svg width="260" height="260" viewBox="0 0 320 320">
-            <circle
-              cx="160"
-              cy="160"
-              r="130"
-              fill="none"
-              strokeWidth="10"
-              strokeOpacity="0.1"
-              stroke="currentColor"
-            />
-
-            <g transform="rotate(-90 160 160)">
-              <circle
-                cx="160"
-                cy="160"
-                r="130"
-                fill="none"
-                strokeWidth="10"
-                strokeDasharray={`${phaseProgress * 2 * Math.PI * 130} ${2 * Math.PI * 130}`}
-                strokeLinecap="round"
-                stroke="currentColor"
-              />
-            </g>
-
             <circle cx="160" cy="160" r={radius} fill="currentColor" opacity="0.2" />
           </svg>
 

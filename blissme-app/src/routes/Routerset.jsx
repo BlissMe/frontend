@@ -47,6 +47,8 @@ import ForestLayout from "../app/layouts/ForestLAyout";
 import { ForestGame } from "../app/therapy/forest-game";
 import { OceanWaves } from "../app/therapy/ocean-waves";
 import OceanLayout from "../app/layouts/OceanLayout";
+import SubscriptionPage from "../app/start/Subscription";
+import PhoneNumber from "../app/start/PhoneNumber";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -112,6 +114,8 @@ const Routerset = () => {
           <Route path="/game" element={<GameLayout />}>
             <Route path="therapy_game" element={<NumberGuessingGame />} />
           </Route>
+            <Route path="/price" element={<SubscriptionPage />} />
+            <Route path="/phone-number" element={<PhoneNumber/>} />
           {/* <Route path="/dash" element={<AnxietyLayout />}>
             <Route path="anxiety" element={<AnxietyGames />} />
             <Route path="zen" element={<ZenGarden />} />

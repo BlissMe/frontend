@@ -30,6 +30,7 @@ const games = [
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
     duration: "5 mins",
+    routeType: "therapy",
   },
   {
     id: "zen",
@@ -39,6 +40,7 @@ const games = [
     color: "text-rose-500",
     bgColor: "bg-rose-500/10",
     duration: "10 mins",
+    routeType: "therapy",
   },
   {
     id: "forest",
@@ -48,6 +50,7 @@ const games = [
     color: "text-green-500",
     bgColor: "bg-green-500/10",
     duration: "15 mins",
+    routeType: "therapy",
   },
   {
     id: "ocean",
@@ -57,6 +60,7 @@ const games = [
     color: "text-cyan-500",
     bgColor: "bg-cyan-500/10",
     duration: "8 mins",
+    routeType: "therapy",
   },
   {
     id: "medication",
@@ -66,15 +70,17 @@ const games = [
     color: "text-cyan-400",
     bgColor: "bg-cyan-400/10",
     duration: "5 mins",
+    routeType: "therapy",
   },
   {
     id: "mood-tracker-home",
     title: "Mood Tracker",
-    description: "Record how you feel and understand your emotional patterns",
+    description: "Record how you feel and understand emotional patterns",
     icon: Smile,
     color: "text-rose-400",
     bgColor: "bg-rose-400/10",
     duration: "2 mins",
+    routeType: "game",
   },
   {
     id: "all-songs",
@@ -84,6 +90,7 @@ const games = [
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
     duration: "3 mins",
+    routeType: "game",
   },
   {
     id: "body-scan",
@@ -93,29 +100,45 @@ const games = [
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
     duration: "10 mins",
+    routeType: "therapy",
+  },
+
+  {
+    id: "therapy_game",
+    title: "Number Game",
+    description: "A simple activity to calm your mind using numbers",
+    icon: Gamepad2,
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
+    duration: "3 mins",
+    routeType: "game",
   },
 ];
 
 interface AnxietyGamesProps {
   onGamePlayed?: (gameName: string, description: string) => Promise<void>;
 }
+
 export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
   const navigate = useNavigate();
 
   const handleGameStart = async (gameId: string) => {
+    const game = games.find((g) => g.id === gameId);
+    if (!game) return;
+
     if (onGamePlayed) {
       try {
-        await onGamePlayed(
-          gameId,
-          games.find((g) => g.id === gameId)?.description || ""
-        );
+        await onGamePlayed(gameId, game.description || "");
       } catch (error) {
         console.error("Error logging game activity:", error);
       }
     }
 
-    navigate(`/therapy/${gameId}`);
-    console.log(`Navigating to /therapy/${gameId}`);
+    const routeBase =
+      game.routeType === "game" ? "/game" : "/therapy";
+
+    navigate(`${routeBase}/${gameId}`);
+    console.log(`Navigating to ${routeBase}/${gameId}`);
   };
 
   return (
@@ -165,6 +188,7 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                           <p className="text-sm text-emerald-700 mt-1">{game.description}</p>
                         </div>
                       </div>
+
                       <div className="flex items-center gap-2 mt-3">
                         <Music2 className="h-4 w-4 text-slate-500" />
                         <span className="text-sm text-slate-500">{game.duration}</span>

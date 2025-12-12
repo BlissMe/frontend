@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { getTherapyFeedbackReport } from "../../services/TherapyFeedbackService";
 import { trackPromise } from "react-promise-tracker";
+import { sendSMS } from "../../services/MSpaceSmsService";
 
 const levelColor = (lvl?: string) => {
   switch ((lvl || "").toLowerCase()) {
@@ -142,7 +143,7 @@ const ChatInterface = () => {
   }, [postPhqMessageCount]);
 
   useEffect(() => {
-    if (location.pathname === "/chat-new/text") {
+    if (location.pathname === "/chat-new/voice") {
       // Check if user just returned from therapy
       const storedTherapy = localStorage.getItem("therapyInProgress");
       if (storedTherapy) {
@@ -237,10 +238,20 @@ const ChatInterface = () => {
 
   useEffect(() => {
     trackPromise(fetchCharacters());
+    sendEmergencySMS();
     if (therapyMode) {
       handleGenerateTherapyFeedbackReport();
     }
   }, []);
+
+  const sendEmergencySMS = async () => {
+    const phone = "94763983266"; // no leading 0
+    const text =
+      "Your session indicates high distress. Please seek help immediately.";
+
+    const response = await sendSMS(phone, text);
+    console.log("SMS sent response:", response);
+  };
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -544,7 +555,7 @@ const ChatInterface = () => {
       sender: "popo",
       text:
         feedback === "Felt Good"
-          ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
+          ? "I'm glad to hear that! Let's keep the good energy going. How are you feeling now?"
           : feedback === "No Change"
           ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
           : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",

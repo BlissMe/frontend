@@ -20,7 +20,9 @@ import {
   getClassifierResult,
   ClassifierResult,
   getDepressionLevel,
+  getDepressionLevelByUserID,
 } from "../../services/DetectionService";
+import { getTherapyFeedbackReport } from "../../services/TherapyFeedbackService";
 import { useNotification } from "../../app/context/notificationContext";
 import user from "../../assets/images/user.png";
 import {
@@ -30,6 +32,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
 import { AuthContext } from "../../app/context/AuthContext";
+import { useLocation } from "react-router-dom";
+import { trackPromise } from "react-promise-tracker";
 
 const { Text } = Typography;
 interface Message {
@@ -48,16 +52,23 @@ interface ApiResult {
 }
 
 const ViceChatInterface = () => {
-  const { handleLogout } = useContext(AuthContext);
+  const {
+    sessionID,
+    setSessionID,
+    setMessages,
+    setChatHistory,
+    messages,
+    handleLogout,
+  } = useContext(AuthContext);
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [messages, setMessages] = useState<Message[]>([]);
+  // const [messages, setMessages] = useState<Message[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isWaitingForBotResponse, setIsWaitingForBotResponse] = useState(false);
-  const [sessionID, setSessionID] = useState<string>("");
+  // const [sessionID, setSessionID] = useState<string>("");
   const [sessionSummaries, setSessionSummaries] = useState<string[]>([]);
   const [lastPhq9, setLastPhq9] = useState<{
     id: number;
@@ -71,18 +82,49 @@ const ViceChatInterface = () => {
   const chunks = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
-  const { selectedCharacter, nickname } = useCharacterContext();
   const [showEmotionModal, setShowEmotionModal] = useState(false);
   const [overallEmotion, setOverallEmotion] = useState<string | null>(null);
   const isCancelledRef = useRef(false);
   const { openNotification } = useNotification();
   const Python_URL = process.env.REACT_APP_Python_API_URL;
-  const [levelResult, setLevelResult] = useState<any>(null);
-  const [levelOpen, setLevelOpen] = useState(false);
   const [detecting, setDetecting] = useState(false);
   const [classifier, setClassifier] = useState<ClassifierResult | null>(null);
   const [isPhq9Complete, setIsPhq9Complete] = useState(false);
+  const [levelResult, setLevelResult] = useState<any>(null);
+  const [levelOpen, setLevelOpen] = useState(false);
+  const [therapyMode, setTherapyMode] = useState(false);
+  console.log("therapyMode:", therapyMode);
   const navigate = useNavigate();
+  const { selectedCharacter, nickname, fetchCharacters } =
+    useCharacterContext();
+  const [therapySuggestion, setTherapySuggestion] = useState<{
+    therapy_id?: string;
+    therapy_name?: string;
+    therapy_path?: string;
+    isVisible: boolean;
+  }>({ isVisible: false });
+  console.log("therapySuggestion:", therapySuggestion);
+  const [showTherapyCard, setShowTherapyCard] = useState(false);
+  const [therapyInfo, setTherapyInfo] = useState<{
+    name?: string;
+    id?: string;
+    description?: string;
+    duration?: string;
+    path?: string;
+  }>({});
+  console.log("therapyInfo:", therapyInfo);
+  const [awaitingFeedback, setAwaitingFeedback] = useState(false);
+  console.log("awaitingFeedback:", awaitingFeedback);
+  const location = useLocation();
+  const user_id = getLocalStoragedata("userId") || "";
+  const API_Python_URL = process.env.REACT_APP_Python_API_URL;
+  console.log("isPhq9Complete", isPhq9Complete);
+  const [postPhqMessageCount, setPostPhqMessageCount] = useState(0);
+  console.log("postPhqMessageCount", postPhqMessageCount);
+  const [therapyFeedbackReport, setTherapyFeedbackReport] =
+    useState<string>("");
+  const [therapyFeedbackConclusion, setTherapyFeedbackConclusion] =
+    useState<string>("");
 
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -125,8 +167,10 @@ const ViceChatInterface = () => {
   useEffect(() => {
     if (askedPhq9Ids.length >= 9 && !isPhq9Complete) {
       setIsPhq9Complete(true);
+      setPostPhqMessageCount(0);
     }
   }, [askedPhq9Ids]);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     const hasPlayed = getLocalStoragedata("greetingPlayed");
@@ -144,6 +188,119 @@ const ViceChatInterface = () => {
     }
   }, []);
 
+  useEffect(() => {
+    console.log("postPhqMessageCount UPDATED:", postPhqMessageCount);
+    if (isPhq9Complete && postPhqMessageCount + 1 >= 2) {
+      console.log("Triggering level detection automatically...");
+      runLevelDetectionWithoutLogout();
+      setPostPhqMessageCount(0);
+    }
+  }, [postPhqMessageCount]);
+
+  useEffect(() => {
+    if (location.pathname === "/chat-new/voice") {
+      // Check if user just returned from therapy
+      const storedTherapy = localStorage.getItem("therapyInProgress");
+      if (storedTherapy) {
+        const info = JSON.parse(storedTherapy);
+
+        setTherapyInfo(info);
+        setAwaitingFeedback(true);
+
+        const startTime = Number(localStorage.getItem("therapyStartTime"));
+        const endTime = Date.now();
+
+        const durationInMinutes = ((endTime - startTime) / 1000 / 60).toFixed(
+          1
+        );
+
+        console.log("Therapy Duration:", durationInMinutes, "minutes");
+
+        // Store duration inside therapyInfo so feedback sending can use it
+        setTherapyInfo((prev) => ({
+          ...prev,
+          duration: durationInMinutes,
+        }));
+
+        localStorage.removeItem("therapyStartTime");
+
+        // Add feedback question once
+        const feedbackMsg = {
+          sender: "bot",
+          text: "How was your therapy session? Please share your feedback.",
+          time: getCurrentTime(),
+        };
+        setMessages((prev) => [...prev, feedbackMsg]);
+        setChatHistory((prev) => [...prev, feedbackMsg]);
+        saveMessage(feedbackMsg.text, sessionID, "bot");
+
+        const feedbackAudio = new Audio("/therapy_feedback_question.mp3");
+        feedbackAudio.play();
+
+        //  Clear it so it's only asked once
+        localStorage.removeItem("therapyInProgress");
+      }
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const initTherapyMode = async () => {
+      // const savedMode = localStorage.getItem("therapyMode");
+      // if (savedMode === "true") {
+      //   setTherapyMode(true);
+      // }
+
+      //const user: User | null = getLocalStoragedata("user") as User | null;
+      // if (!user?.id) return;
+
+      try {
+        const resp = await getDepressionLevelByUserID();
+        console.log("Depression Level API response:", resp);
+
+        if (
+          resp?.success &&
+          resp.data &&
+          resp.data.components.phq9.answered_count == 9 &&
+          resp.data.level != null
+        ) {
+          setLevelResult(resp.data);
+          //  setLevelOpen(true);
+
+          const level = resp.data?.level?.toLowerCase();
+          if (level === "moderate" || level === "minimal") {
+            setTherapyMode(true);
+            localStorage.setItem("therapyMode", "true");
+          } else if (level === "severe") {
+            setTherapyMode(false);
+            localStorage.removeItem("therapyMode");
+            navigate("/therapy/all-doctors");
+          } else {
+            setTherapyMode(false);
+            localStorage.removeItem("therapyMode");
+          }
+        } else {
+          setLevelResult(null);
+          setTherapyMode(false);
+          localStorage.removeItem("therapyMode");
+        }
+      } catch (err) {
+        console.error("Failed to fetch depression level:", err);
+        setLevelResult(null);
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+      }
+    };
+
+    initTherapyMode();
+  }, []);
+
+  useEffect(() => {
+    trackPromise(fetchCharacters());
+    if (therapyMode) {
+      handleGenerateTherapyFeedbackReport();
+    }
+  }, []);
+
   const handleStartRecording = async () => {
     isCancelledRef.current = false; // reset cancellation flag
     try {
@@ -153,8 +310,8 @@ const ViceChatInterface = () => {
       const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
         ? "audio/webm;codecs=opus"
         : MediaRecorder.isTypeSupported("audio/webm")
-          ? "audio/webm"
-          : "";
+        ? "audio/webm"
+        : "";
 
       if (!mimeType) {
         openNotification(
@@ -221,20 +378,40 @@ const ViceChatInterface = () => {
 
     try {
       setIsUploading(true);
+
+      // --- Fetch chat history (common for both modes) ---
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory = Array.isArray(updatedHistory)
         ? updatedHistory.map((msg: any) => ({
-          sender: msg.sender === "bot" ? "Bot" : "User",
-          text: msg.message,
-        }))
+            sender: msg.sender === "bot" ? "Bot" : "User",
+            text: msg.message,
+          }))
         : [];
 
       const historyText = formattedHistory
         .map((m) => `${m.sender}: ${m.text}`)
         .join("\n");
+
       formData.append("history", historyText);
 
-      const response = await fetch(`${Python_URL}/voice-chat`, {
+      let endpoint = `${Python_URL}/voice-chat`;
+
+      if (therapyMode) {
+        endpoint = `${Python_URL}/voice-therapy-agent/chat`;
+
+        const userID = getLocalStoragedata("userId")?.toString() || "guest";
+        formData.append("user_id", userID);
+        formData.append("session_id", String(sessionID));
+        formData.append("level", levelResult.level);
+        formData.append(
+          "therapy_feedback",
+          JSON.stringify(therapyFeedbackConclusion || "")
+        );
+
+        console.log("THERAPY MODE ENABLED → using therapy voice API");
+      }
+
+      const response = await fetch(endpoint, {
         method: "POST",
         body: formData,
       });
@@ -249,6 +426,7 @@ const ViceChatInterface = () => {
       }
 
       const result = await response.json();
+      console.log("FULL RESULT:", result);
 
       const userMessage: Message = {
         text: result.user_query,
@@ -258,7 +436,7 @@ const ViceChatInterface = () => {
       setMessages((prev) => [...prev, userMessage]);
       await saveMessage(userMessage.text, sessionID, "user");
 
-      if (lastPhq9) {
+      if (!therapyMode && lastPhq9) {
         await savePHQ9Answer(
           sessionID,
           lastPhq9.id,
@@ -268,16 +446,43 @@ const ViceChatInterface = () => {
         setLastPhq9(null);
       }
 
-      if (
-        typeof result.phq9_questionID === "number" &&
-        typeof result.phq9_question === "string"
-      ) {
-        setAskedPhq9Ids((prev) => [...prev, result.phq9_questionID!]);
-        setLastPhq9({
-          id: result.phq9_questionID,
-          question: result.phq9_question,
-        });
-        setIsPhq9(true);
+      if (therapyMode) {
+        if (result.isTherapySuggested || result.action === "START_THERAPY") {
+          setTherapySuggestion({
+            therapy_id: result.therapy_id,
+            therapy_name: result.therapy_name,
+            therapy_path: result.therapy_path,
+            isVisible: true,
+          });
+
+          setTherapyInfo({
+            name: result.therapy_name,
+            id: result.therapy_id,
+            description:
+              result.therapy_description ||
+              "A guided reflection to improve your emotional well-being.",
+            path: result.therapy_path,
+          });
+        }
+
+        // if (result.action === "START_THERAPY") {
+        //   navigate(result.therapy_path);
+        //   setIsBotTyping(false);
+        //   setIsWaitingForBotResponse(false);
+        //   return;
+        // }
+      } else {
+        if (
+          typeof result.phq9_questionID === "number" &&
+          typeof result.phq9_question === "string"
+        ) {
+          setAskedPhq9Ids((prev) => [...prev, result.phq9_questionID!]);
+          setLastPhq9({
+            id: result.phq9_questionID,
+            question: result.phq9_question,
+          });
+          setIsPhq9(true);
+        }
       }
 
       const botMessage: Message = {
@@ -288,8 +493,10 @@ const ViceChatInterface = () => {
       await saveMessage(botMessage.text, sessionID, "bot");
       setMessages((prev) => [...prev, botMessage]);
 
+      // Play bot audio
       const audio = new Audio(`${Python_URL}${result.audio_url}`);
       audio.play();
+      console.log("Audio URL:", `${Python_URL}${result.audio_url}`);
 
       // Handle emotion state
       if (result.emotion_history && Array.isArray(result.emotion_history)) {
@@ -309,6 +516,46 @@ const ViceChatInterface = () => {
       setIsBotTyping(false);
       setIsWaitingForBotResponse(false);
     }
+  };
+
+  const handleTherapyChoice = async (choice: "yes" | "no" | "later") => {
+    const userChoiceMsg = {
+      sender: "you",
+      text: choice.charAt(0).toUpperCase() + choice.slice(1), // "Yes" / "No" / "Later"
+      time: getCurrentTime(),
+    };
+
+    // Add user's choice to chat
+    setMessages((prev) => [...prev, userChoiceMsg]);
+    setChatHistory((prev) => [...prev, userChoiceMsg]);
+    await saveMessage(userChoiceMsg.text, sessionID, "user");
+
+    if (choice === "yes") {
+      // Show therapy card (Step 3)
+      setShowTherapyCard(true);
+      setAwaitingFeedback(true);
+    } else {
+      // Step 4: Gentle bot message and continue chat
+      const gentleText =
+        choice === "no"
+          ? "No worries, maybe another time. Let’s keep chatting! tell me more about how you're feeling."
+          : "Sure, we can try that therapy later when you feel ready. Let’s continue our chat! tell me more about how you're feeling.";
+
+      const botMsg = {
+        sender: "bot",
+        text: gentleText,
+        time: getCurrentTime(),
+      };
+      setMessages((prev) => [...prev, botMsg]);
+      setChatHistory((prev) => [...prev, botMsg]);
+      await saveMessage(botMsg.text, sessionID, "bot");
+
+      const replyAudio = new Audio("/therapy_choice.mp3");
+      replyAudio.play();
+    }
+
+    // Hide therapy suggestion buttons
+    setTherapySuggestion((prev) => ({ ...prev, isVisible: false }));
   };
 
   const handlePhqAnswer = async (answer: string) => {
@@ -332,9 +579,9 @@ const ViceChatInterface = () => {
     const updatedHistory = await fetchChatHistory(sessionID);
     const formattedHistory = Array.isArray(updatedHistory)
       ? updatedHistory.map((msg: any) => ({
-        sender: msg.sender === "bot" ? "Bot" : "User",
-        text: msg.message,
-      }))
+          sender: msg.sender === "bot" ? "Bot" : "User",
+          text: msg.message,
+        }))
       : [];
 
     // Prepare text history for sending to backend
@@ -410,6 +657,70 @@ const ViceChatInterface = () => {
     setIsWaitingForBotResponse(false);
   };
 
+  const handleFeedback = async (feedback: string) => {
+    const userFeedbackMsg = {
+      sender: "you",
+      text: feedback,
+      time: getCurrentTime(),
+    };
+
+    setMessages((prev) => [...prev, userFeedbackMsg]);
+    setChatHistory((prev) => [...prev, userFeedbackMsg]);
+    await saveMessage(feedback, sessionID, "user");
+
+    console.log("userFeedback", userFeedbackMsg);
+    // Optional: Send to backend to store therapy feedback
+    try {
+      // await fetch(`${API_Python_URL}/therapy-agent/feedback`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     user_id: getLocalStoragedata("userId")?.toString() || "guest",
+      //     session_id: sessionID,
+      //     feedback: feedback,
+      //     timestamp: new Date().toISOString(),
+      //   }),
+      // });
+      await fetch(`${API_Python_URL}/therapy-agent/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user_id,
+          session_id: sessionID,
+          therapy_id: therapyInfo?.id, // FIXED
+          duration: Number(therapyInfo?.duration) || 0, // FIXED
+          feedback: feedback,
+        }),
+      });
+      console.log("Feedback saved successfully");
+    } catch (err) {
+      console.error("Failed to save feedback:", err);
+    }
+
+    // Bot’s acknowledgment
+    const botReply = {
+      sender: "bot",
+      text:
+        feedback === "Felt Good"
+          ? "I'm glad to hear that! Let's keep the good energy going. How are you feeling now?"
+          : feedback === "No Change"
+          ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
+          : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",
+      time: getCurrentTime(),
+    };
+
+    setMessages((prev) => [...prev, botReply]);
+    setChatHistory((prev) => [...prev, botReply]);
+    await saveMessage(botReply.text, sessionID, "bot");
+
+    const replyAudio = new Audio("/therapy_feedback_reply.mp3");
+    replyAudio.play();
+
+    setAwaitingFeedback(false);
+    setTherapyInfo({});
+    localStorage.removeItem("therapyInProgress");
+  };
+
   async function ClassifierResult() {
     if (!sessionID) return;
     setDetecting(true);
@@ -417,9 +728,9 @@ const ViceChatInterface = () => {
       const updatedHistory = await fetchChatHistory(sessionID);
       const formattedHistory: string[] = Array.isArray(updatedHistory)
         ? updatedHistory.map(
-          (msg: any) =>
-            `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
-        )
+            (msg: any) =>
+              `${msg.sender === "bot" ? "popo" : "you"}: ${msg.message}`
+          )
         : [];
 
       const historyStr = formattedHistory.join("\n").trim();
@@ -445,6 +756,31 @@ const ViceChatInterface = () => {
     }
   }
 
+  async function runLevelDetectionWithoutLogout() {
+    try {
+      await ClassifierResult();
+      const resp = await getDepressionLevel();
+      if (resp?.success) {
+        setLevelResult(resp.data);
+        //   setLevelOpen(true);
+      }
+      const level = resp.data?.level?.toLowerCase();
+      if (level === "minimal" || level === "moderate") {
+        setTherapyMode(true);
+        localStorage.setItem("therapyMode", "true");
+      } else if (level === "severe") {
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+        navigate("/therapy/all-doctors");
+      } else {
+        setTherapyMode(false);
+        localStorage.removeItem("therapyMode");
+      }
+    } catch (err) {
+      console.error("Level detection failed:", err);
+    }
+  }
+
   async function runLevelDetection() {
     try {
       await ClassifierResult();
@@ -453,12 +789,29 @@ const ViceChatInterface = () => {
       if (!resp?.success) throw new Error("level API failed");
 
       setLevelResult(resp.data);
-      setLevelOpen(true);
+      //setLevelOpen(true);
       handleLogout();
     } catch (e) {
       console.error(e);
     }
   }
+
+  const handleGenerateTherapyFeedbackReport = async () => {
+    try {
+      const userID = getLocalStoragedata("userId");
+
+      const res = await getTherapyFeedbackReport(userID);
+
+      console.log("REPORT:", res.report);
+      console.log("CONCLUSION:", res.conclusion);
+
+      setTherapyFeedbackReport(res.report);
+      setTherapyFeedbackConclusion(res.conclusion);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const phqOptions = [
     "Not at all",
     "Several days",
@@ -477,7 +830,11 @@ const ViceChatInterface = () => {
     z-0 w-[600px] h-[600px] 
   "
       >
-        <img src={bearnew} alt="Bear" className="w-full h-full object-contain" />
+        <img
+          src={bearnew}
+          alt="Bear"
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Chat Box */}
@@ -494,12 +851,14 @@ const ViceChatInterface = () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex flex-col ${msg.sender === "you" ? "items-end" : "items-start"
-                }`}
+              className={`flex flex-col ${
+                msg.sender === "you" ? "items-end" : "items-start"
+              }`}
             >
               <div
-                className={`flex gap-2 items-center ${msg.sender === "you" ? "flex-row-reverse" : "flex-row"
-                  }`}
+                className={`flex gap-2 items-center ${
+                  msg.sender === "you" ? "flex-row-reverse" : "flex-row"
+                }`}
               >
                 {msg.sender === "you" ? (
                   <img
@@ -535,8 +894,9 @@ const ViceChatInterface = () => {
                 </div>
               </div>
               <Text
-                className={`text-xs text-gray-500 mt-1 ${msg.sender === "you" ? "" : "ml-10"
-                  }`}
+                className={`text-xs text-gray-500 mt-1 ${
+                  msg.sender === "you" ? "" : "ml-10"
+                }`}
               >
                 {msg.time}
               </Text>
@@ -558,9 +918,59 @@ const ViceChatInterface = () => {
                     ))}
                   </div>
                 )}
+              {therapySuggestion.isVisible &&
+                msg.sender === "bot" &&
+                index === messages.length - 1 && (
+                  <div className="flex flex-wrap gap-2 mt-2 ml-10">
+                    <Button
+                      size="small"
+                      type="primary"
+                      onClick={() => handleTherapyChoice("yes")}
+                      className="bg-green-500 hover:bg-green-600 text-white rounded-full"
+                    >
+                      Yes
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => handleTherapyChoice("no")}
+                      className="bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                    >
+                      No
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => handleTherapyChoice("later")}
+                      className="bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                    >
+                      Later
+                    </Button>
+                  </div>
+                )}
+
+              {awaitingFeedback &&
+                (msg.sender === "popo" || msg.sender === "bot") &&
+                index === messages.length - 1 && (
+                  <div className="flex flex-wrap gap-2 mt-2 ml-10">
+                    {["Felt Good", "No Change", "Didn’t Help"].map((option) => (
+                      <Button
+                        key={option}
+                        size="small"
+                        onClick={() => handleFeedback(option)}
+                        className={
+                          option === "Felt Good"
+                            ? "bg-green-500 hover:bg-green-600 text-white rounded-full"
+                            : option === "No Change"
+                            ? "bg-yellow-100 hover:bg-yellow-200 border-yellow-300 rounded-full"
+                            : "bg-red-100 hover:bg-red-200 border-red-300 rounded-full"
+                        }
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                )}
             </div>
           ))}
-
           {isUploading && (
             <div className="flex justify-end items-center gap-2">
               <ReactBarsLoader />
@@ -582,6 +992,40 @@ const ViceChatInterface = () => {
               />
 
               <ReactBarsLoader />
+            </div>
+          )}
+          {showTherapyCard && (
+            <div className="flex justify-center mt-6">
+              <div className="bg-white shadow-lg rounded-2xl p-6 w-[80%] border border-green-200">
+                <h3 className="text-lg font-semibold text-green-700 mb-2">
+                  {therapyInfo.name || "Recommended Therapy"}
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  {therapyInfo.description ||
+                    "This therapy can help you reflect and relax emotionally."}
+                </p>
+                <p className="text-gray-500 text-xs mb-4">
+                  ⏳ Duration: {therapyInfo.duration || "Around 10 minutes"}
+                </p>
+                <div className="flex justify-end">
+                  <Button
+                    type="primary"
+                    className="bg-green-500 hover:bg-green-600 text-white rounded-full"
+                    onClick={() => {
+                      setShowTherapyCard(false);
+                      const now = Date.now();
+                      localStorage.setItem("therapyStartTime", now.toString());
+                      localStorage.setItem(
+                        "therapyInProgress",
+                        JSON.stringify(therapyInfo)
+                      );
+                      navigate(therapyInfo.path || "/therapy");
+                    }}
+                  >
+                    Start Therapy
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
           <div ref={messageEndRef} />
@@ -618,7 +1062,6 @@ const ViceChatInterface = () => {
                     setRecording(false);
                     // do NOT set isWaitingForBotResponse here
                   }}
-
                   className="bg-red-600 hover:bg-red-700 text-white"
                   aria-label="Stop microphone and send"
                   style={{ width: 50, height: 50, fontSize: 24 }}

@@ -11,8 +11,9 @@ import "aos/dist/aos.css";
 import { AnxietyGames } from '../therapy/Anxiety_Games';
 import AnxietyLayout from '../layouts/AnxietyLayout';
 import { useLocation } from "react-router-dom";
-import { Link, Settings } from "lucide-react";
+import {Settings } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from 'react-router-dom';
 const flowers = ["🧘‍♀️", "💚", "💐"];
 
 const images = [home, home2, home3];

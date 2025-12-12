@@ -140,30 +140,41 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
           <div className="max-h-[60vh] overflow-y-auto md:overflow-visible">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {games.map((game) => (
-                <motion.div key={game.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <motion.div
+                  key={game.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex"
+                >
                   <Card
-                    className="border-slate-300/20 bg-emerald-200 cursor-pointer transition-colors"
+                    className="border-slate-300/20 bg-emerald-200 cursor-pointer transition-colors flex-1 flex flex-col"
                     onClick={() => handleGameStart(game.id)}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
+                    <CardContent className="p-4 flex flex-col flex-1">
+                      <div className="flex items-start gap-4 flex-1">
                         <div className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}>
                           <game.icon className="h-6 w-6" />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-emerald-800" style={{ fontFamily: 'Merienda, cursive' }}>{game.title}</h4>
+                        <div className="flex-1 flex flex-col justify-between">
+                          <h4
+                            className="font-semibold text-emerald-800"
+                            style={{ fontFamily: "Merienda, cursive" }}
+                          >
+                            {game.title}
+                          </h4>
                           <p className="text-sm text-emerald-700 mt-1">{game.description}</p>
-                          <div className="flex items-center gap-2 mt-3">
-                            <Music2 className="h-4 w-4 text-slate-500" />
-                            <span className="text-sm text-slate-500">{game.duration}</span>
-                          </div>
                         </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-3">
+                        <Music2 className="h-4 w-4 text-slate-500" />
+                        <span className="text-sm text-slate-500">{game.duration}</span>
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
             </div>
+
           </div>
         </CardContent>
 

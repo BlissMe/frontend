@@ -68,14 +68,14 @@ const OTPVerify: React.FC = () => {
       return;
     }
 
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Verifying OTP with token:", token);
 
-      const response = await axios.post<VerifyResponse>(
+      //  1. Verify OTP
+      const verifyResponse = await axios.post<VerifyResponse>(
         `${API_URL}/mspace/otp-verify`,
         {
           referenceNo: state.referenceNo,
@@ -88,16 +88,33 @@ const OTPVerify: React.FC = () => {
         }
       );
 
-      if (response.data.statusCode === "S1000") {
-        openNotification(
-          "success",
-          `Phone number ${state.phone} verified successfully!`
-        );
-
-        navigate("/sucess");
-      } else {
-        setError(response.data.statusDetail || "OTP verification failed");
+      if (verifyResponse.data.statusCode !== "S1000") {
+        setError(verifyResponse.data.statusDetail || "OTP verification failed");
+        return;
       }
+
+      const { subscriberId, subscriptionStatus } = verifyResponse.data;
+
+      // 2. Save subscriber
+      await axios.post(
+        `${API_URL}/mspace/save-subscriber`,
+        {
+          subscriberId,
+          subscriptionStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      openNotification(
+        "success",
+        `Phone number ${state.phone} verified successfully!`
+      );
+
+      navigate("/success");
     } catch (err: any) {
       setError(err.response?.data?.message || "OTP verification failed");
     } finally {

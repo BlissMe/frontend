@@ -92,7 +92,8 @@ const Register = () => {
           setLocalStorageData("user", response?.username);
           setLocalStorageData("userId", response?.userID);
           setLocalStorageData("isSignUp", true);
-          navigate("/mode/nick-name", { replace: true });
+          //navigate("/mode/nick-name", { replace: true });
+          navigate("/price", { replace: true });
         } else {
           openNotification(
             "error",

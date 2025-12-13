@@ -1,6 +1,9 @@
 import React, { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { LayeredBackground } from "animated-backgrounds";
+import { useNotification } from "../context/notificationContext";
+import logo from "../../assets/images/logo.png";
 
 // Type for verify OTP API response
 interface VerifyResponse {
@@ -22,6 +25,7 @@ const OTPVerify: React.FC = () => {
   const location = useLocation();
   const state = location.state as LocationState;
   const API_URL = process.env.REACT_APP_API_URL;
+  const { openNotification } = useNotification();
 
   // OTP state
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
@@ -70,8 +74,9 @@ const OTPVerify: React.FC = () => {
       });
 
       if (response.data.statusCode === "S1000") {
-        alert(`Phone number ${state.phone} verified successfully!`);
-        navigate("/dashboard"); // Redirect after successful verification
+        openNotification("success", `Phone number ${state.phone} verified successfully!`);
+
+        navigate("/sucess");
       } else {
         setError(response.data.statusDetail || "OTP verification failed");
       }
@@ -82,29 +87,41 @@ const OTPVerify: React.FC = () => {
     }
   };
 
+  // Layered Background configuration
+  const layers = [
+    { animation: "starryNight", opacity: 0.7, blendMode: "normal", speed: 0.3 },
+    { animation: "cosmicDust", opacity: 0.4, blendMode: "screen", speed: 0.7 },
+    { animation: "auroraBorealis", opacity: 0.3, blendMode: "overlay", speed: 1.1 },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 to-blue-200 px-4">
-      <div
-        className="relative p-6 md:px-10 md:py-7 bg-white rounded-lg w-full sm:w-[400px] md:w-[500px]"
-        style={{ boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
-      >
+    <div className="min-h-screen flex items-center justify-center relative px-4">
+      {/* Animated Background */}
+      <div className="absolute inset-0 z-0">
+        <LayeredBackground layers={layers} />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-200 to-blue-200 opacity-40"></div>
+      </div>
+
+      {/* Card */}
+      <div className="z-10 bg-white/20 backdrop-blur-xl rounded-3xl p-10 w-[90%] max-w-lg text-center shadow-2xl border border-white/30 relative transition-all duration-300 ease-in-out hover:shadow-xl">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-5 left-5 text-purple-600 font-medium"
+          className="absolute top-5 left-5 text-green-600 font-medium"
         >
           ← Back
         </button>
+        <div className="flex flex-col items-center mb-0">
+          <img
+            src={logo}
+            alt="BlissMe Logo"
+            className="w-32 h-10 object-contain"
+          />
+        </div>
+        <h2 className="text-[20px] font-semibold text-center pb-5">Enter verification code</h2>
 
-        {/* Title */}
-        <h2 className="flex items-center justify-center text-[20px] font-semibold pb-5">
-          Enter verification code
-        </h2>
-
-        {/* Description */}
         <p className="text-center text-gray-700 text-sm mb-3">
-          We have sent a 6-digit verification code to your phone number.
-          <br />
+          We have sent a 6-digit verification code to your phone number.<br />
           Please enter the code to continue.
         </p>
 
@@ -124,7 +141,7 @@ const OTPVerify: React.FC = () => {
               value={digit}
               onChange={(e) => handleChange(e.target.value, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className="w-12 h-12 text-center text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-12 h-12 text-center text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               autoComplete="off"
             />
           ))}
@@ -137,20 +154,20 @@ const OTPVerify: React.FC = () => {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className={`w-full py-2 mt-2 text-white font-semibold rounded-lg transition ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"
-          }`}
+          className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition ${loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:brightness-90"
+            }`}
         >
           {loading ? "Verifying..." : "Verify & Continue"}
         </button>
 
-        {/* Footer */}
         <p className="text-center text-xs text-gray-500 mt-4">
-          Didn’t receive the code? <span className="text-purple-600 cursor-pointer">Resend</span>
+          Didn’t receive the code? <span className="text-green-600 cursor-pointer">Resend</span>
         </p>
       </div>
     </div>
   );
 };
 
-export default OTPVerify;
+export default OTPVerify; 

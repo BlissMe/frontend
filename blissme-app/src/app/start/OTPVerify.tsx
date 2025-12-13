@@ -59,7 +59,6 @@ const OTPVerify: React.FC = () => {
     }
   };
 
-  // Submit OTP
   const handleSubmit = async () => {
     const enteredOtp = otp.join("");
 

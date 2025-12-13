@@ -4,6 +4,7 @@ import axios from "axios";
 import { LayeredBackground } from "animated-backgrounds";
 import logo from "../../assets/images/logo.png";
 import { Button } from "antd";
+import { setLocalStorageData } from "../../helpers/Storage";
 
 interface OtpResponse {
   version: string;
@@ -32,24 +33,36 @@ const PhoneNumber: React.FC = () => {
       setError("Please enter a valid 10-digit phone number");
       return;
     }
-
+  
     setError("");
     setLoading(true);
-
+  
+    const subscriberId = `tel:94${phone.slice(1)}`;
+  
     try {
-      const response = await axios.post<OtpResponse>(`${API_URL}/mspace/otp-send`, {
-        subscriberId: `tel:94${phone.slice(1)}`,
-        applicationHash: "default_hash",
-      });
-
+      const response = await axios.post<OtpResponse>(
+        `${API_URL}/mspace/otp-send`,
+        {
+          subscriberId,
+          applicationHash: "default_hash",
+        }
+      );
+  
       const { referenceNo } = response.data;
+
+      setLocalStorageData("subscriberId", subscriberId);
+      setLocalStorageData("phone", phone);
+  
       navigate("/otp-verify", { state: { phone, referenceNo } });
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to send verification code");
+      setError(
+        err.response?.data?.message || "Failed to send verification code"
+      );
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center relative">

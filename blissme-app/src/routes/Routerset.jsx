@@ -119,7 +119,7 @@ const Routerset = () => {
             <Route path="/price" element={<SubscriptionPage />} />
             <Route path="/phone-number" element={<PhoneNumber/>} />
             <Route path ="/otp-verify" element ={<OTPVerify/>} />
-            <Route path = "/sucess" element={<SubscriptionSuccess/>} />
+            <Route path = "/success" element={<SubscriptionSuccess/>} />
           {/* <Route path="/dash" element={<AnxietyLayout />}>
             <Route path="anxiety" element={<AnxietyGames />} />
             <Route path="zen" element={<ZenGarden />} />

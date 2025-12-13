@@ -32,6 +32,7 @@ const PhoneNumber: React.FC = () => {
         subscriberId: `tel:94${phone.slice(1)}`,
         applicationHash: "default_hash"
       });
+      console.log("Checking",response)
 
       const { referenceNo } = response.data;
 

@@ -1,4 +1,3 @@
-import React from "react";
 import ChatInterface from "../../components/chat/ChatInterface";
 import Sidebar from "../../components/chat/Sidebar";
 import bg from "../../assets/images/cb1.png";

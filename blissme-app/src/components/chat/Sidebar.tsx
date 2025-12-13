@@ -76,7 +76,7 @@ const Sidebar: React.FC = () => {
     navigate("/login");
   };
 
-  const subscriberId = getLocalStoragedata("subscriberId") || "";
+  const subscriberId ="tel:94701362783";
 
 const handleUnsubscribe = async () => {
   setUnsubscribeLoading(true);

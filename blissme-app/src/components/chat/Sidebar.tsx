@@ -76,7 +76,7 @@ const Sidebar: React.FC = () => {
     navigate("/login");
   };
 
-  const subscriberId ="tel:94701362783";
+  const subscriberId ="tel:94705707172";
 
 const handleUnsubscribe = async () => {
   setUnsubscribeLoading(true);

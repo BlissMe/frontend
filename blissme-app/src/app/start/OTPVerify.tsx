@@ -27,7 +27,6 @@ const OTPVerify: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const token = localStorage.getItem("token");
 
   // Refs for inputs
   const inputRefs = useRef<HTMLInputElement[]>([]);

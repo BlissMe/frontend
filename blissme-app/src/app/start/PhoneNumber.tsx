@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const PhoneNumber = () => {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   const handleSubmit = () => {
     // Simple validation: must be 10 digits
@@ -30,7 +33,8 @@ const PhoneNumber = () => {
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
       <button
-        onClick={handleSubmit}
+        //onClick={handleSubmit}
+        onClick={() => { navigate('/otp-verify') }}
         className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition"
       >
         Subscribe

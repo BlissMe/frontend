@@ -92,7 +92,6 @@ const OTPVerify: React.FC = () => {
       } else {
         setError(verifyResponse.data.statusDetail || "OTP verification failed");
       }
-
       // // 2. Save subscriber
       // await axios.post(
       //   `${API_URL}/mspace/save-subscriber`,

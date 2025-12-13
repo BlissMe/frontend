@@ -81,8 +81,9 @@ export function ForestGame() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[70vh] mt-20">
+    <div className="flex justify-center items-center min-h-[70vh] mt-8">
       <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
+        
         {/* Card Header */}
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
@@ -93,8 +94,23 @@ export function ForestGame() {
           </CardDescription>
         </CardHeader>
 
+        {/* ✨ Instructions Added Here */}
+        <div className="px-6">
+          <div className="bg-emerald-700 rounded-lg p-3 mb-4">
+            <h3 className="text-sm font-medium text-emerald-100 mb-2">How to Use</h3>
+            <ul className="text-xs text-emerald-100/90 space-y-1 list-disc list-inside">
+              <li>Find a comfortable seated position and relax your shoulders.</li>
+              <li>Adjust the volume to a soft, relaxing level.</li>
+              <li>Press the play button to begin the forest meditation.</li>
+              <li>Focus on the sounds of birds, wind, and rustling leaves.</li>
+              <li>If thoughts appear, gently return attention to the nature sounds.</li>
+              <li>Continue until the timer completes or pause anytime you need.</li>
+            </ul>
+          </div>
+        </div>
+
         {/* Card Content */}
-        <CardContent className="flex flex-col items-center space-y-8">
+        <CardContent className="flex flex-col items-center">
           {/* Animated Tree */}
           <div className="relative w-48 h-48">
             <motion.div
@@ -117,7 +133,7 @@ export function ForestGame() {
           </div>
 
           {/* Controls */}
-          <div className="w-64 space-y-6">
+          <div className="w-64 space-y-4">
             {/* Volume */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-[#f9fbfc]">
@@ -142,7 +158,7 @@ export function ForestGame() {
             {/* Progress */}
             <Progress value={progress} className="h-2" />
 
-            {/* Play / Pause and Timer */}
+            {/* Timer + Play Controls */}
             <div className="flex items-center justify-between w-full">
               <span className="text-sm text-[#f9fbfc]">
                 {formatTime(timeLeft)}
@@ -165,6 +181,14 @@ export function ForestGame() {
             </div>
           </div>
         </CardContent>
+        <div className="w-full flex justify-start px-6 pb-4">
+          <button
+            onClick={() => navigate("/chat-new/text")}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+          >
+            ← Back to Chat
+          </button>
+        </div>
       </Card>
     </div>
   );

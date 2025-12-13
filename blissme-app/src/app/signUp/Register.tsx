@@ -33,7 +33,6 @@ const Register = () => {
   const [stepOneValues, setStepOneValues] = useState({
     username: "",
     password: "",
-    phoneNumber: "",
   });
   const [currentStep, setCurrentStep] = useState(1);
   const next = () => setCurrentStep(2);
@@ -72,7 +71,6 @@ const Register = () => {
       setStepOneValues({
         username: values.username,
         password: values.password,
-        phoneNumber: values.phoneNumber,
       });
       next();
     } else if (currentStep === 2) {
@@ -194,29 +192,7 @@ const Register = () => {
                   className="w-full rounded-md  bg-gray-100 placeholder-lime-500"
                 />
               </Form.Item>
-              <Form.Item
-                name="phoneNumber"
-                label="Phone Number"
-                rules={[
-                  { required: true, message: "Phone number is required!" },
-                  { min: 10, message: "Invalid phone number!" },
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined />}
-                  placeholder="07XXXXXXXX"
-                  size="large"
-                  maxLength={10}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  className="w-full rounded-md bg-gray-100 placeholder-lime-500"
-                />
-              </Form.Item>
+             
 
               <div className="flex justify-center mt-4">
                 <button

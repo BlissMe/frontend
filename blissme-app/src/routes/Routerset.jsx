@@ -49,6 +49,7 @@ import { OceanWaves } from "../app/therapy/ocean-waves";
 import OceanLayout from "../app/layouts/OceanLayout";
 import SubscriptionPage from "../app/start/Subscription";
 import PhoneNumber from "../app/start/PhoneNumber";
+import OTPVerify from "../app/start/OTPVerify";
 
 const Routerset = () => {
   const { token } = useContext(AuthContext);
@@ -116,6 +117,7 @@ const Routerset = () => {
           </Route>
             <Route path="/price" element={<SubscriptionPage />} />
             <Route path="/phone-number" element={<PhoneNumber/>} />
+            <Route path ="/otp-verify" element ={<OTPVerify/>} />
           {/* <Route path="/dash" element={<AnxietyLayout />}>
             <Route path="anxiety" element={<AnxietyGames />} />
             <Route path="zen" element={<ZenGarden />} />
@@ -137,7 +139,7 @@ const Routerset = () => {
           </Route>
         </>
       ) : (
-        <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="*" element={<Navigate to="/sign-in" />} />
       )}
     </Routes>
   );

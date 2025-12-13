@@ -246,7 +246,7 @@ const ChatInterface = () => {
   }, []);
 
   const sendEmergencySMS = async () => {
-    const phone = "94711191618"; // no leading 0
+    const phone = "94701362783";
     const text =
       "Your session indicates high distress. Please seek help immediately.";
 

@@ -34,6 +34,7 @@ const OTPVerify: React.FC = () => {
 
   // Refs for inputs
   const inputRefs = useRef<HTMLInputElement[]>([]);
+  const token = localStorage.getItem("token");
 
   // Handle input change
   const handleChange = (value: string, index: number) => {
@@ -49,7 +50,10 @@ const OTPVerify: React.FC = () => {
   };
 
   // Handle backspace navigation
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -68,10 +72,20 @@ const OTPVerify: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post<VerifyResponse>(`${API_URL}/mspace/otp-verify`, {
-        referenceNo: state.referenceNo,
-        otp: enteredOtp,
-      });
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post<VerifyResponse>(
+        `${API_URL}/mspace/otp-verify`,
+        {
+          referenceNo: state.referenceNo,
+          otp: enteredOtp,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.statusCode === "S1000") {
         openNotification("success", `Phone number ${state.phone} verified successfully!`);
@@ -134,7 +148,9 @@ const OTPVerify: React.FC = () => {
           {otp.map((digit, index) => (
             <input
               key={index}
-              ref={(el) => { if (el) inputRefs.current[index] = el; }}
+              ref={(el) => {
+                if (el) inputRefs.current[index] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -148,7 +164,9 @@ const OTPVerify: React.FC = () => {
         </div>
 
         {/* Error */}
-        {error && <p className="text-center text-red-500 text-sm mb-3">{error}</p>}
+        {error && (
+          <p className="text-center text-red-500 text-sm mb-3">{error}</p>
+        )}
 
         {/* Submit Button */}
         <button

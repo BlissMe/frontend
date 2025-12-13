@@ -73,6 +73,7 @@ const OTPVerify: React.FC = () => {
 
     try {
       const token = localStorage.getItem("token");
+      console.log("Verifying OTP with token:", token);
 
       const response = await axios.post<VerifyResponse>(
         `${API_URL}/mspace/otp-verify`,
@@ -88,7 +89,10 @@ const OTPVerify: React.FC = () => {
       );
 
       if (response.data.statusCode === "S1000") {
-        openNotification("success", `Phone number ${state.phone} verified successfully!`);
+        openNotification(
+          "success",
+          `Phone number ${state.phone} verified successfully!`
+        );
 
         navigate("/sucess");
       } else {
@@ -105,7 +109,12 @@ const OTPVerify: React.FC = () => {
   const layers = [
     { animation: "starryNight", opacity: 0.7, blendMode: "normal", speed: 0.3 },
     { animation: "cosmicDust", opacity: 0.4, blendMode: "screen", speed: 0.7 },
-    { animation: "auroraBorealis", opacity: 0.3, blendMode: "overlay", speed: 1.1 },
+    {
+      animation: "auroraBorealis",
+      opacity: 0.3,
+      blendMode: "overlay",
+      speed: 1.1,
+    },
   ];
 
   return (
@@ -132,10 +141,13 @@ const OTPVerify: React.FC = () => {
             className="w-32 h-10 object-contain"
           />
         </div>
-        <h2 className="text-[20px] font-semibold text-center pb-5">Enter verification code</h2>
+        <h2 className="text-[20px] font-semibold text-center pb-5">
+          Enter verification code
+        </h2>
 
         <p className="text-center text-gray-700 text-sm mb-3">
-          We have sent a 6-digit verification code to your phone number.<br />
+          We have sent a 6-digit verification code to your phone number.
+          <br />
           Please enter the code to continue.
         </p>
 
@@ -172,20 +184,22 @@ const OTPVerify: React.FC = () => {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition ${loading
+          className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition ${
+            loading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:brightness-90"
-            }`}
+          }`}
         >
           {loading ? "Verifying..." : "Verify & Continue"}
         </button>
 
         <p className="text-center text-xs text-gray-500 mt-4">
-          Didn’t receive the code? <span className="text-green-600 cursor-pointer">Resend</span>
+          Didn’t receive the code?{" "}
+          <span className="text-green-600 cursor-pointer">Resend</span>
         </p>
       </div>
     </div>
   );
 };
 
-export default OTPVerify; 
+export default OTPVerify;

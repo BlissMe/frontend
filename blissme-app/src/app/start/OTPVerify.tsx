@@ -80,41 +80,32 @@ const OTPVerify: React.FC = () => {
         {
           referenceNo: state.referenceNo,
           otp: enteredOtp,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
-      if (verifyResponse.data.statusCode !== "S1000") {
+      if (verifyResponse.data.statusCode === "S1000") {
+        openNotification(
+          "success",
+          `Phone number ${state.phone} verified successfully!`
+        );
+        navigate("/success");
+      } else {
         setError(verifyResponse.data.statusDetail || "OTP verification failed");
-        return;
       }
 
-      const { subscriberId, subscriptionStatus } = verifyResponse.data;
-
-      // 2. Save subscriber
-      await axios.post(
-        `${API_URL}/mspace/save-subscriber`,
-        {
-          subscriberId,
-          subscriptionStatus,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      openNotification(
-        "success",
-        `Phone number ${state.phone} verified successfully!`
-      );
-
-      navigate("/success");
+      // // 2. Save subscriber
+      // await axios.post(
+      //   `${API_URL}/mspace/save-subscriber`,
+      //   {
+      //     subscriberId,
+      //     subscriptionStatus,
+      //   },
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
     } catch (err: any) {
       setError(err.response?.data?.message || "OTP verification failed");
     } finally {
@@ -168,9 +159,9 @@ const OTPVerify: React.FC = () => {
           Please enter the code to continue.
         </p>
 
-        <p className="text-center text-red-500 text-xs mb-4">
+        {/* <p className="text-center text-red-500 text-xs mb-4">
           OTP will be cancelled after 3 wrong attempts*
-        </p>
+        </p> */}
 
         {/* OTP Inputs */}
         <div className="flex justify-center gap-3 mb-4">

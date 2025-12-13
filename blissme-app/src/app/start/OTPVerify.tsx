@@ -59,7 +59,6 @@ const OTPVerify: React.FC = () => {
     }
   };
 
-  // Submit OTP
   const handleSubmit = async () => {
     const enteredOtp = otp.join("");
 
@@ -76,7 +75,7 @@ const OTPVerify: React.FC = () => {
 
       //  1. Verify OTP
       const verifyResponse = await axios.post<VerifyResponse>(
-        `${API_URL}/mspace/otp-verify`,
+        `${API_URL}/mspace/otp-verify`,+
         {
           referenceNo: state.referenceNo,
           otp: enteredOtp,

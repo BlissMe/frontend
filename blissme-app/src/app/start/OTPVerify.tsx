@@ -90,7 +90,7 @@ const OTPVerify: React.FC = () => {
         );
         navigate("/success");
       } else {
-        setError(verifyResponse.data.statusDetail || "OTP verification failed");
+        setError(verifyResponse.data.statusDetail);
       }
 
       // // 2. Save subscriber

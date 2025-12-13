@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   X,
+  UserMinus
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../app/context/AuthContext";
@@ -168,6 +169,17 @@ const Sidebar: React.FC = () => {
 
         {/* Settings */}
         <div className="relative space-y-6" ref={settingsRef}>
+          <div className="group relative flex justify-center">
+            <Link to="/unsubscribe">
+              <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
+                <UserMinus className="w-6 h-6 text-white" />
+              </button>
+            </Link>
+            <Tooltip
+              label="Unsubscribe"
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            />
+          </div>
 
           <div className="relative">
             <button
@@ -294,7 +306,17 @@ const Sidebar: React.FC = () => {
             </Link>
 
             <hr /> */}
-
+            <div className="group relative flex justify-center">
+              <Link to="/unsubscribe">
+                <button className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center shadow-md hover:bg-emerald-300 transition-all hover:scale-110">
+                  <UserMinus className="w-6 h-6 text-white" />
+                </button>
+              </Link>
+              <Tooltip
+                label="Unsubscribe"
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              />
+            </div>
             <div className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}

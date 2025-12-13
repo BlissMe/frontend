@@ -1,12 +1,32 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+
+// Type for verify OTP API response
+interface VerifyResponse {
+  version: string;
+  statusCode: string;
+  subscriptionStatus: string;
+  statusDetail: string;
+  subscriberId: string;
+}
+
+// Type for state passed from PhoneNumber page
+interface LocationState {
+  phone: string;
+  referenceNo: string;
+}
 
 const OTPVerify: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const API_URL = process.env.REACT_APP_API_URL;
 
   // OTP state
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Refs for inputs
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -25,17 +45,14 @@ const OTPVerify: React.FC = () => {
   };
 
   // Handle backspace navigation
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
   // Submit OTP
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const enteredOtp = otp.join("");
 
     if (enteredOtp.length !== 6) {
@@ -44,21 +61,32 @@ const OTPVerify: React.FC = () => {
     }
 
     setError("");
-    console.log("OTP Entered:", enteredOtp);
+    setLoading(true);
 
-    // 🔹 Call verify OTP API here
+    try {
+      const response = await axios.post<VerifyResponse>(`${API_URL}/api/otp/verify`, {
+        referenceNo: state.referenceNo,
+        otp: enteredOtp,
+      });
 
-    navigate("/success"); // change route if needed
+      if (response.data.statusCode === "S1000") {
+        alert(`Phone number ${state.phone} verified successfully!`);
+        navigate("/dashboard"); // Redirect after successful verification
+      } else {
+        setError(response.data.statusDetail || "OTP verification failed");
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || "OTP verification failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 to-blue-200 px-4">
       <div
         className="relative p-6 md:px-10 md:py-7 bg-white rounded-lg w-full sm:w-[400px] md:w-[500px]"
-        style={{
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
-        }}
+        style={{ boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
       >
         {/* Back Button */}
         <button
@@ -89,11 +117,7 @@ const OTPVerify: React.FC = () => {
           {otp.map((digit, index) => (
             <input
               key={index}
-              ref={(el) => {
-                if (el) {
-                  inputRefs.current[index] = el;
-                }
-              }}
+              ref={(el) => { if (el) inputRefs.current[index] = el; }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -107,16 +131,17 @@ const OTPVerify: React.FC = () => {
         </div>
 
         {/* Error */}
-        {error && (
-          <p className="text-center text-red-500 text-sm mb-3">{error}</p>
-        )}
+        {error && <p className="text-center text-red-500 text-sm mb-3">{error}</p>}
 
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          className="w-full py-2 mt-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition"
+          disabled={loading}
+          className={`w-full py-2 mt-2 text-white font-semibold rounded-lg transition ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"
+          }`}
         >
-          Verify & Continue
+          {loading ? "Verifying..." : "Verify & Continue"}
         </button>
 
         {/* Footer */}

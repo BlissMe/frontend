@@ -68,24 +68,17 @@ const OTPVerify: React.FC = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-
       const response = await axios.post<VerifyResponse>(
         `${API_URL}/mspace/otp-verify`,
         {
           referenceNo: state.referenceNo,
           otp: enteredOtp,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
       if (response.data.statusCode === "S1000") {
         alert(`Phone number ${state.phone} verified successfully!`);
-        navigate("/dashboard");
+        navigate("/dashboard"); // Redirect after successful verification
       } else {
         setError(response.data.statusDetail || "OTP verification failed");
       }
@@ -95,6 +88,7 @@ const OTPVerify: React.FC = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 to-blue-200 px-4">
       <div

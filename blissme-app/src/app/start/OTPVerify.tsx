@@ -79,6 +79,11 @@ const OTPVerify: React.FC = () => {
         +{
           referenceNo: state.referenceNo,
           otp: enteredOtp,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 

@@ -75,15 +75,10 @@ const OTPVerify: React.FC = () => {
 
       //  1. Verify OTP
       const verifyResponse = await axios.post<VerifyResponse>(
-        `${API_URL}/mspace/otp-verify`,+
-        {
+        `${API_URL}/mspace/otp-verify`,
+        +{
           referenceNo: state.referenceNo,
           otp: enteredOtp,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
 

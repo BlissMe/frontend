@@ -55,8 +55,7 @@ const Sidebar: React.FC = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -76,32 +75,31 @@ const Sidebar: React.FC = () => {
     navigate("/login");
   };
 
-  const subscriberId ="tel:94701362783";
+  const subscriberId = "tel:94701362783";
 
-const handleUnsubscribe = async () => {
-  setUnsubscribeLoading(true);
+  const handleUnsubscribe = async () => {
+    setUnsubscribeLoading(true);
 
-  const res = await unsubscribeUser(subscriberId);
+    const res = await unsubscribeUser(subscriberId);
 
-  if (!res.success) {
-    openNotification("error", "Unsubscribe failed. Please try again.");
-    setUnsubscribeLoading(false);
-    return;
-  }
+    if (!res.success) {
+      openNotification("error", "Unsubscribe failed. Please try again.");
+      setUnsubscribeLoading(false);
+      return;
+    }
 
-  openNotification("success", "You have successfully unsubscribed.");
+    openNotification("success", "You have successfully unsubscribed.");
 
-  // Clear everything
-  setToken(null);
-  setSessionID("");
-  setMessages([]);
-  setChatHistory([]);
-  setIsSessionEnded(true);
-  localStorage.clear();
+    // Clear everything
+    //setToken(null);
+    // setSessionID("");
+    // setMessages([]);
+    // setChatHistory([]);
+    // setIsSessionEnded(true);
+    // localStorage.clear();
 
-  navigate("/login");
-};
-
+    // navigate("/login");
+  };
 
   const Tooltip = ({ label }: { label: string }) => (
     <div className="absolute left-14 top-1/2 -translate-y-1/2 bg-emerald-800 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap z-[9999] opacity-0 group-hover:opacity-100 transition">
@@ -114,8 +112,15 @@ const handleUnsubscribe = async () => {
       {/* DESKTOP SIDEBAR */}
       <div className="hidden md:flex w-16 bg-green-300 bg-opacity-50 flex-col items-center py-4 space-y-6 shadow-md">
         <div className="flex flex-col items-center space-y-6 flex-grow">
-          <Link to="/chat/setting/profile" className="w-10 h-10 rounded-full bg-white overflow-hidden">
-            <img src={user} alt="Avatar" className="object-cover w-full h-full" />
+          <Link
+            to="/chat/setting/profile"
+            className="w-10 h-10 rounded-full bg-white overflow-hidden"
+          >
+            <img
+              src={user}
+              alt="Avatar"
+              className="object-cover w-full h-full"
+            />
           </Link>
 
           <Link to={chatRoute}>
@@ -165,14 +170,23 @@ const handleUnsubscribe = async () => {
 
             {showSettings && (
               <div className="absolute left-12 bottom-[-40px] bg-white rounded-xl shadow-lg py-2 w-40">
-                <Link to="/chat/setting/profile" className="block px-4 py-1">Profile</Link>
-                <Link to="/chat/setting/account" className="block px-4 py-1">Account</Link>
-                <Link to="/chat/setting/security" className="block px-4 py-1">Security</Link>
+                <Link to="/chat/setting/profile" className="block px-4 py-1">
+                  Profile
+                </Link>
+                <Link to="/chat/setting/account" className="block px-4 py-1">
+                  Account
+                </Link>
+                <Link to="/chat/setting/security" className="block px-4 py-1">
+                  Security
+                </Link>
               </div>
             )}
           </div>
 
-          <button onClick={handleLogout} className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center">
+          <button
+            onClick={handleLogout}
+            className="w-10 h-10 bg-emerald-400 rounded-xl flex items-center justify-center"
+          >
             <LogOut className="text-white" />
           </button>
         </div>

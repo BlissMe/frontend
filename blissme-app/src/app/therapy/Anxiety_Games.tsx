@@ -80,7 +80,7 @@ const games = [
     color: "text-rose-400",
     bgColor: "bg-rose-400/10",
     duration: "2 mins",
-    routeType: "game",
+    routeType: "therapy",
   },
   {
     id: "all-songs",
@@ -90,7 +90,7 @@ const games = [
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
     duration: "3 mins",
-    routeType: "game",
+    routeType: "therapy",
   },
   {
     id: "body-scan",

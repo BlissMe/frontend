@@ -4,7 +4,7 @@ import { Form, Input, Button, Checkbox, Typography, Modal, Select } from "antd";
 import { MailOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { assets } from "../../assets/assets";
 import { userSignUpService } from "../../services/UserService";
-import { passwordFieldValidation } from "../../helpers/PasswordValidation";
+import { passwordFieldValidation, validateUsername } from "../../helpers/PasswordValidation";
 import { AuthContext } from "../context/AuthContext";
 import { setLocalStorageData } from "../../helpers/Storage";
 import "../../index.css";
@@ -159,7 +159,7 @@ const Register = () => {
                 name="username"
                 label="Username"
                 className="custom-label"
-                rules={[{ required: true, message: "Username is required!" }]}
+                rules={[{ required: true, message: "Username is required!" },{ validator: validateUsername },]}
               >
                 <Input
                   prefix={<UserOutlined />}

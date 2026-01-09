@@ -230,12 +230,12 @@ const Home = () => {
                                     >
                                         Account
                                     </Link>
-                                    <Link
+                                   {/*  <Link
                                         to="/chat/setting/security"
                                         className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
                                     >
                                         Security
-                                    </Link>
+                                    </Link> */}
                                 </div>
                             )}
                         </div>
@@ -329,12 +329,12 @@ const Home = () => {
                                     >
                                         Account
                                     </Link>
-                                    <Link
+                                   {/*  <Link
                                         to="/chat/setting/security"
                                         className="block px-4 py-1 hover:bg-emerald-100 text-gray-800"
                                     >
                                         Security
-                                    </Link>
+                                    </Link> */}
                                 </div>
                             )}
                         </div>

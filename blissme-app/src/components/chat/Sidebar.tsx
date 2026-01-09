@@ -191,12 +191,12 @@ const Sidebar: React.FC = () => {
                 >
                   Account
                 </Link>
-                <Link
+               {/*  <Link
                   to="/chat/setting/security"
                   className="block px-4 py-1 hover:bg-emerald-100"
                 >
                   Security
-                </Link>
+                </Link> */}
               </div>
             )}
           </div>
@@ -321,13 +321,13 @@ const Sidebar: React.FC = () => {
                     Account
                   </Link>
 
-                  <Link
+                 {/*  <Link
                     to="/chat/setting/security"
                     className="block px-4 py-1 hover:bg-emerald-100"
                     onClick={() => setMenuOpen(false)}
                   >
                     Security
-                  </Link>
+                  </Link> */}
                 </div>
               )}
             </div>

@@ -27,6 +27,18 @@ const SendEmail: React.FC = () => {
   const [securityQuestion, setSecurityQuestion] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const API_URL = process.env.REACT_APP_API_URL;
+  const getSecurityQuestionLabel = (key: string): string => {
+    if (key === "first_school") {
+      return "Favourite Color";
+    }
+    if (key === "pet_name") {
+      return "Pet Name";
+    }
+    if (key === "birth_city") {
+      return "Favourite Country";
+    }
+    return key;
+  };
 
   const handleSubmit = async (values: { username: string }) => {
     setIsLoading(true);
@@ -37,7 +49,9 @@ const SendEmail: React.FC = () => {
       );
       console.log("Response data:", response.data);
       setUsername(values.username);
-      setSecurityQuestion(response.data.securityQuestion);
+      setSecurityQuestion(
+        getSecurityQuestionLabel(response.data.securityQuestion)
+      );
       message.success(response.data.message, 5);
       setIsSubmitted(true);
       setIsButtonDisabled(true);

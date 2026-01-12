@@ -85,10 +85,12 @@ export function OceanWaves() {
   return (
     <div className="flex justify-center items-center mt-3">
       <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
-
         {/* Card Header */}
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
+          <CardTitle
+            className="text-2xl font-semibold text-white"
+            style={{ fontFamily: "Merienda, cursive" }}
+          >
             Ocean Waves
           </CardTitle>
           <CardDescription className="text-slate-100 text-sm">
@@ -99,14 +101,22 @@ export function OceanWaves() {
         {/* 🌊 Instructions Block */}
         <div className="px-6">
           <div className="bg-emerald-100/40 rounded-lg p-3 mb-4">
-            <h3 className="text-sm font-medium text-blue-100 mb-2">How to Use</h3>
+            <h3 className="text-sm font-medium text-blue-100 mb-2">
+              How to Use
+            </h3>
             <ul className="text-xs text-blue-100/90 space-y-1 list-disc list-inside">
-              <li>Sit comfortably and take a moment to settle your breathing.</li>
+              <li>
+                Sit comfortably and take a moment to settle your breathing.
+              </li>
               <li>Adjust the volume to a soft, soothing level.</li>
               <li>Press play to begin the ocean wave breathing session.</li>
-              <li>Match your breath to the rising and falling wave animation.</li>
+              <li>
+                Match your breath to the rising and falling wave animation.
+              </li>
               <li>Inhale as the waves rise, exhale as they fall.</li>
-              <li>If your mind wanders, gently return to the rhythm of the waves.</li>
+              <li>
+                If your mind wanders, gently return to the rhythm of the waves.
+              </li>
               <li>Continue until the timer ends or pause anytime you need.</li>
             </ul>
             <p className="text-[10px] text-blue-100/70 mt-2">
@@ -187,17 +197,23 @@ export function OceanWaves() {
               </span>
             </div>
           </div>
-
         </CardContent>
         <div className="w-full flex justify-start px-6 pb-4">
           <button
-            onClick={() => navigate("/chat-new/text")}
+            onClick={() => {
+              const storedTherapy = localStorage.getItem("therapyInProgress");
+
+              if (storedTherapy) {
+                navigate("/chat-new/voice");
+              } else {
+                navigate("/chat-new/text");
+              }
+            }}
             className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
           >
             ← Back to Chat
           </button>
         </div>
-
       </Card>
     </div>
   );

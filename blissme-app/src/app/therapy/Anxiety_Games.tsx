@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Gamepad2, Flower2, Wind, TreePine, Waves, Music2, PersonStanding, AudioLines, Smile } from "lucide-react";
+import {
+  Gamepad2,
+  Flower2,
+  Wind,
+  TreePine,
+  Waves,
+  Music2,
+  PersonStanding,
+  AudioLines,
+  Smile,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -134,8 +144,7 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
       }
     }
 
-    const routeBase =
-      game.routeType === "game" ? "/game" : "/therapy";
+    const routeBase = game.routeType === "game" ? "/game" : "/therapy";
 
     navigate(`${routeBase}/${gameId}`);
     console.log(`Navigating to ${routeBase}/${gameId}`);
@@ -145,12 +154,10 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
     <div className="p-6 justify-center items-center flex">
       <Card className="relative border-slate-300/20 bg-emerald-50/60 gap-4 flex flex-col pb-16">
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center" >
-            <Gamepad2 className="h-5 w-5 text-emerald-700"
-            />
-            <h3 style={{ fontFamily: 'Merienda, cursive' }}>
+          <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center">
+            <Gamepad2 className="h-5 w-5 text-emerald-700" />
+            <h3 style={{ fontFamily: "Merienda, cursive" }}>
               Anxiety Relief Activities
-
             </h3>
           </CardTitle>
           <CardDescription className="text-center text-slate-600">
@@ -174,7 +181,9 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                   >
                     <CardContent className="p-4 flex flex-col flex-1">
                       <div className="flex items-start gap-4 flex-1">
-                        <div className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}>
+                        <div
+                          className={`p-3 rounded-xl ${game.bgColor} ${game.color}`}
+                        >
                           <game.icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1 flex flex-col justify-between">
@@ -184,25 +193,36 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
                           >
                             {game.title}
                           </h4>
-                          <p className="text-sm text-emerald-700 mt-1">{game.description}</p>
+                          <p className="text-sm text-emerald-700 mt-1">
+                            {game.description}
+                          </p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 mt-3">
                         <Music2 className="h-4 w-4 text-slate-500" />
-                        <span className="text-sm text-slate-500">{game.duration}</span>
+                        <span className="text-sm text-slate-500">
+                          {game.duration}
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
             </div>
-
           </div>
         </CardContent>
 
         <button
-          onClick={() => navigate("/chat-new/text")}
+          onClick={() => {
+            const storedTherapy = localStorage.getItem("therapyInProgress");
+
+            if (storedTherapy) {
+              navigate("/chat-new/voice");
+            } else {
+              navigate("/chat-new/text");
+            }
+          }}
           className="absolute left-4 mt-4 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
         >
           ← Back to Chat

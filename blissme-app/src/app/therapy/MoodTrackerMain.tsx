@@ -89,7 +89,7 @@ export default function MoodTrackerMain() {
               letterSpacing="0.5px"
               icon={<EyeOutlined />}
               className="!h-10 !bg-gradient-to-r !from-green-500 !to-emerald-600 hover:!from-green-600 hover:!to-emerald-700 !rounded-full !px-6 !shadow-lg text-white"
-              onClick={() => navigate("/dash/mood-tracker")}
+              onClick={() => navigate("/therapy/mood-tracker")}
             />
           )}
         </div>

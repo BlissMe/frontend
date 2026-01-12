@@ -41,7 +41,15 @@ const MoodTracker = () => {
       <div className="w-full bg-white/20 backdrop-blur-md rounded-xl p-2 flex flex-col items-center justify-center">
         <div className="relative w-full flex items-center justify-center mb-4">
           <button
-            onClick={() => navigate("/chat-new/text")}
+            onClick={() => {
+              const storedTherapy = localStorage.getItem("therapyInProgress");
+
+              if (storedTherapy) {
+                navigate("/chat-new/voice");
+              } else {
+                navigate("/chat-new/text");
+              }
+            }}
             className="
           fixed top-4 right-8 z-50 
           bg-white/15 backdrop-blur-md border border-white/22

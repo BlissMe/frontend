@@ -72,7 +72,15 @@ export function BreathingGame() {
     return (
       <div className="flex flex-col items-center justify-center h-[400px] space-y-6">
         <button
-          onClick={() => navigate("/chat-new/text")}
+          onClick={() => {
+            const storedTherapy = localStorage.getItem("therapyInProgress");
+
+            if (storedTherapy) {
+              navigate("/chat-new/voice");
+            } else {
+              navigate("/chat-new/text");
+            }
+          }}
           className="
           fixed top-4 right-8 z-50 
           bg-white/15 backdrop-blur-md border border-white/22

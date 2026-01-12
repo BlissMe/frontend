@@ -68,8 +68,8 @@ const AdvancedBreathing: React.FC<Props> = ({
       phase.name === "inhale"
         ? "Inhale"
         : phase.name === "exhale"
-          ? "Exhale"
-          : "Hold";
+        ? "Exhale"
+        : "Hold";
     announce(label);
   }, [phaseIndex, phase.name, announce]);
 
@@ -123,7 +123,7 @@ const AdvancedBreathing: React.FC<Props> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(summary),
-      }).catch(() => { });
+      }).catch(() => {});
     }
 
   }, [running]);
@@ -185,8 +185,7 @@ const AdvancedBreathing: React.FC<Props> = ({
         {/* Cycles + Remaining time */}
         <div className="text-sm opacity-70 mb-4">
           Time remaining: {String(remainingMin).padStart(2, "0")}:
-          {String(remainingSec).padStart(2, "0")}
-          · Cycles: {cyclesCompleted}
+          {String(remainingSec).padStart(2, "0")}· Cycles: {cyclesCompleted}
         </div>
 
         {/* Control buttons */}
@@ -222,12 +221,21 @@ const AdvancedBreathing: React.FC<Props> = ({
 
         {/* Warning */}
         <p className="text-xs text-center max-w-prose opacity-70 mb-10">
-          This feature guides evidence-based slow/paced breathing. Stop if you feel dizzy, light-headed, or unwell.
+          This feature guides evidence-based slow/paced breathing. Stop if you
+          feel dizzy, light-headed, or unwell.
         </p>
 
         {/* Back button at bottom-left */}
         <button
-          onClick={() => navigate("/chat-new/text")}
+          onClick={() => {
+            const storedTherapy = localStorage.getItem("therapyInProgress");
+
+            if (storedTherapy) {
+              navigate("/chat-new/voice");
+            } else {
+              navigate("/chat-new/text");
+            }
+          }}
           className="absolute bottom-4 left-4 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
         >
           ← Back to Chat

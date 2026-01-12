@@ -143,7 +143,10 @@ const ChatInterface = () => {
   }, [postPhqMessageCount]);
 
   useEffect(() => {
-    if (location.pathname === "/chat-new/text") {
+    if (
+      location.pathname === "/chat-new/text" ||
+      location.pathname === "/chat-new/voice"
+    ) {
       // Check if user just returned from therapy
       const storedTherapy = localStorage.getItem("therapyInProgress");
       if (storedTherapy) {
@@ -545,7 +548,7 @@ const ChatInterface = () => {
       sender: "popo",
       text:
         feedback === "Felt Good"
-          ? "I'm glad to hear that! 🌼 Let's keep the good energy going. How are you feeling now?"
+          ? "I'm glad to hear that! Let's keep the good energy going. How are you feeling now?"
           : feedback === "No Change"
           ? "That’s okay, sometimes progress takes time. Would you like to try a different therapy later?"
           : "I understand it didn’t help much. We can explore something else next time. How do you feel right now?",

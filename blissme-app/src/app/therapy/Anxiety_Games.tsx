@@ -144,7 +144,6 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
   return (
     <div className="p-6 justify-center items-center flex">
       <Card className="relative border-slate-300/20 bg-emerald-50/60 gap-4 flex flex-col pb-16">
-
         <CardHeader>
           <CardTitle className="text-2xl font-semibold flex items-center gap-2 text-emerald-700 justify-center" >
             <Gamepad2 className="h-5 w-5 text-emerald-700"
@@ -212,4 +211,3 @@ export const AnxietyGames = ({ onGamePlayed }: AnxietyGamesProps) => {
     </div>
   );
 };
-

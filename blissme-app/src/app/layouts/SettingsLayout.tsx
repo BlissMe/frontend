@@ -1,7 +1,7 @@
 import React from "react";
 import ChatInterface from "../../components/chat/ChatInterface";
 import Sidebar from "../../components/chat/Sidebar";
-import bg from "../../assets/images/chatbg.png"
+import bg from "../../assets/images/chat-bg.png"
 import { Outlet, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { Content } from "antd/es/layout/layout";
@@ -12,7 +12,7 @@ const SettingsLayout = () => {
 
     return (
         <div
-            className="w-screen h-screen flex overflow-hidden relative"
+            className="w-screen h-screen flex flex-col md:flex-row overflow-hidden relative "
             style={{
                 backgroundImage: `url(${bg})`,
                 backgroundSize: "cover",

@@ -10,16 +10,16 @@ const Landing = () => {
     const [loading, setLoading] = useState(false);
     const Navigate = useNavigate();
     const logoStyle = {
-        maxWidth: '300px',
-        marginBottom: '20px',
-        marginTop: '40px',
-        animation: 'scalePulse 2s infinite ease-in-out'
+        width: "clamp(120px, 40vw, 300px)",
+        marginBottom: "20px",
+        marginTop: "40px",
+        animation: "scalePulse 2s infinite ease-in-out"
     };
 
     return (
         <div
             style={{
-                backgroundImage: `url(${bg})`,
+                // backgroundImage: `url(${bg})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -45,6 +45,16 @@ const Landing = () => {
             }
             `}
             </style>
+            <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute top-0 left-0 w-full h-full object-cover"
+            >
+                <source src="/videos/landing-video.mp4" type="video/mp4" />
+            </video>
+
             <img
                 src={logo}
                 alt="BlissMe Logo"
@@ -77,7 +87,7 @@ const Landing = () => {
                     lg:bottom-[60px]  /* ≥1024px */
                     xl:bottom-[60px]  /* ≥1280px */
 ">
-                <DotLottieReact
+                {/* <DotLottieReact
                     src="/animations/bear.lottie"
                     loop
                     autoplay
@@ -88,7 +98,7 @@ const Landing = () => {
                     lg:w-[400px] lg:h-[250px]
                     xl:w-[400px] xl:h-[250px]
                 "
-                />
+                /> */}
             </div>
 
 

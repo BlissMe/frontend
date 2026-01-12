@@ -29,16 +29,16 @@ const BodyScan: React.FC = () => {
       style={{ backgroundImage: `url(${bg})` }}
     >
       <div className="z-10 flex flex-col items-center text-center px-4">
-        <h1 className="text-3xl md:text-4xl font-semibold mb-6 drop-shadow-lg">
+        <h1 className="text-3xl md:text-4xl font-semibold mb-6 drop-shadow-lg" style={{ fontFamily: 'Merienda, cursive' }}>
           Body Scan Therapy
         </h1>
         <button
           onClick={() => navigate("/chat-new/text")}
           className="
           fixed top-4 right-8 z-50 
-          bg-white/10 backdrop-blur-md border border-white/20
+          bg-emerald-500 backdrop-blur-md border border-white/20
           text-white text-sm font-medium px-4 py-2 rounded-xl shadow-lg
-          hover:bg-white/20 hover:scale-105 transition-transform duration-200
+          hover:bg-emerald-200/20 hover:scale-105 transition-transform duration-200
         "
         >
           ← Back to Chat
@@ -47,7 +47,7 @@ const BodyScan: React.FC = () => {
         {!isPlaying ? (
           <button
             onClick={handleStartSession}
-            className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-full text-lg transition duration-300 shadow-md"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 px-6 rounded-full text-lg transition duration-300 shadow-md"
           >
             Start Session
           </button>

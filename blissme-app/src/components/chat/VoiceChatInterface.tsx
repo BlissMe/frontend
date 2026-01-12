@@ -764,7 +764,7 @@ const ViceChatInterface = () => {
           ? sessionSummaries[sessionSummaries.length - 1]
           : null;
 
-      const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? [],Number(user_id),Number(sessionID));
       setClassifier(res);
 
       try {

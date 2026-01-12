@@ -90,13 +90,20 @@ export function ZenGarden() {
             ))}
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-between">
+          <button
+              onClick={() => navigate("/chat-new/text")}
+              className=" bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
+            >
+              ← Back to Chat
+            </button>
             <Button
               onClick={resetGarden}
-              className="bg-emerald-400 text-white hover:bg-emerald-600 text-sm px-4 py-2 rounded-md"
+              className=" bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
             >
               Reset Garden
             </Button>
+           
           </div>
         </CardContent>
       </Card>

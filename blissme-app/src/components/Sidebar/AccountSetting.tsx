@@ -109,7 +109,12 @@ const AccountSetting = () => {
 
   return (
     <>
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-32">
+      <div className="max-w-xl mx-auto bg-green-300/50 p-6 rounded-xl shadow-md mt-32">
+        <div className="w-full flex justify-center mt-4">
+          <h2 className="text-2xl font-semibold text-emerald-800 mb-6" style={{ fontFamily: 'Merienda, cursive' }}>
+            Account Settings
+          </h2>
+        </div>
         <Tabs activeKey={activeTabKey} onChange={handleTabChange} centered>
           <TabPane tab="Change Password" key="1">
             <Form
@@ -129,7 +134,7 @@ const AccountSetting = () => {
                   { validator: passwordFieldValidation },
                 ]}
               >
-                <Input.Password className="h-10" />
+                <Input.Password className="h-10 rounded-lg bg-emerald-100 " />
               </Form.Item>
 
               <Form.Item
@@ -144,7 +149,7 @@ const AccountSetting = () => {
                   { validator: passwordFieldValidation },
                 ]}
               >
-                <Input.Password className="h-10" />
+                <Input.Password className="h-10 rounded-lg bg-emerald-100" />
               </Form.Item>
 
               <Form.Item
@@ -169,14 +174,14 @@ const AccountSetting = () => {
                   }),
                 ]}
               >
-                <Input.Password className="h-10" />
+                <Input.Password className="h-10 rounded-lg bg-emerald-100" />
               </Form.Item>
 
               <Button
                 type="primary"
                 htmlType="submit"
                 block
-                className="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md"
+                className="mt-2 bg-emerald-600 hover:bg-emerald-400 text-white font-semibold py-2 rounded-md"
               >
                 Update Password
               </Button>

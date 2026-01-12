@@ -20,6 +20,7 @@ import {
   ClassifierResult,
   getDepressionLevel,
   getDepressionLevelByUserID,
+  startTherapyAPI,
 } from "../../services/DetectionService";
 import { saveClassifierToServer } from "../../services/ClassifierResults";
 import { Modal, Tag, Progress, Descriptions } from "antd";
@@ -487,7 +488,7 @@ const ChatInterface = () => {
           ? sessionSummaries[sessionSummaries.length - 1]
           : null;
 
-      const res = await getClassifierResult(historyStr, sessionSummaries ?? []);
+      const res = await getClassifierResult(historyStr, sessionSummaries ?? [], Number(user_id), Number(sessionID));
       setClassifier(res);
 
       try {
@@ -635,6 +636,36 @@ const ChatInterface = () => {
     "Nearly every day",
   ];
 
+const startTherapy = async () => {
+  try {
+    // Hide the therapy card
+    setShowTherapyCard(false);
+
+    // Store local session details
+    const now = Date.now();
+    localStorage.setItem("therapyStartTime", now.toString());
+    localStorage.setItem("therapyInProgress", JSON.stringify(therapyInfo));
+
+    // Call the service function
+    
+    const result = await startTherapyAPI(Number(user_id), Number(sessionID), therapyInfo);
+
+
+    if (result.success) {
+      console.log("THERAPY_STARTED event sent successfully!");
+    } else {
+      console.error("Failed to start therapy:", result.error);
+    }
+
+    // Navigate to therapy page
+    navigate(therapyInfo.path || "/therapy");
+  } catch (err: unknown) {
+    let errorMessage = "Unknown error occurred";
+    if (err instanceof Error) errorMessage = err.message;
+    console.error("Failed to start therapy:", errorMessage);
+  }
+};
+
   return (
     <div className="relative flex-1 px-2  h-screen flex items-center justify-end ">
       {/* Bear Image */}
@@ -658,9 +689,9 @@ const ChatInterface = () => {
         className="
     relative z-10 
     w-full lg:w-2/3 md:w-3/4
-    h-full  lg:ml-[400px]
+    h-[90%]  lg:ml-[400px]
     bg-emerald-200/80 bg-opacity-100 rounded-xl p-2 sm:p-6 shadow-lg
-    flex flex-col justify-between
+    flex flex-col justify-between my-2
     
   "
       >
@@ -823,16 +854,8 @@ const ChatInterface = () => {
                   <Button
                     type="primary"
                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
-                    onClick={() => {
-                      setShowTherapyCard(false);
-                      const now = Date.now();
-                      localStorage.setItem("therapyStartTime", now.toString());
-                      localStorage.setItem(
-                        "therapyInProgress",
-                        JSON.stringify(therapyInfo)
-                      );
-                      navigate(therapyInfo.path || "/therapy");
-                    }}
+                    onClick={startTherapy}
+
                   >
                     Start Therapy
                   </Button>
@@ -843,6 +866,7 @@ const ChatInterface = () => {
         </div>
         <div className="flex items-center w-full gap-3 mb-4">
           {/* Input */}
+
           <textarea
             rows={1}
             ref={textareaRef}
@@ -861,11 +885,6 @@ const ChatInterface = () => {
             }}
             disabled={loading || isPhq9}
           />
-
-          {/* Optional Divider */}
-          {/* <Divider type="vertical" className="h-8 bg-gray-200" /> */}
-
-          {/* Send Button */}
           <Button
             type="text"
             icon={
@@ -988,7 +1007,6 @@ const ChatInterface = () => {
                 </>
               )}
             </Modal>
-            {/* Input + Button Row */}
           </div>
         )}
       </div>

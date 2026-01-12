@@ -48,11 +48,11 @@ const Sidebar = () => {
                   Account Settings
                 </Link>
               </li>
-              <li>
+             {/*  <li>
                 <Link to="/chat/setting/security" className="hover:text-blue-300">
                   Security Settings
                 </Link>
-              </li>
+              </li> */}
             </ul>
           )}
         </li>

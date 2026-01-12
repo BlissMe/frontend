@@ -493,8 +493,16 @@ const ViceChatInterface = () => {
       setMessages((prev) => [...prev, botMessage]);
 
       // Play bot audio
-      const audio = new Audio(`${Python_URL}${result.audio_url}`);
-      audio.play();
+      if (result.audio_base64) {
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(result.audio_base64), (c) => c.charCodeAt(0))],
+          { type: "audio/mpeg" }
+        );
+
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+      }
       console.log("Audio URL:", `${Python_URL}${result.audio_url}`);
 
       // Handle emotion state
@@ -665,12 +673,10 @@ const ViceChatInterface = () => {
 
       if (!res.ok) return;
 
-      const data = await res.json();
-
-      if (data.audio_url) {
-        const audio = new Audio(`${Python_URL}${data.audio_url}`);
-        await audio.play();
-      }
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      await audio.play();
     } catch (e) {
       console.warn("TTS failed:", e);
     }

@@ -563,7 +563,7 @@ const ChatInterface = () => {
 
     setAwaitingFeedback(false);
     setTherapyInfo({});
-    localStorage.removeItem("therapyInProgress");
+    localStorage.removeItem("therapyInProgresschat");
   };
 
   async function runLevelDetection() {
@@ -646,7 +646,7 @@ const ChatInterface = () => {
       // Store local session details
       const now = Date.now();
       localStorage.setItem("therapyStartTime", now.toString());
-      localStorage.setItem("therapyInProgress", JSON.stringify(therapyInfo));
+      localStorage.setItem("therapyInProgresschat", JSON.stringify(therapyInfo));
 
       // Call the service function
 

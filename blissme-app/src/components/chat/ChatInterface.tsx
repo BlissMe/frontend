@@ -143,12 +143,9 @@ const ChatInterface = () => {
   }, [postPhqMessageCount]);
 
   useEffect(() => {
-    if (
-      location.pathname === "/chat-new/text" ||
-      location.pathname === "/chat-new/voice"
-    ) {
+    if (location.pathname === "/chat-new/text") {
       // Check if user just returned from therapy
-      const storedTherapy = localStorage.getItem("therapyInProgress");
+      const storedTherapy = localStorage.getItem("therapyInProgresschat");
       if (storedTherapy) {
         const info = JSON.parse(storedTherapy);
 
@@ -183,7 +180,7 @@ const ChatInterface = () => {
         saveMessage(feedbackMsg.text, sessionID, "bot");
 
         //  Clear it so it's only asked once
-        localStorage.removeItem("therapyInProgress");
+        localStorage.removeItem("therapyInProgresschat");
       }
     }
   }, [location.pathname]);
@@ -488,7 +485,12 @@ const ChatInterface = () => {
           ? sessionSummaries[sessionSummaries.length - 1]
           : null;
 
-      const res = await getClassifierResult(historyStr, sessionSummaries ?? [], Number(user_id), Number(sessionID));
+      const res = await getClassifierResult(
+        historyStr,
+        sessionSummaries ?? [],
+        Number(user_id),
+        Number(sessionID)
+      );
       setClassifier(res);
 
       try {
@@ -636,35 +638,38 @@ const ChatInterface = () => {
     "Nearly every day",
   ];
 
-const startTherapy = async () => {
-  try {
-    // Hide the therapy card
-    setShowTherapyCard(false);
+  const startTherapy = async () => {
+    try {
+      // Hide the therapy card
+      setShowTherapyCard(false);
 
-    // Store local session details
-    const now = Date.now();
-    localStorage.setItem("therapyStartTime", now.toString());
-    localStorage.setItem("therapyInProgress", JSON.stringify(therapyInfo));
+      // Store local session details
+      const now = Date.now();
+      localStorage.setItem("therapyStartTime", now.toString());
+      localStorage.setItem("therapyInProgress", JSON.stringify(therapyInfo));
 
-    // Call the service function
-    
-    const result = await startTherapyAPI(Number(user_id), Number(sessionID), therapyInfo);
+      // Call the service function
 
+      const result = await startTherapyAPI(
+        Number(user_id),
+        Number(sessionID),
+        therapyInfo
+      );
 
-    if (result.success) {
-      console.log("THERAPY_STARTED event sent successfully!");
-    } else {
-      console.error("Failed to start therapy:", result.error);
+      if (result.success) {
+        console.log("THERAPY_STARTED event sent successfully!");
+      } else {
+        console.error("Failed to start therapy:", result.error);
+      }
+
+      // Navigate to therapy page
+      navigate(therapyInfo.path || "/therapy");
+    } catch (err: unknown) {
+      let errorMessage = "Unknown error occurred";
+      if (err instanceof Error) errorMessage = err.message;
+      console.error("Failed to start therapy:", errorMessage);
     }
-
-    // Navigate to therapy page
-    navigate(therapyInfo.path || "/therapy");
-  } catch (err: unknown) {
-    let errorMessage = "Unknown error occurred";
-    if (err instanceof Error) errorMessage = err.message;
-    console.error("Failed to start therapy:", errorMessage);
-  }
-};
+  };
 
   return (
     <div className="relative flex-1 px-2  h-screen flex items-center justify-end ">
@@ -855,7 +860,6 @@ const startTherapy = async () => {
                     type="primary"
                     className="bg-green-500 hover:bg-green-600 text-white rounded-full"
                     onClick={startTherapy}
-
                   >
                     Start Therapy
                   </Button>

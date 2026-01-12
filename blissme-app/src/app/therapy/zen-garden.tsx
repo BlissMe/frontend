@@ -91,8 +91,16 @@ export function ZenGarden() {
           </div>
 
           <div className="flex justify-between">
-          <button
-              onClick={() => navigate("/chat-new/text")}
+            <button
+              onClick={() => {
+                const storedTherapy = localStorage.getItem("therapyInProgress");
+
+                if (storedTherapy) {
+                  navigate("/chat-new/voice");
+                } else {
+                  navigate("/chat-new/text");
+                }
+              }}
               className=" bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
             >
               ← Back to Chat
@@ -103,7 +111,6 @@ export function ZenGarden() {
             >
               Reset Garden
             </Button>
-           
           </div>
         </CardContent>
       </Card>

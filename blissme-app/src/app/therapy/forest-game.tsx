@@ -83,10 +83,12 @@ export function ForestGame() {
   return (
     <div className="flex justify-center items-center min-h-[70vh] mt-8">
       <Card className="border-slate-300/20 bg-emerald-800 text-white w-full max-w-md shadow-xl rounded-2xl">
-        
         {/* Card Header */}
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-semibold text-white" style={{ fontFamily: 'Merienda, cursive' }}>
+          <CardTitle
+            className="text-2xl font-semibold text-white"
+            style={{ fontFamily: "Merienda, cursive" }}
+          >
             Mindful Forest
           </CardTitle>
           <CardDescription className="text-slate-100 text-sm">
@@ -97,14 +99,23 @@ export function ForestGame() {
         {/* ✨ Instructions Added Here */}
         <div className="px-6">
           <div className="bg-emerald-700 rounded-lg p-3 mb-4">
-            <h3 className="text-sm font-medium text-emerald-100 mb-2">How to Use</h3>
+            <h3 className="text-sm font-medium text-emerald-100 mb-2">
+              How to Use
+            </h3>
             <ul className="text-xs text-emerald-100/90 space-y-1 list-disc list-inside">
-              <li>Find a comfortable seated position and relax your shoulders.</li>
+              <li>
+                Find a comfortable seated position and relax your shoulders.
+              </li>
               <li>Adjust the volume to a soft, relaxing level.</li>
               <li>Press the play button to begin the forest meditation.</li>
               <li>Focus on the sounds of birds, wind, and rustling leaves.</li>
-              <li>If thoughts appear, gently return attention to the nature sounds.</li>
-              <li>Continue until the timer completes or pause anytime you need.</li>
+              <li>
+                If thoughts appear, gently return attention to the nature
+                sounds.
+              </li>
+              <li>
+                Continue until the timer completes or pause anytime you need.
+              </li>
             </ul>
           </div>
         </div>
@@ -183,7 +194,15 @@ export function ForestGame() {
         </CardContent>
         <div className="w-full flex justify-start px-6 pb-4">
           <button
-            onClick={() => navigate("/chat-new/text")}
+            onClick={() => {
+              const storedTherapy = localStorage.getItem("therapyInProgress");
+
+              if (storedTherapy) {
+                navigate("/chat-new/voice");
+              } else {
+                navigate("/chat-new/text");
+              }
+            }}
             className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow"
           >
             ← Back to Chat

@@ -208,7 +208,15 @@ const MeditationApp: React.FC = () => {
 
           {/* Back to chat button at bottom-left */}
           <button
-            onClick={() => navigate("/chat-new/text")}
+            onClick={() => {
+              const storedTherapy = localStorage.getItem("therapyInProgress");
+
+              if (storedTherapy) {
+                navigate("/chat-new/voice");
+              } else {
+                navigate("/chat-new/text");
+              }
+            }}
             className="absolute bottom-4 left-4 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow z-20"
           >
             ← Back to Chat

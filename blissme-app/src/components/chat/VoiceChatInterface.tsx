@@ -234,8 +234,7 @@ const ViceChatInterface = () => {
         setChatHistory((prev) => [...prev, feedbackMsg]);
         saveMessage(feedbackMsg.text, sessionID, "bot");
 
-        const feedbackAudio = new Audio("/therapy_feedback_question.mp3");
-        feedbackAudio.play();
+        playTTS("How was your therapy session? Please share your feedback.");
 
         //  Clear it so it's only asked once
         localStorage.removeItem("therapyInProgress");
@@ -550,8 +549,7 @@ const ViceChatInterface = () => {
       setChatHistory((prev) => [...prev, botMsg]);
       await saveMessage(botMsg.text, sessionID, "bot");
 
-      const replyAudio = new Audio("/therapy_choice.mp3");
-      replyAudio.play();
+      playTTS(gentleText);
     }
 
     // Hide therapy suggestion buttons
@@ -657,6 +655,27 @@ const ViceChatInterface = () => {
     setIsWaitingForBotResponse(false);
   };
 
+  async function playTTS(text: string) {
+    try {
+      const res = await fetch(`${Python_URL}/tts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+
+      if (data.audio_url) {
+        const audio = new Audio(`${Python_URL}${data.audio_url}`);
+        await audio.play();
+      }
+    } catch (e) {
+      console.warn("TTS failed:", e);
+    }
+  }
+
   const handleFeedback = async (feedback: string) => {
     const userFeedbackMsg = {
       sender: "you",
@@ -712,9 +731,7 @@ const ViceChatInterface = () => {
     setMessages((prev) => [...prev, botReply]);
     setChatHistory((prev) => [...prev, botReply]);
     await saveMessage(botReply.text, sessionID, "bot");
-
-    const replyAudio = new Audio("/therapy_feedback_reply.mp3");
-    replyAudio.play();
+    playTTS(botReply.text);
 
     setAwaitingFeedback(false);
     setTherapyInfo({});

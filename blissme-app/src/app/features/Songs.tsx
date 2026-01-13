@@ -62,7 +62,15 @@ const Songs = () => {
       {/* Left scrollable list */}
       <div className="w-full md:w-2/5 bg-[#95BFA7] backdrop-blur-sm overflow-y-auto p-6 ml-6 mt-20 mr-6 mb-6 rounded-xl shadow-lg">
         <button
-          onClick={() => navigate("/chat-new/text")}
+          onClick={() => {
+            const storedTherapy = localStorage.getItem("therapyInProgress");
+
+            if (storedTherapy) {
+              navigate("/chat-new/voice");
+            } else {
+              navigate("/chat-new/text");
+            }
+          }}
           className="
           fixed top-4 right-8 z-50 
           bg-emerald-500 backdrop-blur-md border border-white/20

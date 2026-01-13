@@ -29,11 +29,22 @@ const BodyScan: React.FC = () => {
       style={{ backgroundImage: `url(${bg})` }}
     >
       <div className="z-10 flex flex-col items-center text-center px-4">
-        <h1 className="text-3xl md:text-4xl font-semibold mb-6 drop-shadow-lg" style={{ fontFamily: 'Merienda, cursive' }}>
+        <h1
+          className="text-3xl md:text-4xl font-semibold mb-6 drop-shadow-lg"
+          style={{ fontFamily: "Merienda, cursive" }}
+        >
           Body Scan Therapy
         </h1>
         <button
-          onClick={() => navigate("/chat-new/text")}
+          onClick={() => {
+            const storedTherapy = localStorage.getItem("therapyInProgress");
+
+            if (storedTherapy) {
+              navigate("/chat-new/voice");
+            } else {
+              navigate("/chat-new/text");
+            }
+          }}
           className="
           fixed top-4 right-8 z-50 
           bg-emerald-500 backdrop-blur-md border border-white/20

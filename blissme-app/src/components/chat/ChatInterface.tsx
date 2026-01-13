@@ -71,6 +71,7 @@ const ChatInterface = () => {
   const { selectedCharacter, nickname, fetchCharacters } =
     useCharacterContext();
   const [levelResult, setLevelResult] = useState<any>(null);
+  console.log("levelResult", levelResult);
   const [levelOpen, setLevelOpen] = useState(false);
   const [therapyMode, setTherapyMode] = useState(false);
   const navigate = useNavigate();
@@ -646,7 +647,10 @@ const ChatInterface = () => {
       // Store local session details
       const now = Date.now();
       localStorage.setItem("therapyStartTime", now.toString());
-      localStorage.setItem("therapyInProgresschat", JSON.stringify(therapyInfo));
+      localStorage.setItem(
+        "therapyInProgresschat",
+        JSON.stringify(therapyInfo)
+      );
 
       // Call the service function
 
